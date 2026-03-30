@@ -1,27 +1,36 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import styles from "@/features/marketing/ui/landing.module.css";
 
-import { AudienceSection } from "@/features/marketing/ui/AudienceSection";
-import { CapabilitySection } from "@/features/marketing/ui/CapabilitySection";
-import { HomeCta } from "@/features/marketing/ui/HomeCta";
-import { HomeHero } from "@/features/marketing/ui/HomeHero";
-import { HowItWorksSection } from "@/features/marketing/ui/HowItWorksSection";
-import { ShowcaseSection } from "@/features/marketing/ui/ShowcaseSection";
+import { ModernHero } from "@/features/marketing/ui/ModernHero";
+import { ModernFeatures } from "@/features/marketing/ui/ModernFeatures";
+import { ModernCta } from "@/features/marketing/ui/ModernCta";
 
 export const metadata: Metadata = {
-  title: "Бронирование пространств онлайн",
+  title: "Bookit — Бронирование и управление пространствами",
   description:
-    "Bookit помогает сдавать пространства в аренду и быстро находить свободные слоты для бронирования."
+    "Платформа №1 для удобной аренды залов, кортов, студий и управления вашим расписанием."
 };
 
 export default function HomePage() {
   return (
-    <div className="marketing-page">
-      <HomeHero />
-      <CapabilitySection />
-      <ShowcaseSection />
-      <HowItWorksSection />
-      <AudienceSection />
-      <HomeCta />
-    </div>
+    <main className={styles.landingPage}>
+      <div className={styles.container}>
+        <header className={styles.header}>
+          <Link href="/" className={styles.logo}>
+            <div className={styles.logoIcon}>B</div>
+            Bookit
+          </Link>
+          <nav className={styles.nav}>
+            <Link href="#features" className={styles.navLink}>Почему мы</Link>
+            <Link href="/login" className={styles.navBtn}>Войти</Link>
+          </nav>
+        </header>
+
+        <ModernHero />
+        <ModernFeatures />
+        <ModernCta />
+      </div>
+    </main>
   );
 }

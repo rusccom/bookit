@@ -1,14 +1,8 @@
-import Link from "next/link";
-
-import { AuthFrame } from "@/features/auth/ui/AuthFrame";
-import { RegisterChoiceGrid } from "@/features/auth/ui/RegisterChoiceGrid";
+import { ModernAuthLayout } from "@/features/auth/ui/ModernAuthLayout";
+import { ModernRegisterChoice } from "@/features/auth/ui/ModernRegisterChoice";
 import { StatusBanner } from "@/features/shared/ui/StatusBanner";
-
-const highlights = [
-  "Сначала выбираете сценарий, потом попадаете ровно в свою форму.",
-  "Для гостей и владельцев мы показываем разные акценты и разный onboarding.",
-  "Если позже понадобится, роли можно развивать отдельными кабинетами и воронками."
-];
+import Link from "next/link";
+import styles from "@/features/auth/ui/auth.module.css";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -19,17 +13,17 @@ export default async function RegisterPage(props: PageProps) {
   const error = pickValue(searchParams.error);
 
   return (
-    <AuthFrame
-      description="Выберите, как хотите работать с Bookit: искать свободные пространства или открывать своё расписание для гостей."
-      eyebrow="Регистрация"
-      footer={<Link className="secondary-link" href="/login">У меня уже есть аккаунт</Link>}
-      highlights={highlights}
-      sideTitle="Почему так устроено"
-      title="С какой стороны вы входите в Bookit?"
+    <ModernAuthLayout
+      title="Начните работу с Bookit"
+      description="Выберите подходящий сценарий: найти идеальное пространство для себя или начать сдавать своё."
+      large={true}
     >
       <StatusBanner error={error} />
-      <RegisterChoiceGrid />
-    </AuthFrame>
+      <ModernRegisterChoice />
+      <div className={styles.footer} style={{ marginTop: '24px' }}>
+        Уже есть аккаунт? <Link href="/login" className={styles.link}>Войти</Link>
+      </div>
+    </ModernAuthLayout>
   );
 }
 
