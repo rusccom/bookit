@@ -5,6 +5,8 @@ import styles from "@/features/marketing/ui/landing.module.css";
 import { ModernHero } from "@/features/marketing/ui/ModernHero";
 import { ModernFeatures } from "@/features/marketing/ui/ModernFeatures";
 import { ModernCta } from "@/features/marketing/ui/ModernCta";
+import { getCurrentUser } from "@/features/auth/server/getCurrentUser";
+import { getDashboardPath } from "@/features/auth/server/requireUser";
 
 export const metadata: Metadata = {
   title: "Bookit — Бронирование и управление пространствами",
@@ -12,7 +14,9 @@ export const metadata: Metadata = {
     "Платформа №1 для удобной аренды залов, кортов, студий и управления вашим расписанием."
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const user = await getCurrentUser();
+
   return (
     <main className={styles.landingPage}>
       <div className={styles.container}>
@@ -23,7 +27,11 @@ export default function HomePage() {
           </Link>
           <nav className={styles.nav}>
             <Link href="#features" className={styles.navLink}>Почему мы</Link>
-            <Link href="/login" className={styles.navBtn}>Войти</Link>
+            {user ? (
+              <Link href={getDashboardPath(user.role)} className={styles.navBtn}>Кабинет</Link>
+            ) : (
+              <Link href="/login" className={styles.navBtn}>Войти</Link>
+            )}
           </nav>
         </header>
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { createNoIndexMetadata } from "@/features/app/server/metadata";
+import { SiteHeader } from "@/features/app/ui/SiteHeader";
 
 export const metadata: Metadata = createNoIndexMetadata(
   "Кабинет",
@@ -8,5 +9,10 @@ export const metadata: Metadata = createNoIndexMetadata(
 );
 
 export default function DashboardLayout(props: { children: React.ReactNode }) {
-  return props.children;
+  return (
+    <div className="page-shell">
+      <SiteHeader />
+      <main className="page-content">{props.children}</main>
+    </div>
+  );
 }

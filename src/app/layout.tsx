@@ -27,10 +27,7 @@ export default async function RootLayout(props: {
   return (
     <html className={`${sansFont.variable} ${displayFont.variable}`} lang="ru">
       <body>
-        <div className="page-shell">
-          <SiteHeader />
-          <main className="page-content">{props.children}</main>
-        </div>
+        {props.children}
       </body>
     </html>
   );
