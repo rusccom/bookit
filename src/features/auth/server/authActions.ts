@@ -3,6 +3,9 @@
 import { redirect } from "next/navigation";
 
 import { loginSchema, registrationSchema } from "@/features/auth/server/authSchema";
+import { getRegisterPath } from "@/features/auth/server/registrationPaths";
+import { getDashboardPath } from "@/features/auth/server/requireUser";
+import { createSession, clearSession } from "@/features/auth/server/session";
 import {
   loginUser,
   prepareRegistration,
@@ -14,15 +17,13 @@ import {
   readPendingRegistration,
   savePendingRegistration
 } from "@/features/auth/server/pendingRegistration";
-import { getDashboardPath } from "@/features/auth/server/requireUser";
-import { createSession, clearSession } from "@/features/auth/server/session";
 import { isSmsConfigured } from "@/features/shared/server/env";
 import { generateOtpCode, hashOtpCode, verifyOtpCode } from "@/features/telegram/server/otp";
 import { sendOtpSms } from "@/features/telegram/server/smsService";
 
 export async function registerUserAction(formData: FormData) {
-  const role = String(formData.get("role") || "customer");
-  let target = `/register?role=${role}`;
+  const role = readRole(formData);
+  let target = getRegisterPath(role);
 
   try {
     const values = registrationSchema.parse(getRegistrationValues(formData));
@@ -34,17 +35,11 @@ export async function registerUserAction(formData: FormData) {
 
     const prepared = await prepareRegistration(values);
     const code = generateOtpCode();
-    await sendOtpSms({
-      code,
-      phone: prepared.phone
-    });
-    await savePendingRegistration({
-      ...prepared,
-      codeHash: hashOtpCode(code)
-    });
+    await sendOtpSms({ code, phone: prepared.phone });
+    await savePendingRegistration({ ...prepared, codeHash: hashOtpCode(code) });
     target = `/register/verify?role=${prepared.role}&success=${encodeURIComponent("Код подтверждения отправлен по SMS.")}`;
   } catch (error) {
-    target = `/register?role=${role}&error=${encodeURIComponent(getErrorMessage(error))}`;
+    target = `${getRegisterPath(role)}?error=${encodeURIComponent(getErrorMessage(error))}`;
   }
 
   redirect(target);
@@ -60,9 +55,7 @@ export async function confirmRegistrationAction(formData: FormData) {
   const code = String(formData.get("code") || "").trim();
 
   if (!verifyOtpCode({ code, hash: pending.codeHash })) {
-    redirect(
-      `/register/verify?role=${pending.role}&error=${encodeURIComponent("Код неверный или истек.")}`
-    );
+    redirect(`/register/verify?role=${pending.role}&error=${encodeURIComponent("Код неверный или уже истёк.")}`);
   }
 
   try {
@@ -79,7 +72,7 @@ export async function confirmRegistrationAction(formData: FormData) {
     redirect(getDashboardPath(user.role));
   } catch (error) {
     await clearPendingRegistration();
-    redirect(`/register?role=${pending.role}&error=${encodeURIComponent(getErrorMessage(error))}`);
+    redirect(`${getRegisterPath(pending.role)}?error=${encodeURIComponent(getErrorMessage(error))}`);
   }
 }
 
@@ -109,6 +102,10 @@ async function registerAndLogin(values: Parameters<typeof registerUser>[0]) {
   redirect(getDashboardPath(user.role));
 }
 
+function readRole(formData: FormData) {
+  return String(formData.get("role") || "customer");
+}
+
 function getRegistrationValues(formData: FormData) {
   return {
     email: String(formData.get("email") || ""),
@@ -116,7 +113,7 @@ function getRegistrationValues(formData: FormData) {
     password: String(formData.get("password") || ""),
     phone: String(formData.get("phone") || ""),
     providerTitle: String(formData.get("providerTitle") || ""),
-    role: String(formData.get("role") || "customer")
+    role: readRole(formData)
   };
 }
 

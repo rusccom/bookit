@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { getCurrentUser } from "@/features/auth/server/getCurrentUser";
 import { logoutUserAction } from "@/features/auth/server/authActions";
+import { getCurrentUser } from "@/features/auth/server/getCurrentUser";
 import { getDashboardPath } from "@/features/auth/server/requireUser";
 
 export async function SiteHeader() {
@@ -10,24 +10,27 @@ export async function SiteHeader() {
   return (
     <header className="site-header">
       <Link className="brand" href="/">
-        Bookit
+        <span className="brand-mark">B</span>
+        <span className="brand-copy">
+          <strong>Bookit</strong>
+          <span>Бронирование пространств без хаоса</span>
+        </span>
       </Link>
       <nav className="site-nav">
-        <Link href="/">Главная</Link>
-        {user ? <Link href={getDashboardPath(user.role)}>Кабинет</Link> : null}
+        <Link className="site-nav-link" href="/">Главная</Link>
+        <Link className="site-nav-link" href="/#benefits">Возможности</Link>
+        <Link className="site-nav-link" href="/#scenarios">Примеры</Link>
+        {user ? (
+          <Link className="site-nav-link" href={getDashboardPath(user.role)}>Кабинет</Link>
+        ) : (
+          <Link className="site-nav-link" href="/login">Войти</Link>
+        )}
         {user ? (
           <form action={logoutUserAction}>
-            <button className="ghost-button" type="submit">
-              Выйти
-            </button>
+            <button className="ghost-button" type="submit">Выйти</button>
           </form>
         ) : (
-          <>
-            <Link href="/login">Войти</Link>
-            <Link className="primary-link" href="/register?role=customer">
-              Регистрация
-            </Link>
-          </>
+          <Link className="primary-link" href="/register">Открыть аккаунт</Link>
         )}
       </nav>
     </header>
