@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:init": "tsx src/scripts/init-database.ts"
+    "migrate:create": "node-pg-migrate create",
+    "migrate:up": "node scripts/migrate.mjs up",
+    "migrate:down": "node scripts/migrate.mjs down",
+    "migrate:redo": "node scripts/migrate.mjs redo"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -25,6 +28,7 @@
     "@types/react-dom": "^19.0.4",
     "eslint": "^9.22.0",
     "eslint-config-next": "15.5.14",
+    "node-pg-migrate": "^8.0.4",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   }

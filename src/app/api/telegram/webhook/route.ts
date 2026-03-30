@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 
-import { initDatabase } from "@/features/database/server/initDatabase";
 import { handleTelegramWebhook } from "@/features/telegram/server/webhookService";
 
 export async function POST(request: Request) {
   try {
-    await initDatabase();
     const update = await request.json();
     await handleTelegramWebhook({
       headers: request.headers,

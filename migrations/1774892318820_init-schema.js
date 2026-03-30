@@ -1,5 +1,10 @@
-export const schemaSql = `
-CREATE TABLE IF NOT EXISTS app_users (
+/**
+ * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
+ */
+export const shorthands = undefined;
+
+const upSql = `
+CREATE TABLE app_users (
   id UUID PRIMARY KEY,
   role TEXT NOT NULL CHECK (role IN ('customer', 'owner')),
   full_name TEXT NOT NULL,
@@ -9,7 +14,7 @@ CREATE TABLE IF NOT EXISTS app_users (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS providers (
+CREATE TABLE providers (
   id UUID PRIMARY KEY,
   owner_user_id UUID NOT NULL UNIQUE REFERENCES app_users(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
@@ -17,7 +22,7 @@ CREATE TABLE IF NOT EXISTS providers (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS venues (
+CREATE TABLE venues (
   id UUID PRIMARY KEY,
   provider_id UUID NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
   city TEXT NOT NULL,
@@ -27,7 +32,7 @@ CREATE TABLE IF NOT EXISTS venues (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS bookable_units (
+CREATE TABLE bookable_units (
   id UUID PRIMARY KEY,
   venue_id UUID NOT NULL REFERENCES venues(id) ON DELETE CASCADE,
   kind TEXT NOT NULL DEFAULT 'tennis_court',
@@ -36,7 +41,7 @@ CREATE TABLE IF NOT EXISTS bookable_units (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS availability_rules (
+CREATE TABLE availability_rules (
   id UUID PRIMARY KEY,
   unit_id UUID NOT NULL REFERENCES bookable_units(id) ON DELETE CASCADE,
   weekday INTEGER NOT NULL CHECK (weekday BETWEEN 0 AND 6),
@@ -46,7 +51,7 @@ CREATE TABLE IF NOT EXISTS availability_rules (
   CONSTRAINT valid_rule_range CHECK (start_minutes < end_minutes)
 );
 
-CREATE TABLE IF NOT EXISTS bookings (
+CREATE TABLE bookings (
   id UUID PRIMARY KEY,
   unit_id UUID NOT NULL REFERENCES bookable_units(id) ON DELETE CASCADE,
   customer_user_id UUID REFERENCES app_users(id) ON DELETE SET NULL,
@@ -67,7 +72,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   CONSTRAINT valid_booking_range CHECK (start_minutes < end_minutes)
 );
 
-CREATE TABLE IF NOT EXISTS telegram_profiles (
+CREATE TABLE telegram_profiles (
   chat_id BIGINT PRIMARY KEY,
   user_id UUID REFERENCES app_users(id) ON DELETE SET NULL,
   role TEXT NOT NULL DEFAULT 'customer' CHECK (role IN ('customer', 'owner')),
@@ -80,5 +85,18 @@ CREATE TABLE IF NOT EXISTS telegram_profiles (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 `;
+
+const downSql = `
+DROP TABLE IF EXISTS telegram_profiles;
+DROP TABLE IF EXISTS bookings;
+DROP TABLE IF EXISTS availability_rules;
+DROP TABLE IF EXISTS bookable_units;
+DROP TABLE IF EXISTS venues;
+DROP TABLE IF EXISTS providers;
+DROP TABLE IF EXISTS app_users;
+`;
+
+export const up = (pgm) => pgm.sql(upSql);
+
+export const down = (pgm) => pgm.sql(downSql);

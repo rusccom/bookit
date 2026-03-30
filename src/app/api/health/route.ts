@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { initDatabase } from "@/features/database/server/initDatabase";
+import { getDb } from "@/features/database/server/client";
 import {
   isAiConfigured,
   isSmsConfigured,
@@ -9,7 +9,9 @@ import {
 
 export async function GET() {
   try {
-    await initDatabase();
+    const sql = getDb();
+    await sql`SELECT 1`;
+
     return NextResponse.json({
       aiConfigured: isAiConfigured(),
       smsConfigured: isSmsConfigured(),
