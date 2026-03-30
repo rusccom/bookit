@@ -1,3 +1,5 @@
+import styles from "./statusBanner.module.css";
+
 type StatusBannerProps = {
   error?: string;
   success?: string;
@@ -8,9 +10,7 @@ export function StatusBanner(props: StatusBannerProps) {
     return null;
   }
 
-  return (
-    <div className={props.error ? "status status-error" : "status status-success"}>
-      {props.error || props.success}
-    </div>
-  );
+  const className = props.error ? `${styles.banner} ${styles.error}` : `${styles.banner} ${styles.success}`;
+
+  return <div className={className}>{props.error || props.success}</div>;
 }

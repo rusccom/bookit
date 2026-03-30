@@ -1,36 +1,46 @@
 import Link from "next/link";
+
 import styles from "./auth.module.css";
 
-const options = [
+const OPTIONS = [
   {
-    icon: "🎾",
-    title: "Для гостей",
-    description: "Находите идеальные корты, студии и залы для своих тренировок. Бронируйте в пару кликов.",
     href: "/register/guest",
-    cta: "Начать бронировать"
+    label: "Аккаунт гостя",
+    title: "Найти пространство и быстро забронировать свободный слот",
+    text: "Подходит для клиентов, которые хотят войти, выбрать площадку и дойти до брони без лишних вопросов.",
+    points: ["Быстрый старт", "Чистая анкета", "Удобный вход"]
   },
   {
-    icon: "🏢",
-    title: "Для владельцев",
-    description: "Управляйте своим пространством легко. Получайте постоянный поток бронирований и удобное расписание.",
     href: "/register/host",
-    cta: "Добавить площадку"
+    label: "Аккаунт владельца",
+    title: "Запустить площадку и привести пользователя к будущему кабинету",
+    text: "Подходит для команд, которым нужен уверенный публичный вход в продукт: витрина, регистрация и переход к управлению.",
+    points: ["Отдельный маршрут для владельца", "Поле для названия бренда", "Подготовка к дашборду"]
   }
 ];
 
 export function ModernRegisterChoice() {
+  return <div className={styles.choiceGrid}>{OPTIONS.map(renderOption)}</div>;
+}
+
+function renderOption(option: {
+  href: string;
+  label: string;
+  points: string[];
+  text: string;
+  title: string;
+}) {
   return (
-    <div className={styles.choiceGrid}>
-      {options.map((option) => (
-        <Link key={option.href} href={option.href} className={styles.choiceCard}>
-          <div className={styles.cardIcon}>{option.icon}</div>
-          <h3>{option.title}</h3>
-          <p>{option.description}</p>
-          <span className={styles.cardAction}>
-            {option.cta} <span aria-hidden="true">→</span>
-          </span>
-        </Link>
-      ))}
-    </div>
+    <Link key={option.href} className={styles.choiceCard} href={option.href}>
+      <span className={styles.choiceBadge}>{option.label}</span>
+      <h2>{option.title}</h2>
+      <p>{option.text}</p>
+      <ul className={styles.choiceList}>{option.points.map(renderPoint)}</ul>
+      <span className={styles.choiceAction}>Открыть форму</span>
+    </Link>
   );
+}
+
+function renderPoint(point: string) {
+  return <li key={point}>{point}</li>;
 }

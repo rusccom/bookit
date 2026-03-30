@@ -1,32 +1,39 @@
 import Link from "next/link";
+
 import { getCurrentUser } from "@/features/auth/server/getCurrentUser";
 import { getDashboardPath } from "@/features/auth/server/requireUser";
-import styles from "@/features/marketing/ui/landing.module.css";
+
+import styles from "./publicHeader.module.css";
+
+const NAV_LINKS = [
+  { href: "/#audiences", label: "Сценарии" },
+  { href: "/#features", label: "Платформа" },
+  { href: "/#how-it-works", label: "Как это работает" }
+];
 
 export async function ModernSiteHeader() {
   const user = await getCurrentUser();
+  const ctaHref = user ? getDashboardPath(user.role) : "/register";
+  const ctaLabel = user ? "Открыть кабинет" : "Создать аккаунт";
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <Link href="/" className={styles.logo}>
-          <div className={styles.logoIcon}>B</div>
-          Bookit
-        </Link>
-        <nav className={styles.nav}>
-          <Link href="/register/guest" className={styles.navLink}>Арендаторам</Link>
-          <Link href="/register/host" className={styles.navLink}>Владельцам</Link>
-          <Link href="/#features" className={styles.navLink}>Платформа</Link>
-          {user ? (
-            <Link href={getDashboardPath(user.role)} className={styles.navBtn}>В свой кабинет →</Link>
-          ) : (
-            <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
-              <Link href="/login" className={styles.navLink}>Войти</Link>
-              <Link href="/register" className={styles.navBtn}>Начать работу</Link>
-            </div>
-          )}
-        </nav>
-      </header>
-    </div>
+    <header className={styles.header}>
+      <Link className={styles.brand} href="/">
+        <span className={styles.mark}>B</span>
+        <span className={styles.brandCopy}>
+          <strong>Bookit</strong>
+          <span>Бронирование пространств</span>
+        </span>
+      </Link>
+      <nav className={styles.nav}>
+        {NAV_LINKS.map(renderLink)}
+        {user ? null : <Link className={styles.secondary} href="/login">Войти</Link>}
+        <Link className={styles.primary} href={ctaHref}>{ctaLabel}</Link>
+      </nav>
+    </header>
   );
+}
+
+function renderLink(link: { href: string; label: string }) {
+  return <Link key={link.href} className={styles.link} href={link.href}>{link.label}</Link>;
 }

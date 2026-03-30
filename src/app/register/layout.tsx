@@ -4,7 +4,7 @@ import { createNoIndexMetadata } from "@/features/app/server/metadata";
 
 export const metadata: Metadata = createNoIndexMetadata(
   "Регистрация",
-  "Регистрация клиентов и владельцев пространств в Bookit."
+  "Регистрация гостей и владельцев площадок в Bookit."
 );
 
 export default function RegisterLayout(props: { children: React.ReactNode }) {

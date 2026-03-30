@@ -1,0 +1,125 @@
+.header {
+  position: sticky;
+  top: 16px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 18px;
+  border: 1px solid rgba(14, 36, 46, 0.1);
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(247, 243, 236, 0.72));
+  box-shadow: 0 24px 60px rgba(19, 41, 50, 0.14);
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #0d2430;
+}
+
+.mark {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ff6a3d, #1b8d78);
+  color: #fffdf8;
+  font-family: var(--font-public-display), sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.brandCopy {
+  display: grid;
+  gap: 2px;
+}
+
+.brandCopy strong {
+  font-family: var(--font-public-display), sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: -0.03em;
+}
+
+.brandCopy span {
+  color: #5d6a70;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.link,
+.secondary,
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.link,
+.secondary {
+  color: #26404c;
+}
+
+.link:hover,
+.secondary:hover,
+.primary:hover {
+  transform: translateY(-2px);
+}
+
+.link {
+  background: transparent;
+}
+
+.secondary {
+  border: 1px solid rgba(14, 36, 46, 0.12);
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.secondary:hover {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.primary {
+  background: linear-gradient(135deg, #132932, #1b8d78);
+  color: #fffdf8;
+  box-shadow: 0 16px 32px rgba(19, 41, 50, 0.18);
+}
+
+@media (max-width: 860px) {
+  .header {
+    position: static;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nav {
+    justify-content: stretch;
+  }
+
+  .nav > * {
+    flex: 1 1 180px;
+  }
+}

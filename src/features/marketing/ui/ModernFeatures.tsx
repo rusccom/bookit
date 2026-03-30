@@ -1,48 +1,42 @@
 import styles from "./landing.module.css";
 
-const features = [
+const FEATURES = [
   {
-    icon: "⚡",
-    title: "Моментальное подтверждение",
-    desc: "Больше никаких долгих ожиданий. Все слоты синхронизируются в реальном времени.",
-    isWide: false
+    title: "Общий стиль для главной, логина и регистрации",
+    text: "Одна сетка, одна типографика, одна цветовая система и понятные состояния для действий."
   },
   {
-    icon: "🎨",
-    title: "Современный интерфейс",
-    desc: "Обновленный дизайн Bookit позволяет вам сделать все быстрее и получать эстетическое удовольствие от процесса аренды.",
-    isWide: true
+    title: "Визуальная глубина без тяжёлого dark-mode шаблона",
+    text: "Светлый фон, тёплые поверхности, глубокий тёмный текст и аккуратные зелёно-коралловые акценты."
   },
   {
-    icon: "🛡️",
-    title: "Полный контроль",
-    desc: "Для владельцев: удобное управление правилами, слотами и финансами в одном месте.",
-    isWide: true
+    title: "Карточная архитектура для сценариев",
+    text: "Маршруты гостей и владельцев поданы как отдельные продукты внутри одной платформы."
   },
   {
-    icon: "🔔",
-    title: "Умные уведомления",
-    desc: "Вы и ваши гости всегда в курсе событий с помощью PUSH и SMS напоминаний.",
-    isWide: false
+    title: "Формы, в которых легко закончить действие",
+    text: "Чёткие подписи, читаемые поля и явный первичный CTA уменьшают трение на входе."
   }
 ];
 
 export function ModernFeatures() {
   return (
-    <section className={styles.features} id="features">
-      <header className={styles.sectionHeader}>
-        <h2>Почему выбирают Bookit?</h2>
-        <p>Мы продумали каждый шаг на пути бронирования</p>
-      </header>
-      <div className={styles.bentoGrid}>
-        {features.map((f, i) => (
-          <div key={i} className={`${styles.bentoCard} ${f.isWide ? styles.bentoWide : ""}`}>
-            <span className={styles.bentoIcon}>{f.icon}</span>
-            <h3>{f.title}</h3>
-            <p>{f.desc}</p>
-          </div>
-        ))}
+    <section className={styles.section} id="features">
+      <div className={styles.sectionIntro}>
+        <p className={styles.eyebrow}>Что изменилось</p>
+        <h2>Полностью пересобран ритм страницы: блоки, отступы, цвета, шрифты и акценты.</h2>
       </div>
+      <div className={styles.featureGrid}>{FEATURES.map(renderFeature)}</div>
     </section>
+  );
+}
+
+function renderFeature(feature: { text: string; title: string }) {
+  return (
+    <article key={feature.title} className={styles.featureCard}>
+      <span className={styles.featureAccent} />
+      <h3>{feature.title}</h3>
+      <p>{feature.text}</p>
+    </article>
   );
 }

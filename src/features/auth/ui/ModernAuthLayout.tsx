@@ -1,29 +1,39 @@
-import React from "react";
-import styles from "./auth.module.css";
+import type { ReactNode } from "react";
+
 import { ModernSiteHeader } from "@/features/app/ui/ModernSiteHeader";
 
+import styles from "./auth.module.css";
+
 type ModernAuthLayoutProps = {
-  children: React.ReactNode;
-  title: string;
+  children: ReactNode;
   description: string;
+  eyebrow: string;
+  highlights: string[];
   large?: boolean;
+  title: string;
 };
 
-export function ModernAuthLayout({ children, title, description, large }: ModernAuthLayoutProps) {
+export function ModernAuthLayout(props: ModernAuthLayoutProps) {
+  const containerClass = props.large ? `${styles.layout} ${styles.layoutLarge}` : styles.layout;
+
   return (
-    <main className={styles.authPage}>
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100 }}>
+    <main className={styles.page}>
+      <div className={styles.shell}>
         <ModernSiteHeader />
-      </div>
-      <div className={`${styles.authContainer} ${large ? styles.authContainerLarge : ""}`}>
-        <div className={styles.glassPanel}>
-          <header className={styles.header}>
-            <h1>{title}</h1>
-            <p>{description}</p>
-          </header>
-          {children}
-        </div>
+        <section className={containerClass}>
+          <article className={styles.intro}>
+            <p className={styles.eyebrow}>{props.eyebrow}</p>
+            <h1>{props.title}</h1>
+            <p className={styles.description}>{props.description}</p>
+            <ul className={styles.highlightList}>{props.highlights.map(renderHighlight)}</ul>
+          </article>
+          <div className={styles.content}>{props.children}</div>
+        </section>
       </div>
     </main>
   );
+}
+
+function renderHighlight(item: string) {
+  return <li key={item} className={styles.highlightItem}>{item}</li>;
 }

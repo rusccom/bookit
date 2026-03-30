@@ -15,11 +15,9 @@ export const rootMetadata: Metadata = {
     default: "Bookit",
     template: "%s | Bookit"
   },
-  description:
-    "Bookit помогает управлять арендой пространств и находить свободные слоты для быстрого бронирования.",
+  description: "Bookit помогает владельцам пространств и гостям работать с бронированиями через понятный публичный интерфейс и отдельные кабинеты.",
   openGraph: {
-    description:
-      "Платформа для владельцев пространств и гостей: расписание, брони и понятный маршрут от главной до кабинета.",
+    description: "Платформа для площадок, студий, залов и гостей: публичный вход, регистрация, логин и дальнейшая работа с бронированиями.",
     locale: "ru_BY",
     siteName: "Bookit",
     title: "Bookit",
@@ -38,10 +36,7 @@ export const rootMetadata: Metadata = {
   }
 };
 
-export function createNoIndexMetadata(
-  title: string,
-  description: string
-): Metadata {
+export function createNoIndexMetadata(title: string, description: string): Metadata {
   return {
     title,
     description,
