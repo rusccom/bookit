@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Playfair_Display } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 
 import { rootMetadata } from "@/features/app/server/metadata";
 import { SiteHeader } from "@/features/app/ui/SiteHeader";
@@ -7,15 +7,15 @@ import { SiteHeader } from "@/features/app/ui/SiteHeader";
 import "./globals.css";
 import "./public.css";
 
-const sansFont = Manrope({
+const sansFont = Inter({
   display: "swap",
   subsets: ["latin", "cyrillic"],
   variable: "--font-sans"
 });
 
-const displayFont = Playfair_Display({
+const displayFont = Space_Grotesk({
   display: "swap",
-  subsets: ["latin", "cyrillic"],
+  subsets: ["latin"],
   variable: "--font-display"
 });
 

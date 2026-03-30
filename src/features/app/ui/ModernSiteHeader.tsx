@@ -14,15 +14,15 @@ export async function ModernSiteHeader() {
           Bookit
         </Link>
         <nav className={styles.nav}>
-          <Link href="/" className={styles.navLink}>Главная</Link>
-          <Link href="/#features" className={styles.navLink}>Возможности</Link>
-          <Link href="/#features" className={styles.navLink}>Примеры</Link>
+          <Link href="/register/guest" className={styles.navLink}>Арендаторам</Link>
+          <Link href="/register/host" className={styles.navLink}>Владельцам</Link>
+          <Link href="/#features" className={styles.navLink}>Платформа</Link>
           {user ? (
-            <Link href={getDashboardPath(user.role)} className={styles.navBtn}>Кабинет</Link>
+            <Link href={getDashboardPath(user.role)} className={styles.navBtn}>В свой кабинет →</Link>
           ) : (
             <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
               <Link href="/login" className={styles.navLink}>Войти</Link>
-              <Link href="/register" className={styles.navBtn}>Открыть аккаунт</Link>
+              <Link href="/register" className={styles.navBtn}>Начать работу</Link>
             </div>
           )}
         </nav>
