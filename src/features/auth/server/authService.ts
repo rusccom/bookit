@@ -20,36 +20,53 @@ type RegistrationInput = {
   role: AuthUser["role"];
 };
 
+export type PreparedRegistration = {
+  email: string;
+  fullName: string;
+  passwordHash: string;
+  phone: string;
+  providerTitle?: string;
+  role: AuthUser["role"];
+};
+
 export async function registerUser(input: RegistrationInput) {
+  const prepared = await prepareRegistration(input);
+  return registerPreparedUser(prepared);
+}
+
+export async function prepareRegistration(input: RegistrationInput) {
   const parsed = registrationSchema.parse({
     ...input,
     phone: normalizePhone(input.phone)
   });
 
-  const existing = await findUserByEmail(parsed.email);
-  const phoneOwner = await findUserByPhone(parsed.phone);
+  await assertRegistrationAvailable(parsed.email, parsed.phone);
 
-  if (existing) {
-    throw new Error("Email already registered");
-  }
-
-  if (phoneOwner) {
-    throw new Error("Phone already registered");
-  }
-
-  const passwordHash = await hashPassword(parsed.password);
-  const user = await createUser({
+  return {
     email: parsed.email,
     fullName: parsed.fullName,
-    passwordHash,
+    passwordHash: await hashPassword(parsed.password),
     phone: parsed.phone,
+    providerTitle: parsed.providerTitle,
     role: parsed.role
+  } satisfies PreparedRegistration;
+}
+
+export async function registerPreparedUser(input: PreparedRegistration) {
+  await assertRegistrationAvailable(input.email, input.phone);
+
+  const user = await createUser({
+    email: input.email,
+    fullName: input.fullName,
+    passwordHash: input.passwordHash,
+    phone: input.phone,
+    role: input.role
   });
 
-  if (parsed.role === "owner") {
+  if (input.role === "owner") {
     await createProvider({
       ownerUserId: user.id,
-      title: parsed.providerTitle || `${parsed.fullName} Booking`
+      title: input.providerTitle || `${input.fullName} Booking`
     });
   }
 
@@ -86,4 +103,17 @@ export async function registerTelegramCustomer(input: {
     fullName: input.fullName,
     phone: normalizePhone(input.phone)
   });
+}
+
+async function assertRegistrationAvailable(email: string, phone: string) {
+  const existing = await findUserByEmail(email);
+  const phoneOwner = await findUserByPhone(phone);
+
+  if (existing) {
+    throw new Error("Email already registered");
+  }
+
+  if (phoneOwner) {
+    throw new Error("Phone already registered");
+  }
 }

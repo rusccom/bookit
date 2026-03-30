@@ -26,7 +26,7 @@ export function RegisterForm(props: RegisterFormProps) {
       {isOwner ? (
         <label>
           <span>Название арендодателя</span>
-          <input name="providerTitle" placeholder="Ace Courts Minsk" required />
+          <input name="providerTitle" placeholder="Ace Courts Minsk" />
         </label>
       ) : null}
       <label>
