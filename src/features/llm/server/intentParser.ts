@@ -26,7 +26,7 @@ export async function extractBookingIntent(input: {
         role: "user"
       }
     ],
-    model: getEnv().OPENAI_MODEL,
+    model: getEnv().OPENROUTER_MODEL,
     response_format: zodResponseFormat(bookingIntentSchema, "booking_intent")
   });
 
@@ -58,7 +58,12 @@ function getClient() {
   }
 
   client = new OpenAI({
-    apiKey: getEnv().OPENAI_API_KEY
+    apiKey: getEnv().OPENROUTER_API_KEY,
+    baseURL: "https://openrouter.ai/api/v1",
+    defaultHeaders: {
+      "HTTP-Referer": getEnv().APP_URL,
+      "X-OpenRouter-Title": "Bookit"
+    }
   });
 
   return client;
@@ -73,9 +78,9 @@ function getFallbackIntent() {
     endTime: null,
     needsClarification: true,
     clarificationQuestion:
-      "LLM пока не настроена. Добавьте OPENAI_API_KEY и OPENAI_MODEL в env.",
+      "LLM пока не настроена. Добавьте OPENROUTER_API_KEY и OPENROUTER_MODEL в env.",
     responseText:
-      "LLM пока не настроена. Добавьте OPENAI_API_KEY и OPENAI_MODEL в env.",
+      "LLM пока не настроена. Добавьте OPENROUTER_API_KEY и OPENROUTER_MODEL в env.",
     startTime: null,
     venueQuery: null
   };

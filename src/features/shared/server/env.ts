@@ -3,8 +3,8 @@ import { z } from "zod";
 const envSchema = z.object({
   APP_URL: z.string().url().default("http://localhost:3000"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
-  OPENAI_API_KEY: z.string().optional(),
-  OPENAI_MODEL: z.string().default("gpt-5.2"),
+  OPENROUTER_API_KEY: z.string().optional(),
+  OPENROUTER_MODEL: z.string().default("openai/gpt-5.2"),
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 chars"),
   SMS_PROVIDER: z.string().default("twilio"),
   TELEGRAM_BOT_TOKEN: z.string().optional(),
@@ -28,7 +28,7 @@ export function getEnv(): AppEnv {
 }
 
 export function isAiConfigured(): boolean {
-  return Boolean(getEnv().OPENAI_API_KEY);
+  return Boolean(getEnv().OPENROUTER_API_KEY);
 }
 
 export function isTelegramConfigured(): boolean {
