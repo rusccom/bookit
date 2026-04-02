@@ -2,20 +2,20 @@ import styles from "./landing.module.css";
 
 const FEATURES = [
   {
-    title: "Общий стиль для главной, логина и регистрации",
-    text: "Одна сетка, одна типографика, одна цветовая система и понятные состояния для действий."
+    title: "Календарь в реальном времени",
+    text: "Актуальное расписание без ручных таблиц. Гости видят только свободные слоты."
   },
   {
-    title: "Визуальная глубина без тяжёлого dark-mode шаблона",
-    text: "Светлый фон, тёплые поверхности, глубокий тёмный текст и аккуратные зелёно-коралловые акценты."
+    title: "Разделение по ролям",
+    text: "Гости и владельцы работают в своих сценариях с отдельными интерфейсами."
   },
   {
-    title: "Карточная архитектура для сценариев",
-    text: "Маршруты гостей и владельцев поданы как отдельные продукты внутри одной платформы."
+    title: "Быстрые формы без лишнего",
+    text: "Минимум полей для регистрации и бронирования. Каждое действие — в один шаг."
   },
   {
-    title: "Формы, в которых легко закончить действие",
-    text: "Чёткие подписи, читаемые поля и явный первичный CTA уменьшают трение на входе."
+    title: "SMS и Telegram-подтверждения",
+    text: "Верификация через привычные каналы. Надёжно и без сложных настроек."
   }
 ];
 
@@ -23,20 +23,22 @@ export function ModernFeatures() {
   return (
     <section className={styles.section} id="features">
       <div className={styles.sectionIntro}>
-        <p className={styles.eyebrow}>Что изменилось</p>
-        <h2>Полностью пересобран ритм страницы: блоки, отступы, цвета, шрифты и акценты.</h2>
+        <p className={styles.eyebrow}>Возможности</p>
+        <h2>Всё, что нужно для запуска бронирования площадки.</h2>
       </div>
-      <div className={styles.featureGrid}>{FEATURES.map(renderFeature)}</div>
+      <div className={styles.featureGrid}>
+        {FEATURES.map(renderFeature)}
+      </div>
     </section>
   );
 }
 
-function renderFeature(feature: { text: string; title: string }) {
+function renderFeature(f: { text: string; title: string }) {
   return (
-    <article key={feature.title} className={styles.featureCard}>
+    <article key={f.title} className={styles.featureCard}>
       <span className={styles.featureAccent} />
-      <h3>{feature.title}</h3>
-      <p>{feature.text}</p>
+      <h3>{f.title}</h3>
+      <p>{f.text}</p>
     </article>
   );
 }

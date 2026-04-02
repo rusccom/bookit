@@ -7,12 +7,18 @@ export function ModernCta() {
     <section className={styles.ctaSection}>
       <div className={styles.ctaCard}>
         <div>
-          <p className={styles.eyebrow}>Готово к запуску</p>
-          <h2>Публичная зона Bookit теперь может жить отдельно от будущих дашбордов и не спорить с ними визуально.</h2>
+          <p className={styles.eyebrow}>Готовы начать?</p>
+          <h2>
+            Запустите бронирование вашей площадки уже сегодня.
+          </h2>
         </div>
         <div className={styles.actions}>
-          <Link className={styles.primaryButton} href="/register">Открыть регистрацию</Link>
-          <Link className={styles.secondaryButton} href="/login">Перейти ко входу</Link>
+          <Link className={styles.primaryButton} href="/register">
+            Создать аккаунт
+          </Link>
+          <Link className={styles.secondaryButton} href="/login">
+            Войти
+          </Link>
         </div>
       </div>
     </section>

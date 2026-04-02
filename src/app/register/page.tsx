@@ -11,9 +11,9 @@ type PageProps = {
 };
 
 const HIGHLIGHTS = [
-  "Регистрация разделена по ролям, поэтому пользователь сразу попадает в понятный сценарий.",
-  "Гость и владелец видят разную ценность, но остаются внутри одного бренда.",
-  "Публичный дизайн можно развивать отдельно от будущих дашбордов."
+  "Регистрация разделена по ролям — гость или владелец",
+  "Минимум полей для быстрого старта",
+  "Каждая роль ведёт в свой сценарий работы"
 ];
 
 export default async function RegisterPage(props: PageProps) {
@@ -22,15 +22,18 @@ export default async function RegisterPage(props: PageProps) {
 
   return (
     <ModernAuthLayout
-      description="Выберите роль и продолжайте путь в том сценарии, который подходит вашему типу пользователя."
+      description="Выберите роль и создайте аккаунт за минуту."
       eyebrow="Регистрация"
       highlights={HIGHLIGHTS}
       large={true}
-      title="Запуск аккаунта без путаницы между гостем и владельцем."
+      title="Начните работу с Bookit."
     >
       <StatusBanner error={error} />
       <ModernRegisterChoice />
-      <p className={styles.footer}>Уже есть аккаунт? <Link className={styles.link} href="/login">Войти</Link>.</p>
+      <p className={styles.footer}>
+        Уже есть аккаунт?{" "}
+        <Link className={styles.link} href="/login">Войти</Link>.
+      </p>
     </ModernAuthLayout>
   );
 }

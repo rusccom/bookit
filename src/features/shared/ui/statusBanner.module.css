@@ -1,19 +1,19 @@
 .banner {
   padding: 14px 18px;
-  border-radius: 20px;
+  border-radius: 12px;
   border: 1px solid transparent;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   line-height: 1.5;
 }
 
 .error {
-  border-color: rgba(168, 44, 44, 0.16);
-  background: rgba(168, 44, 44, 0.08);
-  color: #922d2d;
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.08);
+  color: #fca5a5;
 }
 
 .success {
-  border-color: rgba(27, 141, 120, 0.16);
-  background: rgba(27, 141, 120, 0.08);
-  color: #136a5a;
+  border-color: rgba(20, 184, 166, 0.2);
+  background: rgba(20, 184, 166, 0.08);
+  color: #5eead4;
 }

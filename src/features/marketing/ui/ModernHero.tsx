@@ -3,36 +3,47 @@ import Link from "next/link";
 import styles from "./landing.module.css";
 
 const METRICS = [
-  { label: "Минут до брони", value: "2" },
-  { label: "Сценария для запуска", value: "2" },
-  { label: "Окна в один клик", value: "24/7" }
+  { label: "До первой брони", value: "2 мин" },
+  { label: "Роли в системе", value: "2" },
+  { label: "Доступность слотов", value: "24/7" }
 ];
 
 const SLOTS = [
   { time: "09:30", title: "Padel Court A", state: "Подтверждено" },
-  { time: "12:00", title: "Loft Hall", state: "Ожидает ответа" },
-  { time: "18:45", title: "Studio Black", state: "Свободный слот" }
+  { time: "12:00", title: "Loft Hall", state: "Ожидает" },
+  { time: "18:45", title: "Studio Black", state: "Свободно" }
 ];
 
 export function ModernHero() {
   return (
     <section className={styles.hero}>
       <div className={styles.heroCopy}>
-        <p className={styles.eyebrow}>Новый публичный интерфейс Bookit</p>
-        <h1 className={styles.heroTitle}>Бронирование пространств, которое выглядит как готовый продукт, а не как набор форм.</h1>
-        <p className={styles.heroText}>Гость быстро находит свободное окно. Владелец получает понятный поток броней и чистый маршрут от лендинга до личного кабинета.</p>
+        <p className={styles.eyebrow}>Платформа бронирования</p>
+        <h1 className={styles.heroTitle}>
+          Бронируйте пространства без звонков и переписок.
+        </h1>
+        <p className={styles.heroText}>
+          Гости находят свободные слоты за секунды. Владельцы получают
+          автоматизированный поток заявок и полный контроль расписания.
+        </p>
         <div className={styles.actions}>
-          <Link className={styles.primaryButton} href="/register">Запустить аккаунт</Link>
-          <Link className={styles.secondaryButton} href="/login">Войти в кабинет</Link>
+          <Link className={styles.primaryButton} href="/register">
+            Создать аккаунт
+          </Link>
+          <Link className={styles.secondaryButton} href="/login">
+            Войти
+          </Link>
         </div>
-        <div className={styles.metricGrid}>{METRICS.map(renderMetric)}</div>
+        <div className={styles.metricGrid}>
+          {METRICS.map(renderMetric)}
+        </div>
       </div>
       <aside className={styles.heroPanel}>
-        <div className={styles.panelBadge}>Сегодня в Bookit</div>
+        <div className={styles.panelBadge}>Live</div>
         <div className={styles.panelHeader}>
           <div>
-            <strong>Живой календарь</strong>
-            <span>Без ручных таблиц и переписок</span>
+            <strong>Календарь бронирований</strong>
+            <span>Обновляется в реальном времени</span>
           </div>
           <div className={styles.fillRate}>86%</div>
         </div>
@@ -40,11 +51,11 @@ export function ModernHero() {
         <div className={styles.panelFooter}>
           <div className={styles.miniCard}>
             <strong>02 мин</strong>
-            <span>среднее время до ответа гостю</span>
+            <span>среднее время ответа</span>
           </div>
           <div className={styles.miniCard}>
             <strong>+14%</strong>
-            <span>заполняемость после запуска витрины</span>
+            <span>рост заполняемости</span>
           </div>
         </div>
       </aside>
@@ -52,22 +63,22 @@ export function ModernHero() {
   );
 }
 
-function renderMetric(metric: { label: string; value: string }) {
+function renderMetric(m: { label: string; value: string }) {
   return (
-    <div key={metric.label} className={styles.metricCard}>
-      <strong>{metric.value}</strong>
-      <span>{metric.label}</span>
+    <div key={m.label} className={styles.metricCard}>
+      <strong>{m.value}</strong>
+      <span>{m.label}</span>
     </div>
   );
 }
 
-function renderSlot(slot: { time: string; title: string; state: string }) {
+function renderSlot(s: { state: string; time: string; title: string }) {
   return (
-    <article key={`${slot.time}-${slot.title}`} className={styles.slotCard}>
-      <span>{slot.time}</span>
+    <article key={`${s.time}-${s.title}`} className={styles.slotCard}>
+      <span>{s.time}</span>
       <div>
-        <strong>{slot.title}</strong>
-        <span>{slot.state}</span>
+        <strong>{s.title}</strong>
+        <span>{s.state}</span>
       </div>
     </article>
   );

@@ -11,9 +11,9 @@ type PageProps = {
 };
 
 const HIGHLIGHTS = [
-  "Публичная регистрация владельца сразу выглядит как часть полноценного сервиса.",
-  "Название бренда или площадки закладывается уже на входе в продукт.",
-  "После логина дизайн кабинета можно будет развивать отдельно, не ломая публичную часть."
+  "Регистрация с указанием названия площадки",
+  "Доступ к панели управления расписанием",
+  "Публичная витрина для привлечения гостей"
 ];
 
 export default async function RegisterHostPage(props: PageProps) {
@@ -22,14 +22,19 @@ export default async function RegisterHostPage(props: PageProps) {
 
   return (
     <ModernAuthLayout
-      description="Создайте аккаунт владельца и подготовьте понятный маршрут к управлению расписанием и бронированиями."
+      description="Создайте аккаунт владельца и настройте площадку для приёма бронирований."
       eyebrow="Владелец"
       highlights={HIGHLIGHTS}
-      title="Регистрация для площадок, студий и залов."
+      title="Регистрация для площадок."
     >
       <StatusBanner error={error} />
       <ModernRegisterForm role="owner" />
-      <p className={styles.footer}>Нужен только поиск площадок? <Link className={styles.link} href="/register/guest">Открыть форму гостя</Link>.</p>
+      <p className={styles.footer}>
+        Хотите бронировать?{" "}
+        <Link className={styles.link} href="/register/guest">
+          Зарегистрироваться как гость
+        </Link>.
+      </p>
     </ModernAuthLayout>
   );
 }
