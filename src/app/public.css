@@ -1,3 +1,24 @@
+:root {
+  --public-bg: #f6efe6;
+  --public-bg-strong: #ecdccc;
+  --public-surface: rgba(255, 249, 242, 0.82);
+  --public-surface-strong: rgba(255, 251, 246, 0.94);
+  --public-border: rgba(80, 58, 40, 0.1);
+  --public-border-strong: rgba(120, 85, 57, 0.18);
+  --public-text: #241f1a;
+  --public-muted: #6f655d;
+  --public-primary: #d36a45;
+  --public-primary-strong: #bc5634;
+  --public-primary-soft: rgba(211, 106, 69, 0.14);
+  --public-secondary: #2f6b63;
+  --public-secondary-soft: rgba(47, 107, 99, 0.12);
+  --public-shadow: 0 24px 60px rgba(58, 39, 24, 0.12);
+  --public-shadow-soft: 0 18px 40px rgba(58, 39, 24, 0.08);
+  --public-radius-xl: 28px;
+  --public-radius-lg: 22px;
+  --public-radius-md: 16px;
+}
+
 @keyframes rise-in {
   from {
     opacity: 0;
