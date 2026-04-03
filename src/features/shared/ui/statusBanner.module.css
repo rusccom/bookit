@@ -8,13 +8,13 @@
 }
 
 .error {
-  border-color: rgba(188, 86, 52, 0.18);
-  background: rgba(188, 86, 52, 0.08);
-  color: #8f4028;
+  border-color: rgba(255, 106, 0, 0.22);
+  background: rgba(255, 106, 0, 0.1);
+  color: #9c3400;
 }
 
 .success {
-  border-color: rgba(227, 138, 59, 0.18);
-  background: rgba(227, 138, 59, 0.1);
-  color: #8a5522;
+  border-color: rgba(20, 13, 9, 0.18);
+  background: rgba(20, 13, 9, 0.06);
+  color: #140d09;
 }

@@ -7,7 +7,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 16px 32px;
-  background: rgba(250, 244, 237, 0.74);
+  background: rgba(255, 250, 246, 0.78);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--public-border);
   box-shadow: 0 10px 24px rgba(58, 39, 24, 0.04);
@@ -26,8 +26,8 @@
   width: 42px;
   height: 42px;
   border-radius: 14px;
-  background: linear-gradient(135deg, var(--public-primary), #ebb18b);
-  box-shadow: 0 14px 24px rgba(211, 106, 69, 0.22);
+  background: linear-gradient(135deg, var(--public-primary), #ff9b52);
+  box-shadow: 0 14px 24px rgba(255, 106, 0, 0.24);
   color: #fffaf6;
   font-family: var(--font-public-display), sans-serif;
   font-size: 1rem;
@@ -73,15 +73,15 @@
 }
 
 .primary {
-  background: linear-gradient(135deg, var(--public-primary), #e29d73);
-  box-shadow: 0 14px 28px rgba(211, 106, 69, 0.2);
+  background: linear-gradient(135deg, var(--public-primary), #ff8d3a);
+  box-shadow: 0 14px 28px rgba(255, 106, 0, 0.22);
   color: #fff9f4;
   transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
 }
 
 .primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 18px 32px rgba(211, 106, 69, 0.24);
+  box-shadow: 0 18px 32px rgba(255, 106, 0, 0.28);
   filter: saturate(1.03);
 }
 
