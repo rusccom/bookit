@@ -14,18 +14,22 @@ type ModernAuthLayoutProps = {
 };
 
 export function ModernAuthLayout(props: ModernAuthLayoutProps) {
-  const containerClass = props.large ? `${styles.layout} ${styles.layoutLarge}` : styles.layout;
+  const cls = props.large
+    ? `${styles.layout} ${styles.layoutLarge}`
+    : styles.layout;
 
   return (
     <main className={styles.page}>
+      <ModernSiteHeader />
       <div className={styles.shell}>
-        <ModernSiteHeader />
-        <section className={containerClass}>
+        <section className={cls}>
           <article className={styles.intro}>
             <p className={styles.eyebrow}>{props.eyebrow}</p>
             <h1>{props.title}</h1>
             <p className={styles.description}>{props.description}</p>
-            <ul className={styles.highlightList}>{props.highlights.map(renderHighlight)}</ul>
+            <ul className={styles.highlightList}>
+              {props.highlights.map(renderHighlight)}
+            </ul>
           </article>
           <div className={styles.content}>{props.children}</div>
         </section>
@@ -35,5 +39,9 @@ export function ModernAuthLayout(props: ModernAuthLayoutProps) {
 }
 
 function renderHighlight(item: string) {
-  return <li key={item} className={styles.highlightItem}>{item}</li>;
+  return (
+    <li key={item} className={styles.highlightItem}>
+      {item}
+    </li>
+  );
 }

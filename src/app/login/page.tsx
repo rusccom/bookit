@@ -7,7 +7,7 @@ import { StatusBanner } from "@/features/shared/ui/StatusBanner";
 
 export const metadata: Metadata = createNoIndexMetadata(
   "Вход",
-  "Вход в кабинет Bookit для гостей и владельцев площадок."
+  "Вход в личный кабинет BookCort."
 );
 
 type PageProps = {
@@ -15,9 +15,9 @@ type PageProps = {
 };
 
 const HIGHLIGHTS = [
-  "Единый вход для гостей и владельцев площадок",
+  "Единый вход для клиентов и арендодателей",
   "После авторизации — сразу в личный кабинет",
-  "Безопасная аутентификация с шифрованием данных"
+  "Безопасная аутентификация с шифрованием",
 ];
 
 export default async function LoginPage(props: PageProps) {
@@ -26,10 +26,10 @@ export default async function LoginPage(props: PageProps) {
 
   return (
     <ModernAuthLayout
-      description="Войдите в свой аккаунт, чтобы управлять бронированиями и площадками."
+      description="Войдите в аккаунт, чтобы управлять бронированиями."
       eyebrow="Авторизация"
       highlights={HIGHLIGHTS}
-      title="С возвращением в Bookit."
+      title="С возвращением."
     >
       <StatusBanner error={error} />
       <ModernLoginForm />

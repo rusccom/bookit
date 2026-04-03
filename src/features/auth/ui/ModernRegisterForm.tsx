@@ -11,8 +11,8 @@ type ModernRegisterFormProps = {
 
 export function ModernRegisterForm(props: ModernRegisterFormProps) {
   const isOwner = props.role === "owner";
-  const title = isOwner ? "Регистрация владельца" : "Регистрация гостя";
-  const text = isOwner ? "Соберите базовые данные, чтобы открыть публичный вход для своей площадки." : "Создайте аккаунт, чтобы искать свободные слоты и быстро переходить к бронированию.";
+  const title = isOwner ? "Регистрация арендодателя" : "Регистрация клиента";
+  const text = isOwner ? "Укажите данные, чтобы начать сдавать корты в аренду." : "Создайте аккаунт, чтобы быстро находить и бронировать корты.";
 
   return (
     <section className={styles.formCard}>

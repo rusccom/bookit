@@ -22,7 +22,7 @@ export function ModernLoginForm() {
         </label>
         <button className={styles.primaryButton} type="submit">Войти</button>
       </form>
-      <p className={styles.footer}>Нет аккаунта? <Link className={styles.link} href="/register">Выберите сценарий регистрации</Link>.</p>
+      <p className={styles.footer}>Нет аккаунта? <Link className={styles.link} href="/register">Зарегистрироваться</Link>.</p>
     </section>
   );
 }

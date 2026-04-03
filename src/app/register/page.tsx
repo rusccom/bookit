@@ -11,9 +11,9 @@ type PageProps = {
 };
 
 const HIGHLIGHTS = [
-  "Регистрация разделена по ролям — гость или владелец",
+  "Регистрация разделена по ролям — клиент или арендодатель",
   "Минимум полей для быстрого старта",
-  "Каждая роль ведёт в свой сценарий работы"
+  "Каждая роль ведёт в свой сценарий работы",
 ];
 
 export default async function RegisterPage(props: PageProps) {
@@ -26,7 +26,7 @@ export default async function RegisterPage(props: PageProps) {
       eyebrow="Регистрация"
       highlights={HIGHLIGHTS}
       large={true}
-      title="Начните работу с Bookit."
+      title="Начните работу с BookCort."
     >
       <StatusBanner error={error} />
       <ModernRegisterChoice />

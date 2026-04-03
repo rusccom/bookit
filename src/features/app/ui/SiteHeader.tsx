@@ -12,8 +12,8 @@ export async function SiteHeader() {
       <Link className="brand" href="/">
         <span className="brand-mark">B</span>
         <span className="brand-copy">
-          <strong>Bookit</strong>
-          <span>Бронирование пространств без хаоса</span>
+          <strong>BookCort</strong>
+          <span>Бронирование кортов</span>
         </span>
       </Link>
       <nav className="site-nav">

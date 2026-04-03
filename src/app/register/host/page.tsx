@@ -13,7 +13,7 @@ type PageProps = {
 const HIGHLIGHTS = [
   "Регистрация с указанием названия площадки",
   "Доступ к панели управления расписанием",
-  "Публичная витрина для привлечения гостей"
+  "Публичный каталог для привлечения клиентов",
 ];
 
 export default async function RegisterHostPage(props: PageProps) {
@@ -22,8 +22,8 @@ export default async function RegisterHostPage(props: PageProps) {
 
   return (
     <ModernAuthLayout
-      description="Создайте аккаунт владельца и настройте площадку для приёма бронирований."
-      eyebrow="Владелец"
+      description="Создайте аккаунт арендодателя и настройте площадку."
+      eyebrow="Арендодатель"
       highlights={HIGHLIGHTS}
       title="Регистрация для площадок."
     >
@@ -32,7 +32,7 @@ export default async function RegisterHostPage(props: PageProps) {
       <p className={styles.footer}>
         Хотите бронировать?{" "}
         <Link className={styles.link} href="/register/guest">
-          Зарегистрироваться как гость
+          Зарегистрироваться как клиент
         </Link>.
       </p>
     </ModernAuthLayout>

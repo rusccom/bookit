@@ -12,15 +12,15 @@ const NO_INDEX_ROBOTS: Metadata["robots"] = {
 
 export const rootMetadata: Metadata = {
   title: {
-    default: "Bookit",
-    template: "%s | Bookit"
+    default: "BookCort",
+    template: "%s | BookCort"
   },
-  description: "Bookit помогает владельцам пространств и гостям работать с бронированиями через понятный публичный интерфейс и отдельные кабинеты.",
+  description: "BookCort — онлайн-бронирование кортов. Находите и бронируйте корты за пару кликов.",
   openGraph: {
-    description: "Платформа для площадок, студий, залов и гостей: публичный вход, регистрация, логин и дальнейшая работа с бронированиями.",
+    description: "Платформа для онлайн-бронирования кортов: быстрый поиск, моментальное подтверждение, удобное управление.",
     locale: "ru_BY",
-    siteName: "Bookit",
-    title: "Bookit",
+    siteName: "BookCort",
+    title: "BookCort",
     type: "website"
   },
   robots: {

@@ -12,8 +12,8 @@ type PageProps = {
 
 const HIGHLIGHTS = [
   "Быстрая регистрация без лишних данных",
-  "Сразу после создания — доступ к поиску слотов",
-  "Телефон используется для подтверждения брони"
+  "Сразу после создания — доступ к поиску кортов",
+  "Телефон используется для подтверждения брони",
 ];
 
 export default async function RegisterGuestPage(props: PageProps) {
@@ -22,17 +22,17 @@ export default async function RegisterGuestPage(props: PageProps) {
 
   return (
     <ModernAuthLayout
-      description="Создайте аккаунт гостя и начните бронировать площадки."
-      eyebrow="Гость"
+      description="Создайте аккаунт и начните бронировать корты."
+      eyebrow="Клиент"
       highlights={HIGHLIGHTS}
       title="Регистрация для бронирования."
     >
       <StatusBanner error={error} />
       <ModernRegisterForm role="customer" />
       <p className={styles.footer}>
-        Владелец площадки?{" "}
+        Арендодатель?{" "}
         <Link className={styles.link} href="/register/host">
-          Зарегистрироваться как владелец
+          Зарегистрироваться как арендодатель
         </Link>.
       </p>
     </ModernAuthLayout>
