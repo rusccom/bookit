@@ -4,9 +4,9 @@
   overflow: hidden;
   isolation: isolate;
   background:
-    radial-gradient(circle at left top, rgba(211, 106, 69, 0.13), transparent 28rem),
-    radial-gradient(circle at 88% 12%, rgba(47, 107, 99, 0.11), transparent 24rem),
-    linear-gradient(180deg, #fcf6ef 0%, var(--public-bg) 56%, #f1e7da 100%);
+    radial-gradient(circle at left top, rgba(227, 106, 59, 0.15), transparent 28rem),
+    radial-gradient(circle at 88% 12%, rgba(255, 194, 153, 0.24), transparent 26rem),
+    linear-gradient(180deg, #fffaf6 0%, var(--public-bg) 56%, #fff0e4 100%);
   color: var(--public-text);
   font-family: var(--font-public-sans), sans-serif;
 }
@@ -242,8 +242,8 @@
 }
 
 .link:hover {
-  color: var(--public-secondary);
-  text-decoration-color: rgba(47, 107, 99, 0.24);
+  color: var(--public-primary-strong);
+  text-decoration-color: rgba(227, 106, 59, 0.3);
 }
 
 .choiceGrid {

@@ -4,9 +4,9 @@
   overflow: hidden;
   isolation: isolate;
   background:
-    radial-gradient(circle at left top, rgba(211, 106, 69, 0.14), transparent 30rem),
-    radial-gradient(circle at 88% 14%, rgba(47, 107, 99, 0.12), transparent 26rem),
-    linear-gradient(180deg, #fbf5ed 0%, var(--public-bg) 58%, #f2e8dc 100%);
+    radial-gradient(circle at left top, rgba(227, 106, 59, 0.16), transparent 30rem),
+    radial-gradient(circle at 88% 14%, rgba(255, 198, 161, 0.26), transparent 28rem),
+    linear-gradient(180deg, #fffaf6 0%, var(--public-bg) 58%, #fff0e4 100%);
   color: var(--public-text);
   font-family: var(--font-public-sans), sans-serif;
 }
@@ -31,15 +31,21 @@
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-  gap: 56px;
-  align-items: center;
-  padding: 68px 0 12px;
+  width: 100vw;
+  min-height: clamp(520px, 78vh, 760px);
+  margin-inline: calc(50% - 50vw);
+  isolation: isolate;
 }
 
 .heroCopy {
+  position: relative;
   display: grid;
   gap: 26px;
+  align-self: end;
+  z-index: 2;
+  width: min(1160px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: clamp(120px, 18vw, 190px) 0 clamp(56px, 10vw, 96px);
 }
 
 .heroTitle {
@@ -50,15 +56,17 @@
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 0.97;
-  color: var(--public-text);
+  color: #fffaf6;
+  text-shadow: 0 12px 40px rgba(49, 23, 10, 0.36);
 }
 
 .heroText {
   max-width: 34rem;
   margin: 0;
-  color: var(--public-muted);
+  color: rgba(255, 246, 239, 0.9);
   font-size: 1.06rem;
   line-height: 1.78;
+  text-shadow: 0 8px 28px rgba(49, 23, 10, 0.28);
 }
 
 .heroAction {
@@ -69,37 +77,39 @@
   min-height: 54px;
   padding: 0 30px;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--public-primary), #e19b6e);
-  box-shadow: 0 18px 36px rgba(211, 106, 69, 0.22);
-  color: #fffaf6;
+  background: rgba(255, 250, 245, 0.96);
+  box-shadow: 0 18px 36px rgba(49, 23, 10, 0.18);
+  color: var(--public-primary-strong);
   font-size: 0.98rem;
   font-weight: 700;
-  transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
 .heroAction:hover {
   transform: translateY(-2px);
-  box-shadow: 0 24px 44px rgba(211, 106, 69, 0.28);
-  filter: saturate(1.04);
+  background: #ffffff;
+  box-shadow: 0 24px 44px rgba(49, 23, 10, 0.22);
 }
 
 .heroImage {
   position: relative;
-  min-height: 420px;
+  grid-area: 1 / 1;
+  min-height: inherit;
   overflow: hidden;
-  border: 1px solid var(--public-border);
-  border-radius: var(--public-radius-xl);
+  border: none;
+  border-radius: 0;
   background:
-    linear-gradient(180deg, rgba(255, 249, 242, 0.4), rgba(255, 249, 242, 0)),
-    linear-gradient(135deg, rgba(47, 107, 99, 0.14), rgba(211, 106, 69, 0.08));
-  box-shadow: var(--public-shadow);
+    linear-gradient(180deg, rgba(255, 164, 110, 0.14), rgba(255, 164, 110, 0)),
+    linear-gradient(135deg, rgba(227, 106, 59, 0.18), rgba(255, 224, 204, 0.08));
 }
 
 .heroImage::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(23, 20, 17, 0.06), transparent 34%, rgba(23, 20, 17, 0.18));
+  background:
+    linear-gradient(90deg, rgba(42, 17, 5, 0.66) 0%, rgba(42, 17, 5, 0.38) 34%, rgba(42, 17, 5, 0.2) 56%, rgba(42, 17, 5, 0.26) 100%),
+    linear-gradient(180deg, rgba(42, 17, 5, 0.16), rgba(42, 17, 5, 0.08) 34%, rgba(42, 17, 5, 0.34));
   pointer-events: none;
 }
 
@@ -107,7 +117,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(0.9) contrast(1.03);
+  filter: saturate(0.96) contrast(1.02);
 }
 
 .heroImageDesktop {
@@ -209,18 +219,21 @@
 }
 
 @media (max-width: 860px) {
-  .hero,
   .cardGrid {
     grid-template-columns: 1fr;
   }
 
   .hero {
-    gap: 32px;
-    padding: 44px 0 6px;
+    min-height: 500px;
   }
 
   .heroTitle {
     max-width: 12ch;
+  }
+
+  .heroCopy {
+    width: min(100%, calc(100% - 32px));
+    padding: 116px 0 44px;
   }
 
   .heroImageDesktop {
@@ -242,8 +255,14 @@
     font-size: clamp(2.3rem, 11vw, 3.3rem);
   }
 
+  .heroText {
+    max-width: 28rem;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
   .card,
   .heroImage {
-    border-radius: 22px;
+    border-radius: 0;
   }
 }

@@ -25,7 +25,7 @@ export function LandingHero() {
           className={s.heroImageDesktop}
           fill
           priority
-          sizes="(max-width: 860px) 100vw, 50vw"
+          sizes="100vw"
           src="/images/hero/desktop.jpg"
         />
         <Image
