@@ -21,9 +21,9 @@ export async function createOwnerUnitAction(formData: FormData) {
       title: String(formData.get("title") || ""),
       venueTitle: String(formData.get("venueTitle") || "")
     });
-    target = "/dashboard/owner?success=unit-created";
+    target = "/dashboard/owner/units?success=unit-created";
   } catch (error) {
-    target = `/dashboard/owner?error=${encodeURIComponent(getErrorMessage(error))}`;
+    target = `/dashboard/owner/units?error=${encodeURIComponent(getErrorMessage(error))}`;
   }
 
   redirect(target);

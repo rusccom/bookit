@@ -1,43 +1,67 @@
-import { getOwnerUnits } from "@/features/catalog/server/catalogService";
-import { OwnerUnitForm } from "@/features/catalog/ui/OwnerUnitForm";
-import { OwnerUnitList } from "@/features/catalog/ui/OwnerUnitList";
+import Link from "next/link";
+
 import { requireUser } from "@/features/auth/server/requireUser";
-import { getOwnerBookingList } from "@/features/booking/server/bookingService";
-import { OwnerManualBookingForm } from "@/features/booking/ui/OwnerManualBookingForm";
-import { BookingList } from "@/features/booking/ui/BookingList";
+import {
+  getOwnerDashboardStats,
+  getOwnerTodayBookings,
+} from "@/features/booking/server/bookingService";
+import { OwnerStatCards } from "@/features/booking/ui/OwnerStatCards";
+import { TodaySchedule } from "@/features/booking/ui/TodaySchedule";
 import { StatusBanner } from "@/features/shared/ui/StatusBanner";
+import { toIsoDateLabel } from "@/features/shared/server/dateTime";
+
+import s from "@/features/booking/ui/owner.module.css";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function OwnerDashboardPage(props: PageProps) {
+export default async function OwnerOverviewPage(props: PageProps) {
   const owner = await requireUser("owner");
-  const searchParams = await props.searchParams;
-  const [units, bookings] = await Promise.all([
-    getOwnerUnits(owner.id),
-    getOwnerBookingList(owner.id)
+  const sp = await props.searchParams;
+  const error = pickValue(sp.error);
+  const success = pickValue(sp.success);
+
+  const today = toIsoDateLabel(new Date());
+
+  const [stats, todayBookings] = await Promise.all([
+    getOwnerDashboardStats(owner.id, today),
+    getOwnerTodayBookings(owner.id, today),
   ]);
-  const error = pickValue(searchParams.error);
-  const success = pickValue(searchParams.success);
+
+  const nextBooking = todayBookings.length > 0
+    ? `${todayBookings[0].startTime}`
+    : null;
 
   return (
-    <div className="stack-large">
-      <section className="panel intro-panel">
-        <p className="eyebrow">Owner workspace</p>
-        <h1>Кабинет арендодателя</h1>
-        <p className="lead">
-          Здесь вы добавляете объекты, задаете график работы и вручную блокируете уже занятые слоты.
-        </p>
-      </section>
+    <>
       <StatusBanner error={error} success={success} />
-      <div className="dashboard-grid">
-        <OwnerUnitForm />
-        <OwnerManualBookingForm units={units} />
+
+      <section className="panel">
+        <p className="eyebrow">Workspace</p>
+        <h1>Привет, {owner.fullName}!</h1>
+      </section>
+
+      <OwnerStatCards
+        nextBookingLabel={nextBooking}
+        todayCount={stats.todayCount}
+        totalUnits={stats.totalUnits}
+      />
+
+      <section className="panel stack">
+        <h2>Расписание на сегодня</h2>
+        <TodaySchedule bookings={todayBookings} />
+      </section>
+
+      <div className={s.quickActions}>
+        <Link className="primary-link" href="/dashboard/owner/units">
+          Добавить объект
+        </Link>
+        <Link className="secondary-link" href="/dashboard/owner/bookings">
+          Создать бронь
+        </Link>
       </div>
-      <OwnerUnitList units={units} />
-      <BookingList items={bookings} role="owner" />
-    </div>
+    </>
   );
 }
 

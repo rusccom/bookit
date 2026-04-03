@@ -1,0 +1,320 @@
+.tabNav {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.tabLink {
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tabLink:hover {
+  background: rgba(16, 36, 55, 0.05);
+  color: var(--text);
+}
+
+.tabLinkActive {
+  background: linear-gradient(135deg, var(--primary), #ff8a57);
+  color: white;
+  box-shadow: 0 4px 12px rgba(220, 91, 57, 0.3);
+}
+
+.tabLinkActive:hover {
+  color: white;
+}
+
+.welcome h1 {
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.welcome p {
+  margin: 0;
+}
+
+.upcomingCard {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.08), rgba(15, 118, 110, 0.02));
+  border: 1px solid rgba(15, 118, 110, 0.15);
+  border-radius: var(--radius-lg);
+}
+
+.upcomingDate {
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-family: var(--font-display), serif;
+  color: var(--text);
+}
+
+.upcomingVenue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.upcomingAddress {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.upcomingMeta {
+  display: grid;
+  gap: 6px;
+}
+
+.emptyCard {
+  padding: 32px;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px dashed rgba(16, 36, 55, 0.15);
+}
+
+.emptyCard p {
+  margin: 0 0 16px;
+}
+
+.quickSearch {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.quickSearch label {
+  display: grid;
+  gap: 6px;
+  flex: 1;
+}
+
+.slotGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.slotChip {
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid rgba(15, 118, 110, 0.2);
+  background: rgba(15, 118, 110, 0.06);
+  color: var(--secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.slotChip:hover {
+  background: rgba(15, 118, 110, 0.14);
+  border-color: var(--secondary);
+  transform: translateY(-1px);
+}
+
+.slotChipSelected {
+  background: linear-gradient(135deg, var(--primary), #ff8a57);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(220, 91, 57, 0.25);
+}
+
+.slotChipSelected:hover {
+  background: linear-gradient(135deg, var(--primary), #ff8a57);
+  color: white;
+}
+
+.bookingConfirm {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: rgba(220, 91, 57, 0.04);
+  border: 1px solid rgba(220, 91, 57, 0.12);
+}
+
+.bookingConfirm label {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  width: fit-content;
+}
+
+.badgeConfirmed {
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--secondary);
+}
+
+.badgePending {
+  background: rgba(220, 170, 57, 0.12);
+  color: #b8860b;
+}
+
+.badgeCancelled {
+  background: rgba(173, 47, 47, 0.08);
+  color: var(--danger);
+}
+
+.filterTabs {
+  display: flex;
+  gap: 4px;
+}
+
+.filterTab {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--panel-border);
+  background: transparent;
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.filterTab:hover {
+  background: rgba(16, 36, 55, 0.04);
+  color: var(--text);
+  transform: none;
+}
+
+.filterTabActive {
+  background: var(--text);
+  color: white;
+  border-color: var(--text);
+}
+
+.filterTabActive:hover {
+  color: white;
+}
+
+.historyCard {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(16, 36, 55, 0.08);
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.historyActions {
+  display: grid;
+  gap: 8px;
+  justify-items: flex-end;
+}
+
+.repeatLink {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--secondary);
+  text-decoration: none;
+}
+
+.repeatLink:hover {
+  text-decoration: underline;
+  transform: none;
+}
+
+.recentList {
+  display: grid;
+  gap: 10px;
+}
+
+.recentItem {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(16, 36, 55, 0.06);
+}
+
+.recentMeta {
+  display: grid;
+  gap: 2px;
+}
+
+.recentMeta strong {
+  font-size: 0.9rem;
+}
+
+.recentMeta span {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.courtCard {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(16, 36, 55, 0.08);
+}
+
+.courtHeader h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.courtHeader p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.searchResults {
+  display: grid;
+  gap: 16px;
+}
+
+@media (max-width: 780px) {
+  .tabNav {
+    overflow-x: auto;
+  }
+
+  .quickSearch {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .upcomingCard {
+    grid-template-columns: 1fr;
+  }
+
+  .bookingConfirm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .historyCard {
+    grid-template-columns: 1fr;
+  }
+}

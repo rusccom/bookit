@@ -24,7 +24,7 @@ export async function createCustomerBookingAction(formData: FormData) {
     });
     target = "/dashboard/customer?success=booking-created";
   } catch (error) {
-    target = `/dashboard/customer?error=${encodeURIComponent(getErrorMessage(error))}`;
+    target = `/dashboard/customer/search?error=${encodeURIComponent(getErrorMessage(error))}`;
   }
 
   redirect(target);
@@ -43,9 +43,9 @@ export async function createOwnerManualBookingAction(formData: FormData) {
       startTime: String(formData.get("startTime") || ""),
       unitId: String(formData.get("unitId") || "")
     });
-    target = "/dashboard/owner?success=manual-booking-created";
+    target = "/dashboard/owner/bookings?success=manual-booking-created";
   } catch (error) {
-    target = `/dashboard/owner?error=${encodeURIComponent(getErrorMessage(error))}`;
+    target = `/dashboard/owner/bookings?error=${encodeURIComponent(getErrorMessage(error))}`;
   }
 
   redirect(target);
@@ -53,11 +53,13 @@ export async function createOwnerManualBookingAction(formData: FormData) {
 
 export async function cancelCustomerBookingAction(formData: FormData) {
   const user = await requireUser("customer");
+  const returnTo = String(formData.get("returnTo") || "/dashboard/customer");
+  const safePath = returnTo.startsWith("/dashboard/customer") ? returnTo : "/dashboard/customer";
   await cancelBookingAction({
     actorRole: "customer",
     actorUserId: user.id,
     bookingId: String(formData.get("bookingId") || ""),
-    redirectPath: "/dashboard/customer"
+    redirectPath: safePath
   });
 }
 
@@ -67,7 +69,7 @@ export async function cancelOwnerBookingAction(formData: FormData) {
     actorRole: "owner",
     actorUserId: owner.id,
     bookingId: String(formData.get("bookingId") || ""),
-    redirectPath: "/dashboard/owner"
+    redirectPath: "/dashboard/owner/bookings"
   });
 }
 

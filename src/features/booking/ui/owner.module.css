@@ -1,0 +1,285 @@
+.tabNav {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.tabLink {
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tabLink:hover {
+  background: rgba(16, 36, 55, 0.05);
+  color: var(--text);
+}
+
+.tabLinkActive {
+  background: linear-gradient(135deg, var(--primary), #ff8a57);
+  color: white;
+  box-shadow: 0 4px 12px rgba(220, 91, 57, 0.3);
+}
+
+.tabLinkActive:hover {
+  color: white;
+}
+
+/* ── Stats ── */
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.statCard {
+  display: grid;
+  gap: 6px;
+  padding: 20px 22px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(16, 36, 55, 0.08);
+}
+
+.statValue {
+  font-size: 1.8rem;
+  font-weight: 800;
+  font-family: var(--font-display), serif;
+  color: var(--text);
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.statHighlight {
+  border-color: rgba(15, 118, 110, 0.2);
+  background: linear-gradient(
+    135deg,
+    rgba(15, 118, 110, 0.08),
+    rgba(15, 118, 110, 0.02)
+  );
+}
+
+.statHighlight .statValue {
+  color: var(--secondary);
+}
+
+/* ── Today schedule ── */
+
+.scheduleList {
+  display: grid;
+  gap: 10px;
+}
+
+.scheduleItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(16, 36, 55, 0.06);
+}
+
+.scheduleTime {
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: var(--font-display), serif;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.scheduleMeta {
+  display: grid;
+  gap: 2px;
+}
+
+.scheduleMeta strong {
+  font-size: 0.9rem;
+}
+
+.scheduleMeta span {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* ── Quick actions ── */
+
+.quickActions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ── Empty state ── */
+
+.emptyCard {
+  padding: 32px;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px dashed rgba(16, 36, 55, 0.15);
+}
+
+.emptyCard p {
+  margin: 0 0 16px;
+}
+
+/* ── Unit cards ── */
+
+.unitGrid {
+  display: grid;
+  gap: 16px;
+}
+
+.unitCard {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(16, 36, 55, 0.08);
+}
+
+.unitCard h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.unitMeta {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.unitSchedule {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dayChip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+/* ── Booking cards (owner) ── */
+
+.bookingCard {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(16, 36, 55, 0.08);
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.bookingMeta {
+  display: grid;
+  gap: 4px;
+}
+
+.bookingMeta strong {
+  font-size: 0.95rem;
+}
+
+.bookingMeta span {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.bookingActions {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+
+.sourceBadge {
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: rgba(16, 36, 55, 0.06);
+  color: var(--muted);
+}
+
+/* ── Filter tabs ── */
+
+.filterTabs {
+  display: flex;
+  gap: 4px;
+}
+
+.filterTab {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--panel-border);
+  background: transparent;
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.filterTab:hover {
+  background: rgba(16, 36, 55, 0.04);
+  color: var(--text);
+  transform: none;
+}
+
+.filterTabActive {
+  background: var(--text);
+  color: white;
+  border-color: var(--text);
+}
+
+.filterTabActive:hover {
+  color: white;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 780px) {
+  .tabNav {
+    overflow-x: auto;
+  }
+
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+
+  .quickActions {
+    flex-direction: column;
+  }
+
+  .bookingCard {
+    grid-template-columns: 1fr;
+  }
+
+  .scheduleItem {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
