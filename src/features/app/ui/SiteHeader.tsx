@@ -4,6 +4,8 @@ import { logoutUserAction } from "@/features/auth/server/authActions";
 import { getCurrentUser } from "@/features/auth/server/getCurrentUser";
 import { getDashboardPath } from "@/features/auth/server/requireUser";
 
+import { MobileNav } from "./MobileNav";
+
 const CUSTOMER_NAV = [
   { href: "/dashboard/customer", label: "Главная" },
   { href: "/dashboard/customer/search", label: "Поиск корта" },
@@ -27,12 +29,11 @@ export async function SiteHeader() {
         <span className="brand-mark">B</span>
         <span className="brand-copy">
           <strong>BookCort</strong>
-          <span>Бронирование кортов</span>
         </span>
       </Link>
-      <nav className="site-nav">
-        {user ? (
-          <>
+      {user ? (
+        <>
+          <nav className="site-nav desktop-only">
             {navItems.map((item) => (
               <Link key={item.href} className="nav-link" href={item.href}>
                 {item.label}
@@ -41,14 +42,17 @@ export async function SiteHeader() {
             <form action={logoutUserAction}>
               <button className="ghost-button" type="submit">Выйти</button>
             </form>
-          </>
-        ) : (
-          <>
-            <Link className="nav-link" href="/login">Войти</Link>
-            <Link className="primary-link" href="/register">Открыть аккаунт</Link>
-          </>
-        )}
-      </nav>
+          </nav>
+          <div className="mobile-only">
+            <MobileNav items={navItems} logoutAction={logoutUserAction} />
+          </div>
+        </>
+      ) : (
+        <nav className="site-nav">
+          <Link className="nav-link" href="/login">Войти</Link>
+          <Link className="primary-link" href="/register">Открыть аккаунт</Link>
+        </nav>
+      )}
     </header>
   );
 }
