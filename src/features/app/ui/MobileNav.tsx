@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import styles from "./dashboardHeader.module.css";
+
 type NavItem = { href: string; label: string };
 
 type MobileNavProps = {
@@ -12,33 +14,45 @@ type MobileNavProps = {
 
 export function MobileNav({ items, logoutAction }: MobileNavProps) {
   const [open, setOpen] = useState(false);
+  const menuId = "dashboard-mobile-menu";
 
   return (
-    <>
+    <div className={styles.mobileNavShell}>
       <button
+        aria-controls={menuId}
+        aria-expanded={open}
         aria-label="Меню"
-        className="burger"
+        className={styles.burger}
         onClick={() => setOpen(!open)}
         type="button"
       >
-        <span className={open ? "burger-line burger-open" : "burger-line"} />
-        <span className={open ? "burger-line burger-open" : "burger-line"} />
-        <span className={open ? "burger-line burger-open" : "burger-line"} />
+        <span className={open ? `${styles.burgerLine} ${styles.burgerLineOpen}` : styles.burgerLine} />
+        <span className={open ? `${styles.burgerLine} ${styles.burgerLineOpen}` : styles.burgerLine} />
+        <span className={open ? `${styles.burgerLine} ${styles.burgerLineOpen}` : styles.burgerLine} />
       </button>
       {open && (
-        <nav className="mobile-menu" onClick={() => setOpen(false)}>
+        <nav className={styles.mobileMenu} id={menuId}>
           {items.map((item) => (
-            <Link key={item.href} className="mobile-link" href={item.href}>
+            <Link
+              key={item.href}
+              className={styles.mobileLink}
+              href={item.href}
+              onClick={() => setOpen(false)}
+            >
               {item.label}
             </Link>
           ))}
           <form action={logoutAction}>
-            <button className="mobile-link mobile-logout" type="submit">
+            <button
+              className={`${styles.mobileLink} ${styles.mobileLogout}`}
+              onClick={() => setOpen(false)}
+              type="submit"
+            >
               Выйти
             </button>
           </form>
         </nav>
       )}
-    </>
+    </div>
   );
 }

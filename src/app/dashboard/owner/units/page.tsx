@@ -20,11 +20,6 @@ export default async function OwnerUnitsPage(props: PageProps) {
     <>
       <StatusBanner error={error} success={success} />
 
-      <section className="panel">
-        <p className="eyebrow">Управление</p>
-        <h2>Ваши объекты ({units.length})</h2>
-      </section>
-
       <OwnerUnitCards units={units} />
 
       <OwnerUnitForm />

@@ -26,11 +26,6 @@ export default async function OwnerBookingsPage(props: PageProps) {
     <>
       <StatusBanner error={error} success={success} />
 
-      <section className="panel">
-        <p className="eyebrow">Бронирования</p>
-        <h2>Все бронирования</h2>
-      </section>
-
       <OwnerBookingList items={bookings} />
 
       <OwnerManualBookingForm units={units} />

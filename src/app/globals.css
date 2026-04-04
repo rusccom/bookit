@@ -33,6 +33,7 @@ html {
 body {
   margin: 0;
   min-height: 100%;
+  overflow-x: clip;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans), system-ui, sans-serif;
@@ -55,6 +56,7 @@ select {
 
 .page-shell {
   width: min(1080px, calc(100% - 24px));
+  max-width: 100%;
   margin: 0 auto;
   padding: 16px 0 48px;
 }
@@ -72,6 +74,7 @@ select {
 .time-row {
   display: grid;
   gap: 16px;
+  min-width: 0;
 }
 
 .stack-large {
@@ -210,9 +213,11 @@ p {
   position: absolute;
   top: 100%;
   right: 0;
-  left: 0;
   display: grid;
   gap: 2px;
+  width: 220px;
+  min-width: 220px;
+  max-width: calc(100vw - 32px);
   padding: 8px;
   margin-top: 6px;
   background: var(--surface);
@@ -315,6 +320,8 @@ label span {
 input,
 select {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 8px 12px;
   border: 1px solid rgba(15, 23, 42, 0.1);
   border-radius: var(--radius-md);
@@ -415,6 +422,10 @@ select:focus {
     padding-top: 12px;
   }
 
+  .brand-copy {
+    display: none;
+  }
+
   .desktop-only {
     display: none;
   }
@@ -426,5 +437,15 @@ select:focus {
   .weekday-grid,
   .time-row {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .mobile-menu {
+    right: 8px;
+    left: 8px;
+    width: auto;
+    min-width: 0;
+    max-width: none;
   }
 }

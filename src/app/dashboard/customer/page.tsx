@@ -34,13 +34,6 @@ export default async function CustomerMainPage(props: PageProps) {
     <>
       <StatusBanner error={error} success={success} />
 
-      <section className="panel">
-        <div className={s.welcome}>
-          <p className="eyebrow">Добро пожаловать</p>
-          <h1>Привет, {user.fullName}!</h1>
-        </div>
-      </section>
-
       <section className="panel stack">
         <h2>Ближайшая бронь</h2>
         <UpcomingBookingCard booking={upcoming} />

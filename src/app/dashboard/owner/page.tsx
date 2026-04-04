@@ -37,11 +37,6 @@ export default async function OwnerOverviewPage(props: PageProps) {
     <>
       <StatusBanner error={error} success={success} />
 
-      <section className="panel">
-        <p className="eyebrow">Workspace</p>
-        <h1>Привет, {owner.fullName}!</h1>
-      </section>
-
       <OwnerStatCards
         nextBookingLabel={nextBooking}
         todayCount={stats.todayCount}

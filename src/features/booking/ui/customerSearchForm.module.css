@@ -1,0 +1,43 @@
+.searchForm {
+  width: 100%;
+  min-width: 0;
+}
+
+.searchForm > * {
+  min-width: 0;
+  justify-self: stretch;
+}
+
+.field {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  justify-self: stretch;
+}
+
+.field span {
+  width: 100%;
+}
+
+.control {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  inline-size: 100%;
+  min-inline-size: 100%;
+  max-inline-size: 100%;
+  align-self: stretch;
+  justify-self: stretch;
+  min-height: 46px;
+}
+
+.submit {
+  width: 100%;
+}
+
+@media (min-width: 781px) {
+  .submit {
+    width: fit-content;
+  }
+}
