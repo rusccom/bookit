@@ -1,103 +1,64 @@
-.tabNav {
-  display: flex;
-  gap: 4px;
-  background: var(--surface);
-  backdrop-filter: blur(18px);
-  border: 1px solid var(--panel-border);
-  border-radius: 999px;
-  padding: 4px;
-}
-
-.tabLink {
-  padding: 10px 20px;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--muted);
-  text-decoration: none;
-  transition: background 0.2s, color 0.2s;
-}
-
-.tabLink:hover {
-  background: rgba(16, 36, 55, 0.05);
-  color: var(--text);
-}
-
-.tabLinkActive {
-  background: linear-gradient(135deg, var(--primary), #ff8a57);
-  color: white;
-  box-shadow: 0 4px 12px rgba(220, 91, 57, 0.3);
-}
-
-.tabLinkActive:hover {
-  color: white;
-}
-
 /* ── Stats ── */
 
 .statsRow {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 12px;
 }
 
 .statCard {
   display: grid;
-  gap: 6px;
-  padding: 20px 22px;
+  gap: 4px;
+  padding: 16px 18px;
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.76);
-  border: 1px solid rgba(16, 36, 55, 0.08);
+  background: var(--surface);
+  border: 1px solid var(--panel-border);
 }
 
 .statValue {
-  font-size: 1.8rem;
-  font-weight: 800;
+  font-size: 1.6rem;
+  font-weight: 700;
   font-family: var(--font-display), serif;
   color: var(--text);
   line-height: 1;
 }
 
 .statLabel {
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 500;
   color: var(--muted);
 }
 
 .statHighlight {
-  border-color: rgba(15, 118, 110, 0.2);
-  background: linear-gradient(
-    135deg,
-    rgba(15, 118, 110, 0.08),
-    rgba(15, 118, 110, 0.02)
-  );
+  border-color: rgba(37, 99, 235, 0.2);
+  background: rgba(37, 99, 235, 0.04);
 }
 
 .statHighlight .statValue {
-  color: var(--secondary);
+  color: var(--primary);
 }
 
 /* ── Today schedule ── */
 
 .scheduleList {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .scheduleItem {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  gap: 14px;
+  gap: 12px;
   align-items: center;
-  padding: 14px 18px;
+  padding: 12px 16px;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(16, 36, 55, 0.06);
+  background: var(--bg);
+  border: 1px solid var(--panel-border);
 }
 
 .scheduleTime {
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 600;
   font-family: var(--font-display), serif;
   color: var(--text);
   white-space: nowrap;
@@ -109,11 +70,11 @@
 }
 
 .scheduleMeta strong {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 .scheduleMeta span {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--muted);
 }
 
@@ -121,46 +82,46 @@
 
 .quickActions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
 /* ── Empty state ── */
 
 .emptyCard {
-  padding: 32px;
+  padding: 28px;
   text-align: center;
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px dashed rgba(16, 36, 55, 0.15);
+  background: var(--bg);
+  border: 1px dashed rgba(15, 23, 42, 0.12);
 }
 
 .emptyCard p {
-  margin: 0 0 16px;
+  margin: 0 0 12px;
 }
 
 /* ── Unit cards ── */
 
 .unitGrid {
   display: grid;
-  gap: 16px;
+  gap: 12px;
 }
 
 .unitCard {
   display: grid;
-  gap: 10px;
-  padding: 20px;
+  gap: 8px;
+  padding: 16px 18px;
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.76);
-  border: 1px solid rgba(16, 36, 55, 0.08);
+  background: var(--surface);
+  border: 1px solid var(--panel-border);
 }
 
 .unitCard h3 {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 .unitMeta {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--muted);
   margin: 0;
 }
@@ -168,16 +129,16 @@
 .unitSchedule {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .dayChip {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  background: var(--secondary-soft);
-  color: var(--secondary);
+  padding: 3px 8px;
+  border-radius: var(--radius-md);
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--primary);
 }
 
 /* ── Booking cards (owner) ── */
@@ -185,42 +146,42 @@
 .bookingCard {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 16px;
+  gap: 12px;
   align-items: start;
-  padding: 18px 20px;
+  padding: 14px 16px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(16, 36, 55, 0.08);
-  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid var(--panel-border);
+  background: var(--surface);
 }
 
 .bookingMeta {
   display: grid;
-  gap: 4px;
+  gap: 3px;
 }
 
 .bookingMeta strong {
-  font-size: 0.95rem;
+  font-size: 0.875rem;
 }
 
 .bookingMeta span {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--muted);
 }
 
 .bookingActions {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   justify-items: end;
 }
 
 .sourceBadge {
   display: inline-flex;
-  padding: 3px 8px;
-  border-radius: 999px;
+  padding: 2px 8px;
+  border-radius: var(--radius-md);
   font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  background: rgba(16, 36, 55, 0.06);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: var(--bg);
   color: var(--muted);
 }
 
@@ -232,10 +193,10 @@
 }
 
 .filterTab {
-  padding: 8px 16px;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.825rem;
+  font-weight: 500;
   border: 1px solid var(--panel-border);
   background: transparent;
   color: var(--muted);
@@ -244,15 +205,14 @@
 }
 
 .filterTab:hover {
-  background: rgba(16, 36, 55, 0.04);
+  background: var(--bg);
   color: var(--text);
-  transform: none;
 }
 
 .filterTabActive {
-  background: var(--text);
+  background: var(--primary);
   color: white;
-  border-color: var(--text);
+  border-color: var(--primary);
 }
 
 .filterTabActive:hover {
@@ -262,10 +222,6 @@
 /* ── Responsive ── */
 
 @media (max-width: 780px) {
-  .tabNav {
-    overflow-x: auto;
-  }
-
   .statsRow {
     grid-template-columns: 1fr;
   }
@@ -280,6 +236,6 @@
 
   .scheduleItem {
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 6px;
   }
 }

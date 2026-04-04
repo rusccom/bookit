@@ -18,7 +18,7 @@ const FEATURES = [
 export function LandingFeatures() {
   return (
     <section className={s.section}>
-      <div className={s.sectionHeader}>
+      <div className={`${s.sectionHeader} ${s.sectionHeaderCentered}`}>
         <h2>Возможности платформы</h2>
         <p>
           Всё, что нужно для удобной аренды — от быстрого поиска
@@ -26,9 +26,8 @@ export function LandingFeatures() {
         </p>
       </div>
       <div className={s.cardGrid}>
-        {FEATURES.map((item, i) => (
+        {FEATURES.map((item) => (
           <article key={item.title} className={s.card}>
-            <span className={s.cardNumber}>{i + 1}</span>
             <h3>{item.title}</h3>
             <p>{item.text}</p>
           </article>

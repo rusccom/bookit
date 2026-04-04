@@ -18,7 +18,7 @@ const AI_FEATURES = [
 export function LandingAI() {
   return (
     <section className={s.section}>
-      <div className={s.sectionHeader}>
+      <div className={`${s.sectionHeader} ${s.sectionHeaderCentered}`}>
         <h2>AI-ассистент в твоём мессенджере</h2>
         <p>
           Бронируйте корты через Telegram — без приложений и регистрации.
@@ -26,9 +26,8 @@ export function LandingAI() {
         </p>
       </div>
       <div className={s.cardGrid}>
-        {AI_FEATURES.map((item, i) => (
+        {AI_FEATURES.map((item) => (
           <article key={item.title} className={s.card}>
-            <span className={s.cardNumber}>{i + 1}</span>
             <h3>{item.title}</h3>
             <p>{item.text}</p>
           </article>

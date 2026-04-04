@@ -10,23 +10,12 @@ type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-const HIGHLIGHTS = [
-  "Регистрация с указанием названия площадки",
-  "Доступ к панели управления расписанием",
-  "Публичный каталог для привлечения клиентов",
-];
-
 export default async function RegisterHostPage(props: PageProps) {
   const searchParams = await props.searchParams;
   const error = pickValue(searchParams.error);
 
   return (
-    <ModernAuthLayout
-      description="Создайте аккаунт арендодателя и настройте площадку."
-      eyebrow="Арендодатель"
-      highlights={HIGHLIGHTS}
-      title="Регистрация для площадок."
-    >
+    <ModernAuthLayout>
       <StatusBanner error={error} />
       <ModernRegisterForm role="owner" />
       <p className={styles.footer}>

@@ -10,24 +10,12 @@ type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-const HIGHLIGHTS = [
-  "Регистрация разделена по ролям — клиент или арендодатель",
-  "Минимум полей для быстрого старта",
-  "Каждая роль ведёт в свой сценарий работы",
-];
-
 export default async function RegisterPage(props: PageProps) {
   const searchParams = await props.searchParams;
   const error = pickValue(searchParams.error);
 
   return (
-    <ModernAuthLayout
-      description="Выберите роль и создайте аккаунт за минуту."
-      eyebrow="Регистрация"
-      highlights={HIGHLIGHTS}
-      large={true}
-      title="Начните работу с BookCort."
-    >
+    <ModernAuthLayout>
       <StatusBanner error={error} />
       <ModernRegisterChoice />
       <p className={styles.footer}>

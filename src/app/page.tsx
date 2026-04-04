@@ -4,6 +4,7 @@ import { ModernSiteHeader } from "@/features/app/ui/ModernSiteHeader";
 import { LandingHero } from "@/features/marketing/ui/LandingHero";
 import { LandingFeatures } from "@/features/marketing/ui/LandingFeatures";
 import { LandingAI } from "@/features/marketing/ui/LandingAI";
+import { LandingFooter } from "@/features/marketing/ui/LandingFooter";
 import styles from "@/features/marketing/ui/landing.module.css";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function HomePage() {
         <LandingHero />
         <LandingFeatures />
         <LandingAI />
+        <LandingFooter />
       </div>
     </main>
   );
