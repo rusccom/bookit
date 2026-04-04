@@ -9,7 +9,7 @@ type NavItem = { href: string; label: string };
 
 type MobileNavProps = {
   items: NavItem[];
-  logoutAction: (formData: FormData) => Promise<void>;
+  logoutAction: () => Promise<void>;
 };
 
 export function MobileNav({ items, logoutAction }: MobileNavProps) {
@@ -45,7 +45,6 @@ export function MobileNav({ items, logoutAction }: MobileNavProps) {
           <form action={logoutAction}>
             <button
               className={`${styles.mobileLink} ${styles.mobileLogout}`}
-              onClick={() => setOpen(false)}
               type="submit"
             >
               Выйти
