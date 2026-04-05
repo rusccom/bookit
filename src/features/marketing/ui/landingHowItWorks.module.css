@@ -1,0 +1,67 @@
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  padding: 32px 28px;
+  border: 1px solid var(--public-border);
+  border-radius: var(--public-radius-lg);
+  background: linear-gradient(
+    180deg,
+    rgba(250, 252, 255, 0.92),
+    rgba(245, 248, 255, 0.78)
+  );
+  box-shadow: var(--public-shadow-soft);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.step:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 44px rgba(20, 30, 60, 0.12);
+}
+
+.num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--public-primary);
+  color: var(--public-text);
+  font-family: var(--font-public-display), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.stepTitle {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--public-text);
+}
+
+.stepText {
+  margin: 0;
+  color: var(--public-muted);
+  font-size: 0.93rem;
+  line-height: 1.7;
+}
+
+@media (max-width: 960px) {
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}
