@@ -4,9 +4,9 @@
   overflow: hidden;
   isolation: isolate;
   background:
-    radial-gradient(circle at left top, rgba(255, 106, 0, 0.14), transparent 30rem),
-    radial-gradient(circle at 88% 14%, rgba(149, 213, 178, 0.28), transparent 28rem),
-    linear-gradient(180deg, #ffffff 0%, var(--public-bg) 58%, #f0f5ed 100%);
+    radial-gradient(circle at left top, rgba(255, 229, 0, 0.12), transparent 30rem),
+    radial-gradient(circle at 88% 14%, rgba(74, 173, 232, 0.22), transparent 28rem),
+    linear-gradient(180deg, #ffffff 0%, var(--public-bg) 58%, #eef2fa 100%);
   color: var(--public-text);
   font-family: var(--font-public-sans), sans-serif;
 }
@@ -71,17 +71,17 @@
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 0.97;
-  color: #fffaf6;
-  text-shadow: 0 12px 40px rgba(49, 23, 10, 0.36);
+  color: #f4f8ff;
+  text-shadow: 0 12px 40px rgba(10, 20, 49, 0.36);
 }
 
 .heroText {
   max-width: 34rem;
   margin: 0;
-  color: rgba(255, 246, 239, 0.9);
+  color: rgba(240, 248, 255, 0.9);
   font-size: 1.06rem;
   line-height: 1.78;
-  text-shadow: 0 8px 28px rgba(49, 23, 10, 0.28);
+  text-shadow: 0 8px 28px rgba(10, 20, 49, 0.28);
 }
 
 .heroAction {
@@ -92,9 +92,9 @@
   min-height: 54px;
   padding: 0 30px;
   border-radius: 999px;
-  background: rgba(255, 250, 245, 0.96);
-  box-shadow: 0 18px 36px rgba(49, 23, 10, 0.18);
-  color: var(--public-secondary);
+  background: #ffe500;
+  box-shadow: 0 18px 36px rgba(200, 180, 0, 0.3);
+  color: var(--public-text);
   font-size: 0.98rem;
   font-weight: 700;
   transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
@@ -102,8 +102,8 @@
 
 .heroAction:hover {
   transform: translateY(-2px);
-  background: #ffffff;
-  box-shadow: 0 24px 44px rgba(49, 23, 10, 0.22);
+  background: #fff033;
+  box-shadow: 0 24px 44px rgba(200, 180, 0, 0.36);
 }
 
 .heroImage {
@@ -114,8 +114,8 @@
   border: none;
   border-radius: 0;
   background:
-    linear-gradient(180deg, rgba(255, 145, 48, 0.16), rgba(255, 145, 48, 0)),
-    linear-gradient(135deg, rgba(255, 106, 0, 0.2), rgba(255, 236, 222, 0.08));
+    linear-gradient(180deg, rgba(74, 173, 232, 0.16), rgba(74, 173, 232, 0)),
+    linear-gradient(135deg, rgba(74, 173, 232, 0.2), rgba(217, 140, 187, 0.08));
 }
 
 .heroImage::after {
@@ -123,8 +123,8 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(42, 17, 5, 0.66) 0%, rgba(42, 17, 5, 0.38) 34%, rgba(42, 17, 5, 0.2) 56%, rgba(42, 17, 5, 0.26) 100%),
-    linear-gradient(180deg, rgba(42, 17, 5, 0.16), rgba(42, 17, 5, 0.08) 34%, rgba(42, 17, 5, 0.34));
+    linear-gradient(90deg, rgba(10, 15, 35, 0.66) 0%, rgba(10, 15, 35, 0.38) 34%, rgba(10, 15, 35, 0.2) 56%, rgba(10, 15, 35, 0.26) 100%),
+    linear-gradient(180deg, rgba(10, 15, 35, 0.16), rgba(10, 15, 35, 0.08) 34%, rgba(10, 15, 35, 0.34));
   pointer-events: none;
 }
 
@@ -178,7 +178,7 @@
 
 .section:nth-of-type(even)::after {
   right: -6rem;
-  background: radial-gradient(circle, rgba(45, 106, 79, 0.08), transparent 70%);
+  background: radial-gradient(circle, rgba(74, 173, 232, 0.08), transparent 70%);
 }
 
 .sectionHeader {
@@ -224,7 +224,7 @@
   overflow: hidden;
   border: 1px solid var(--public-border);
   border-radius: var(--public-radius-lg);
-  background: linear-gradient(180deg, rgba(255, 253, 249, 0.9), rgba(245, 250, 245, 0.76));
+  background: linear-gradient(180deg, rgba(250, 252, 255, 0.9), rgba(245, 248, 255, 0.76));
   box-shadow: var(--public-shadow-soft);
   transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
@@ -235,13 +235,13 @@
   inset: 0 auto auto 0;
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(45, 106, 79, 0.45), transparent);
+  background: linear-gradient(90deg, transparent, rgba(74, 173, 232, 0.45), transparent);
 }
 
 .card:hover {
   transform: translateY(-4px);
   border-color: var(--public-border-strong);
-  box-shadow: 0 22px 44px rgba(34, 54, 40, 0.12);
+  box-shadow: 0 22px 44px rgba(20, 30, 60, 0.12);
 }
 
 .card h3 {

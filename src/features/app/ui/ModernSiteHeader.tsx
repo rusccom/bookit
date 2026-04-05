@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { getCurrentUser } from "@/features/auth/server/getCurrentUser";
@@ -13,8 +14,13 @@ export async function ModernSiteHeader() {
   return (
     <header className={styles.header}>
       <Link className={styles.brand} href="/">
-        <span className={styles.mark}>B</span>
-        <span className={styles.brandName}>BookCort</span>
+        <Image
+          alt="BookCort"
+          className={styles.logo}
+          height={36}
+          src="/images/brand/logo.png"
+          width={160}
+        />
       </Link>
       <nav className={styles.nav}>
         {user ? null : (

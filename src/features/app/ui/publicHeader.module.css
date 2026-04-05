@@ -7,38 +7,21 @@
   justify-content: space-between;
   gap: 16px;
   padding: 16px 32px;
-  background: rgba(250, 252, 248, 0.78);
+  background: rgba(250, 251, 255, 0.78);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--public-border);
-  box-shadow: 0 10px 24px rgba(34, 54, 40, 0.04);
+  box-shadow: 0 10px 24px rgba(20, 30, 60, 0.04);
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  color: var(--public-text);
 }
 
-.mark {
-  display: inline-grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--public-secondary), #5bab82);
-  box-shadow: 0 14px 24px rgba(45, 106, 79, 0.24);
-  color: #f4fff8;
-  font-family: var(--font-public-display), sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.brandName {
-  font-family: var(--font-public-display), sans-serif;
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+.logo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
 }
 
 .nav {
@@ -73,15 +56,15 @@
 }
 
 .primary {
-  background: linear-gradient(135deg, var(--public-secondary), #5bab82);
-  box-shadow: 0 14px 28px rgba(45, 106, 79, 0.22);
-  color: #f4fff8;
+  background: linear-gradient(135deg, #ffe500, #ffd000);
+  box-shadow: 0 14px 28px rgba(200, 180, 0, 0.22);
+  color: var(--public-text);
   transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
 }
 
 .primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 18px 32px rgba(45, 106, 79, 0.28);
+  box-shadow: 0 18px 32px rgba(200, 180, 0, 0.3);
   filter: saturate(1.06);
 }
 
