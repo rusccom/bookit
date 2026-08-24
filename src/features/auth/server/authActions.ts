@@ -29,15 +29,16 @@ export async function registerUserAction(formData: FormData) {
     const values = registrationSchema.parse(getRegistrationValues(formData));
 
     if (!isSmsConfigured()) {
-      await registerAndLogin(values);
-      return;
+      const user = await registerUser(values);
+      await createSession(user);
+      target = getDashboardPath(user.role);
+    } else {
+      const prepared = await prepareRegistration(values);
+      const code = generateOtpCode();
+      await sendOtpSms({ code, phone: prepared.phone });
+      await savePendingRegistration({ ...prepared, codeHash: hashOtpCode(code) });
+      target = `/register/verify?role=${prepared.role}&success=${encodeURIComponent("Код подтверждения отправлен по SMS.")}`;
     }
-
-    const prepared = await prepareRegistration(values);
-    const code = generateOtpCode();
-    await sendOtpSms({ code, phone: prepared.phone });
-    await savePendingRegistration({ ...prepared, codeHash: hashOtpCode(code) });
-    target = `/register/verify?role=${prepared.role}&success=${encodeURIComponent("Код подтверждения отправлен по SMS.")}`;
   } catch (error) {
     target = `${getRegisterPath(role)}?error=${encodeURIComponent(getErrorMessage(error))}`;
   }
@@ -58,6 +59,8 @@ export async function confirmRegistrationAction(formData: FormData) {
     redirect(`/register/verify?role=${pending.role}&error=${encodeURIComponent("Код неверный или уже истёк.")}`);
   }
 
+  let target: string;
+
   try {
     const user = await registerPreparedUser({
       email: pending.email,
@@ -69,11 +72,13 @@ export async function confirmRegistrationAction(formData: FormData) {
     });
     await clearPendingRegistration();
     await createSession(user);
-    redirect(getDashboardPath(user.role));
+    target = getDashboardPath(user.role);
   } catch (error) {
     await clearPendingRegistration();
-    redirect(`${getRegisterPath(pending.role)}?error=${encodeURIComponent(getErrorMessage(error))}`);
+    target = `${getRegisterPath(pending.role)}?error=${encodeURIComponent(getErrorMessage(error))}`;
   }
+
+  redirect(target);
 }
 
 export async function loginUserAction(formData: FormData) {
@@ -94,12 +99,6 @@ export async function loginUserAction(formData: FormData) {
 export async function logoutUserAction() {
   await clearSession();
   redirect("/");
-}
-
-async function registerAndLogin(values: Parameters<typeof registerUser>[0]) {
-  const user = await registerUser(values);
-  await createSession(user);
-  redirect(getDashboardPath(user.role));
 }
 
 function readRole(formData: FormData) {
