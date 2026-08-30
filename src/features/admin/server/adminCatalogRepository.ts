@@ -53,8 +53,14 @@ export async function listAdminCatalog(filters: {
 export async function updateAdminCatalogItem(input: CatalogUpdate) {
   const sql = getDb();
   return sql.begin(async (transaction) => {
-    await transaction`UPDATE venues SET title = ${input.venueTitle}, city = ${input.city}, address = ${input.address} WHERE id = ${input.venueId}`;
-    const rows = await transaction<{ id: string }[]>`UPDATE bookable_units SET title = ${input.unitTitle} WHERE id = ${input.unitId} AND venue_id = ${input.venueId} RETURNING id`;
+    await transaction.unsafe(
+      "UPDATE venues SET title = $1, city = $2, address = $3 WHERE id = $4",
+      [input.venueTitle, input.city, input.address, input.venueId]
+    );
+    const rows = await transaction.unsafe<{ id: string }[]>(
+      "UPDATE bookable_units SET title = $1 WHERE id = $2 AND venue_id = $3 RETURNING id",
+      [input.unitTitle, input.unitId, input.venueId]
+    );
     if (!rows[0]) throw new Error("Корт не найден");
     return true;
   });
