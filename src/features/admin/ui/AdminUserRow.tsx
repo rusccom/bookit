@@ -1,5 +1,6 @@
 import type { AdminUserRecord } from "@/features/admin/server/adminTypes";
 import { DeleteUserButton } from "@/features/admin/ui/DeleteUserButton";
+import { EditUserButton } from "@/features/admin/ui/EditUserButton";
 
 import styles from "./adminPanel.module.css";
 
@@ -15,7 +16,12 @@ export function AdminUserRow({ search, user }: AdminUserRowProps) {
       <td>{user.email || "—"}<span className={styles.phone}>{user.phone || "Телефон не указан"}</span></td>
       <td><span className={styles.roleBadge}>{user.role === "owner" ? "Владелец" : "Клиент"}</span></td>
       <td>{formatDate(user.createdAt)}</td>
-      <td><DeleteUserButton search={search} userId={user.id} /></td>
+      <td>
+        <div className={styles.userActions}>
+          <EditUserButton search={search} user={user} />
+          <DeleteUserButton search={search} userId={user.id} />
+        </div>
+      </td>
     </tr>
   );
 }

@@ -221,6 +221,12 @@
   cursor: pointer;
 }
 
+.userActions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
 .emptyState {
   padding: 54px 20px;
   border: 1px dashed rgba(15, 23, 42, 0.14);

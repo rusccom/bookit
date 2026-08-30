@@ -22,6 +22,13 @@ type UserRow = Row & {
   role: UserRole;
 };
 
+type UserUpdate = {
+  email: string | null;
+  fullName: string;
+  id: string;
+  phone: string | null;
+};
+
 const FIND_ADMIN_BY_LOGIN = `
   SELECT id, login, password_hash
   FROM admin_users
@@ -71,6 +78,19 @@ export async function deleteUserById(id: string) {
   const rows = await sql<{ id: string }[]>`
     DELETE FROM app_users
     WHERE id = ${id}
+    RETURNING id
+  `;
+  return Boolean(rows[0]);
+}
+
+export async function updateUserById(input: UserUpdate) {
+  const sql = getDb();
+  const rows = await sql<{ id: string }[]>`
+    UPDATE app_users
+    SET full_name = ${input.fullName},
+        email = ${input.email},
+        phone = ${input.phone}
+    WHERE id = ${input.id}
     RETURNING id
   `;
   return Boolean(rows[0]);

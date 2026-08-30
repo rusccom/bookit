@@ -1,0 +1,157 @@
+.editButton,
+.cancelButton,
+.saveButton,
+.closeButton {
+  border: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.editButton {
+  padding: 7px 11px;
+  border: 1px solid rgba(14, 165, 233, 0.22);
+  border-radius: 9px;
+  background: rgba(14, 165, 233, 0.08);
+  color: #247fb8;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.56);
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  width: min(520px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  border-radius: 22px;
+  background: white;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.25);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 26px 18px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.header span {
+  color: var(--public-secondary);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.header h2 {
+  margin: 4px 0 0;
+  color: var(--public-text);
+  font-family: var(--font-public-display), sans-serif;
+  font-size: 1.55rem;
+}
+
+.closeButton {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: var(--muted);
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.form {
+  display: grid;
+  gap: 17px;
+  padding: 24px 26px 26px;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+.field span {
+  color: var(--public-text);
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.field input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--public-border);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--public-text);
+  outline: none;
+}
+
+.field input:focus {
+  border-color: var(--public-secondary);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
+}
+
+.roleNote {
+  margin: -2px 0 0;
+  padding: 11px 13px;
+  border-radius: 11px;
+  background: #f8fafc;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.roleNote strong {
+  color: var(--public-text);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 5px;
+}
+
+.cancelButton,
+.saveButton {
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.cancelButton {
+  border: 1px solid var(--public-border);
+  background: white;
+  color: var(--public-muted);
+}
+
+.saveButton {
+  background: linear-gradient(135deg, var(--public-primary), #ffd000);
+  color: var(--public-text);
+}
+
+@media (max-width: 520px) {
+  .overlay {
+    padding: 10px;
+  }
+
+  .header,
+  .form {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+}
