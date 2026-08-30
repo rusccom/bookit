@@ -16,7 +16,8 @@ export async function loginAdminAction(formData: FormData) {
     await createAdminSession(admin, formData.get("remember") === "on");
     target = "/adminpanel";
   } catch {
-    target = "/admin?error=Неверный%20логин%20или%20пароль";
+    const message = encodeURIComponent("Неверный логин или пароль");
+    target = `/admin?error=${message}`;
   }
   redirect(target);
 }
@@ -29,7 +30,7 @@ export async function logoutAdminAction() {
 export async function deleteUserAction(formData: FormData) {
   await requireAdmin();
   const search = String(formData.get("search") || "");
-  let status = "success=Пользователь удалён";
+  let status = `success=${encodeURIComponent("Пользователь удалён")}`;
   try {
     await removeUser(String(formData.get("userId") || ""));
   } catch (error) {
