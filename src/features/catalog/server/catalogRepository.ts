@@ -142,6 +142,8 @@ export async function listDistinctCities(): Promise<string[]> {
   const rows = await sql<{ city: string }[]>`
     SELECT DISTINCT city
     FROM venues
+    WHERE is_active = TRUE
+      AND EXISTS (SELECT 1 FROM bookable_units u WHERE u.venue_id = venues.id AND u.is_active = TRUE)
     ORDER BY city
   `;
 
@@ -166,6 +168,8 @@ export async function listSearchUnits(filters: {
     FROM venues v
     JOIN bookable_units u ON u.venue_id = v.id
     WHERE v.city = ${filters.city}
+      AND v.is_active = TRUE
+      AND u.is_active = TRUE
       AND (
         ${venueQuery || null} IS NULL
         OR v.title ILIKE ${`%${venueQuery}%`}

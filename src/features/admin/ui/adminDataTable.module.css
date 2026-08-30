@@ -1,0 +1,139 @@
+.filters {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 180px 190px auto;
+  gap: 9px;
+  padding: 15px;
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  background: white;
+}
+
+.filters input,
+.filters select,
+.filters button {
+  min-height: 44px;
+  padding: 0 13px;
+  border: 1px solid var(--public-border);
+  border-radius: 11px;
+  background: white;
+  color: var(--public-text);
+}
+
+.filters button,
+.actionButton {
+  border: none;
+  background: linear-gradient(135deg, var(--public-primary), #ffd000);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.exportLink {
+  width: fit-content;
+  color: var(--public-secondary);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.tableFrame {
+  overflow: auto;
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  background: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.tableFrame table {
+  width: 100%;
+  min-width: 940px;
+  border-collapse: collapse;
+}
+
+.tableFrame th,
+.tableFrame td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--panel-border);
+  text-align: left;
+  vertical-align: middle;
+  font-size: 0.8rem;
+}
+
+.tableFrame th {
+  background: #f8fafc;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.tableFrame td span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.successBadge,
+.dangerBadge,
+.warningBadge {
+  display: inline-flex;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.successBadge {
+  background: rgba(22, 163, 74, 0.1);
+  color: #15803d;
+}
+
+.dangerBadge {
+  background: rgba(220, 38, 38, 0.08);
+  color: var(--danger);
+}
+
+.warningBadge {
+  background: rgba(234, 179, 8, 0.13);
+  color: #a16207;
+}
+
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.actionButton,
+.dangerButton {
+  padding: 7px 10px;
+  border-radius: 9px;
+  font-size: 0.74rem;
+  cursor: pointer;
+}
+
+.dangerButton {
+  border: 1px solid rgba(220, 38, 38, 0.16);
+  background: rgba(220, 38, 38, 0.05);
+  color: var(--danger);
+}
+
+.empty {
+  padding: 42px;
+  border: 1px dashed var(--panel-border);
+  border-radius: 16px;
+  background: white;
+  color: var(--public-muted);
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}

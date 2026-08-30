@@ -6,4 +6,5 @@ export type AuthUser = {
   fullName: string;
   email: string | null;
   phone: string | null;
+  isBlocked: boolean;
 };

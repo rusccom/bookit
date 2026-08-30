@@ -15,7 +15,7 @@ export function AdminUsersTable(props: AdminUsersTableProps) {
   return (
     <div className={styles.tableFrame}>
       <table className={styles.usersTable}>
-        <thead><tr><th>Пользователь</th><th>Контакты</th><th>Роль</th><th>Регистрация</th><th>Управление</th></tr></thead>
+        <thead><tr><th>Пользователь</th><th>Контакты</th><th>Роль</th><th>Статус</th><th>Регистрация</th><th>Управление</th></tr></thead>
         <tbody>{props.users.map((user) => (
           <AdminUserRow key={user.id} search={props.search} user={user} />
         ))}</tbody>

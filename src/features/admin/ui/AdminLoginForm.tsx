@@ -18,6 +18,7 @@ export function AdminLoginForm(props: AdminLoginFormProps) { return (
       <form action={loginAdminAction} className={styles.loginForm}>
         <label className={styles.field}><span>Логин</span><input autoComplete="username" name="login" required /></label>
         <label className={styles.field}><span>Пароль</span><input autoComplete="current-password" name="password" required type="password" /></label>
+        <label className={styles.field}><span>Код 2FA, если включён</span><input autoComplete="one-time-code" inputMode="numeric" maxLength={6} name="otp" pattern="[0-9]{6}" placeholder="123456" /></label>
         <label className={styles.remember}>
           <input name="remember" type="checkbox" /><span>Запомнить мой вход на 30 дней</span>
         </label>

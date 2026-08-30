@@ -8,5 +8,6 @@ export async function getCurrentUser() {
     return null;
   }
 
-  return findUserById(session.userId);
+  const user = await findUserById(session.userId);
+  return user?.isBlocked ? null : user;
 }

@@ -23,12 +23,13 @@ type DbUserRow = Row & {
   id: string;
   phone: string | null;
   role: UserRole;
+  is_blocked: boolean;
 };
 
 export async function findUserByEmail(email: string) {
   const sql = getDb();
   const [row] = await sql<DbUserRow[]>`
-    SELECT id, role, full_name, email, phone
+    SELECT id, role, full_name, email, phone, is_blocked
     FROM app_users
     WHERE email = ${email}
   `;
@@ -39,7 +40,7 @@ export async function findUserByEmail(email: string) {
 export async function findUserById(id: string) {
   const sql = getDb();
   const [row] = await sql<DbUserRow[]>`
-    SELECT id, role, full_name, email, phone
+    SELECT id, role, full_name, email, phone, is_blocked
     FROM app_users
     WHERE id = ${id}
   `;
@@ -50,7 +51,7 @@ export async function findUserById(id: string) {
 export async function findUserByPhone(phone: string) {
   const sql = getDb();
   const [row] = await sql<DbUserRow[]>`
-    SELECT id, role, full_name, email, phone
+    SELECT id, role, full_name, email, phone, is_blocked
     FROM app_users
     WHERE phone = ${phone}
   `;
@@ -65,7 +66,7 @@ export async function findUserWithPassword(email: string) {
       password_hash: string | null;
     })[]
   >`
-    SELECT id, role, full_name, email, phone, password_hash
+    SELECT id, role, full_name, email, phone, password_hash, is_blocked
     FROM app_users
     WHERE email = ${email}
   `;
@@ -99,7 +100,7 @@ export async function createUser(input: UserInsert) {
       ${input.phone},
       ${input.passwordHash}
     )
-    RETURNING id, role, full_name, email, phone
+    RETURNING id, role, full_name, email, phone, is_blocked
   `;
 
   return mapUser(row);
@@ -139,7 +140,7 @@ export async function upsertTelegramCustomer(input: {
     )
     ON CONFLICT (phone) DO UPDATE
     SET full_name = EXCLUDED.full_name
-    RETURNING id, role, full_name, email, phone
+    RETURNING id, role, full_name, email, phone, is_blocked
   `;
 
   return mapUser(row);
@@ -151,6 +152,7 @@ function mapUser(row: DbUserRow): AuthUser {
     fullName: row.full_name,
     id: row.id,
     phone: row.phone,
-    role: row.role
+    role: row.role,
+    isBlocked: row.is_blocked
   };
 }

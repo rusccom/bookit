@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { registerUserAction } from "@/features/auth/server/authActions";
 import type { UserRole } from "@/features/auth/server/authTypes";
+import { BelarusPhoneInput } from "@/features/shared/ui/BelarusPhoneInput";
 
 import styles from "./auth.module.css";
 
@@ -33,7 +34,7 @@ export function ModernRegisterForm(props: ModernRegisterFormProps) {
           </label>
           <label className={styles.field}>
             <span>Телефон</span>
-            <input autoComplete="tel" className={styles.input} name="phone" placeholder="+375291112233" required />
+            <BelarusPhoneInput className={styles.input} required />
           </label>
           {isOwner ? renderProviderField() : null}
           <label className={styles.field}>

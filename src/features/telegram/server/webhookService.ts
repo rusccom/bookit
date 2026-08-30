@@ -1,13 +1,14 @@
 import { registerTelegramCustomer } from "@/features/auth/server/authService";
-import { confirmTelegramBooking, rejectTelegramBooking } from "@/features/booking/server/bookingService";
 import { buildTelegramAssistantReply } from "@/features/llm/server/assistantService";
 import { getEnv, isSmsConfigured } from "@/features/shared/server/env";
-import { isPhoneValid, normalizePhone } from "@/features/shared/server/phone";
-import { generateOtpCode, hashOtpCode, verifyOtpCode } from "@/features/telegram/server/otp";
 import {
-  answerTelegramCallback,
-  sendTelegramMessage
-} from "@/features/telegram/server/telegramApi";
+  isBelarusPhoneValid,
+  normalizeBelarusPhone
+} from "@/features/shared/server/phone";
+import { generateOtpCode, hashOtpCode, verifyOtpCode } from "@/features/telegram/server/otp";
+import { isTelegramUserActive } from "@/features/telegram/server/telegramAccess";
+import { handleTelegramCallback } from "@/features/telegram/server/telegramCallbackService";
+import { sendTelegramMessage } from "@/features/telegram/server/telegramApi";
 import {
   ensureTelegramProfile,
   resetTelegramProfile,
@@ -42,7 +43,7 @@ export async function handleTelegramWebhook(input: {
   validateSecret(input.headers);
 
   if (input.update.callback_query) {
-    await handleCallback(input.update.callback_query);
+    await handleTelegramCallback(input.update.callback_query);
     return;
   }
 
@@ -68,6 +69,11 @@ async function handleTextMessage(chatId: number, text: string) {
 
   if (profile.stage !== "ready" || !profile.userId) {
     await handleRegistrationStep(profile, text);
+    return;
+  }
+
+  if (!await isTelegramUserActive(profile.userId)) {
+    await sendTelegramMessage({ chatId, text: "Ваш аккаунт заблокирован администратором." });
     return;
   }
 
@@ -144,17 +150,17 @@ async function handleNameStep(profile: TelegramProfile, text: string) {
 
   await sendTelegramMessage({
     chatId: profile.chatId,
-    text: "Теперь отправьте номер телефона в международном формате."
+    text: "Теперь отправьте номер телефона: +375 XX XXX XX XX. Коды операторов: 25, 29, 33, 44."
   });
 }
 
 async function handlePhoneStep(profile: TelegramProfile, text: string) {
-  const phone = normalizePhone(text);
+  const phone = normalizeBelarusPhone(text);
 
-  if (!isPhoneValid(phone)) {
+  if (!isBelarusPhoneValid(phone)) {
     await sendTelegramMessage({
       chatId: profile.chatId,
-      text: "Номер не распознан. Пример: +375291112233"
+      text: "Номер не распознан. Пример: +375 29 123 45 67"
     });
     return;
   }
@@ -242,42 +248,6 @@ function buildRegistrationDoneText(smsConfirmed: boolean) {
     hint,
     "Мне нужен корт в Минске на завтра после обеда."
   ].join("\n");
-}
-
-async function handleCallback(query: NonNullable<TelegramUpdate["callback_query"]>) {
-  const chatId = query.message?.chat?.id;
-  const data = query.data || "";
-
-  if (!chatId || !data.includes(":")) {
-    return;
-  }
-
-  const [action, bookingId] = data.split(":");
-
-  if (action === "confirm") {
-    await confirmTelegramBooking({ bookingId, chatId });
-    await answerTelegramCallback({
-      callbackQueryId: query.id,
-      text: "Бронирование подтверждено"
-    });
-    await sendTelegramMessage({
-      chatId,
-      text: "Бронь подтверждена и сохранена."
-    });
-    return;
-  }
-
-  if (action === "reject") {
-    await rejectTelegramBooking({ bookingId, chatId });
-    await answerTelegramCallback({
-      callbackQueryId: query.id,
-      text: "Бронирование отменено"
-    });
-    await sendTelegramMessage({
-      chatId,
-      text: "Черновик бронирования отменен."
-    });
-  }
 }
 
 function isOtpValid(profile: TelegramProfile, text: string) {

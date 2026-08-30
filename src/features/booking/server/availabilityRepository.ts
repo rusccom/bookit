@@ -77,6 +77,8 @@ export async function listUnitsForAvailability(filters: {
     FROM venues v
     JOIN bookable_units u ON u.venue_id = v.id
     WHERE v.city = ${filters.city}
+      AND v.is_active = TRUE
+      AND u.is_active = TRUE
       AND (
         ${venueQuery || null} IS NULL
         OR v.title ILIKE ${`%${venueQuery}%`}
@@ -106,6 +108,8 @@ export async function findOwnerUnit(input: {
     JOIN providers p ON p.id = v.provider_id
     WHERE u.id = ${input.unitId}
       AND p.owner_user_id = ${input.ownerUserId}
+      AND v.is_active = TRUE
+      AND u.is_active = TRUE
   `;
 
   return row ? mapUnit(row) : null;
@@ -124,6 +128,8 @@ export async function findUnit(unitId: string) {
     FROM bookable_units u
     JOIN venues v ON v.id = u.venue_id
     WHERE u.id = ${unitId}
+      AND v.is_active = TRUE
+      AND u.is_active = TRUE
   `;
 
   return row ? mapUnit(row) : null;

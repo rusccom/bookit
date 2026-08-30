@@ -1,6 +1,5 @@
-import Link from "next/link";
-
 import { logoutAdminAction } from "@/features/admin/server/adminActions";
+import { AdminNavigation } from "@/features/admin/ui/AdminNavigation";
 
 import styles from "./adminPanel.module.css";
 
@@ -14,11 +13,7 @@ export function AdminSidebar(props: AdminSidebarProps) { return (
         <span className={styles.brandMark}>B</span>
         <div><strong>BookCort</strong><span>Администрирование</span></div>
       </div>
-      <nav className={styles.sidebarNav} aria-label="Панель администратора">
-        <Link className={styles.activeNavItem} href="/adminpanel">
-          <span className={styles.navIcon}>П</span>Пользователи
-        </Link>
-      </nav>
+      <AdminNavigation />
       <div className={styles.sidebarFooter}>
         <span>Вы вошли как</span><strong>{props.login}</strong>
         <form action={logoutAdminAction}>

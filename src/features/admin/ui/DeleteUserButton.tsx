@@ -7,13 +7,15 @@ import { deleteUserAction } from "@/features/admin/server/adminActions";
 import styles from "./adminPanel.module.css";
 
 type DeleteUserButtonProps = {
+  bookingsCount: number;
   search: string;
+  unitsCount: number;
   userId: string;
 };
 
 export function DeleteUserButton(props: DeleteUserButtonProps) {
   return (
-    <form action={deleteUserAction} onSubmit={confirmDeletion}>
+    <form action={deleteUserAction} onSubmit={(event) => confirmDeletion(event, props)}>
       <input name="userId" type="hidden" value={props.userId} />
       <input name="search" type="hidden" value={props.search} />
       <button className={styles.deleteButton} type="submit">Удалить</button>
@@ -21,8 +23,9 @@ export function DeleteUserButton(props: DeleteUserButtonProps) {
   );
 }
 
-function confirmDeletion(event: FormEvent<HTMLFormElement>) {
-  if (!window.confirm("Удалить пользователя? Объекты владельца также будут удалены.")) {
+function confirmDeletion(event: FormEvent<HTMLFormElement>, props: DeleteUserButtonProps) {
+  const impact = `${props.unitsCount} кортов и ${props.bookingsCount} связанных бронирований`;
+  if (!window.confirm(`Удалить пользователя безвозвратно? Будут затронуты: ${impact}.`)) {
     event.preventDefault();
   }
 }

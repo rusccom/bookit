@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from "next/navigation";
+import { ZodError } from "zod";
 
 import { loginSchema, registrationSchema } from "@/features/auth/server/authSchema";
 import { getRegisterPath } from "@/features/auth/server/registrationPaths";
@@ -124,5 +125,6 @@ function getLoginValues(formData: FormData) {
 }
 
 function getErrorMessage(error: unknown): string {
+  if (error instanceof ZodError) return error.issues[0]?.message || "Проверьте введённые данные";
   return error instanceof Error ? error.message : "Unexpected error";
 }

@@ -1,4 +1,7 @@
-import { registrationSchema } from "@/features/auth/server/authSchema";
+import {
+  belarusPhoneSchema,
+  registrationSchema
+} from "@/features/auth/server/authSchema";
 import {
   createProvider,
   createUser,
@@ -9,7 +12,6 @@ import {
 } from "@/features/auth/server/authRepository";
 import type { AuthUser } from "@/features/auth/server/authTypes";
 import { hashPassword, verifyPassword } from "@/features/auth/server/password";
-import { normalizePhone } from "@/features/shared/server/phone";
 
 type RegistrationInput = {
   email: string;
@@ -35,10 +37,7 @@ export async function registerUser(input: RegistrationInput) {
 }
 
 export async function prepareRegistration(input: RegistrationInput) {
-  const parsed = registrationSchema.parse({
-    ...input,
-    phone: normalizePhone(input.phone)
-  });
+  const parsed = registrationSchema.parse(input);
 
   await assertRegistrationAvailable(parsed.email, parsed.phone);
 
@@ -80,7 +79,11 @@ export async function loginUser(input: {
   const candidate = await findUserWithPassword(input.email);
 
   if (!candidate?.passwordHash) {
-    throw new Error("Invalid credentials");
+    throw new Error("Неверный email или пароль");
+  }
+
+  if (candidate.user.isBlocked) {
+    throw new Error("Аккаунт заблокирован администратором");
   }
 
   const isValid = await verifyPassword({
@@ -89,7 +92,7 @@ export async function loginUser(input: {
   });
 
   if (!isValid) {
-    throw new Error("Invalid credentials");
+    throw new Error("Неверный email или пароль");
   }
 
   return candidate.user;
@@ -99,10 +102,12 @@ export async function registerTelegramCustomer(input: {
   fullName: string;
   phone: string;
 }) {
-  return upsertTelegramCustomer({
+  const user = await upsertTelegramCustomer({
     fullName: input.fullName,
-    phone: normalizePhone(input.phone)
+    phone: belarusPhoneSchema.parse(input.phone)
   });
+  if (user.isBlocked) throw new Error("Аккаунт заблокирован администратором");
+  return user;
 }
 
 async function assertRegistrationAvailable(email: string, phone: string) {

@@ -1,0 +1,162 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.card {
+  display: grid;
+  gap: 13px;
+  padding: 20px;
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  background: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.card h2,
+.card p {
+  margin: 0;
+}
+
+.card h2 {
+  color: var(--public-text);
+  font-size: 1.05rem;
+}
+
+.card p {
+  color: var(--public-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.form,
+.form label {
+  display: grid;
+  gap: 9px;
+}
+
+.form label {
+  gap: 5px;
+  color: var(--public-text);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.form input,
+.inlineForm input {
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--public-border);
+  border-radius: 10px;
+}
+
+.card button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--public-primary), #ffd000);
+  color: var(--public-text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.inlineForm {
+  display: flex;
+  gap: 8px;
+}
+
+.dangerButton {
+  border: 1px solid rgba(220, 38, 38, 0.16) !important;
+  background: rgba(220, 38, 38, 0.05) !important;
+  color: var(--danger) !important;
+}
+
+.secureText {
+  color: #15803d !important;
+  font-weight: 750;
+}
+
+.secret,
+.uri {
+  overflow-wrap: anywhere;
+  padding: 10px;
+  border-radius: 9px;
+  background: #f1f5f9;
+  color: var(--public-text);
+  font-size: 0.75rem;
+}
+
+.tableFrame {
+  overflow: auto;
+}
+
+.tableFrame table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+}
+
+.tableFrame th,
+.tableFrame td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--panel-border);
+  text-align: left;
+  font-size: 0.78rem;
+}
+
+.tableFrame th {
+  color: var(--public-muted);
+}
+
+.tableFrame td span {
+  display: block;
+  color: var(--public-muted);
+  font-size: 0.7rem;
+}
+
+.sessionList {
+  display: grid;
+  gap: 8px;
+}
+
+.sessionList article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+}
+
+.sessionList article div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.sessionList span,
+.sessionList small {
+  overflow: hidden;
+  color: var(--public-muted);
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .inlineForm,
+  .sessionList article {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
