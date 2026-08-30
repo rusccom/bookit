@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "prestart": "node scripts/migrate.mjs up",
     "start": "next start",
     "lint": "next lint",
     "migrate:create": "node-pg-migrate create",
