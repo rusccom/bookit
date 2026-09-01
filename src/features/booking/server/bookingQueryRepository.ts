@@ -83,6 +83,8 @@ export async function listOwnerBookings(ownerUserId: string) {
       b.status,
       b.note,
       b.source,
+      c.full_name AS customer_name,
+      c.phone AS customer_phone,
       u.title AS unit_title,
       v.title AS venue_title,
       v.city,
@@ -91,9 +93,10 @@ export async function listOwnerBookings(ownerUserId: string) {
     JOIN bookable_units u ON u.id = b.unit_id
     JOIN venues v ON v.id = u.venue_id
     JOIN providers p ON p.id = v.provider_id
+    LEFT JOIN app_users c ON c.id = b.customer_user_id
     WHERE p.owner_user_id = ${ownerUserId}
     ORDER BY b.booking_date DESC, b.start_minutes DESC
-    LIMIT 20
+    LIMIT 100
   `;
 
   return rows.map(mapBooking);
@@ -156,7 +159,11 @@ async function getOwnerBooking(input: {
   return row ? mapBooking(row) : null;
 }
 
-export async function listUpcomingCustomerBooking(customerUserId: string) {
+export async function listUpcomingCustomerBooking(input: {
+  customerUserId: string;
+  minimumStart: number;
+  today: string;
+}) {
   const sql = getDb();
   const [row] = await sql<BookingRow[]>`
     SELECT
@@ -166,9 +173,10 @@ export async function listUpcomingCustomerBooking(customerUserId: string) {
     FROM bookings b
     JOIN bookable_units u ON u.id = b.unit_id
     JOIN venues v ON v.id = u.venue_id
-    WHERE b.customer_user_id = ${customerUserId}
+    WHERE b.customer_user_id = ${input.customerUserId}
       AND b.status IN ('confirmed', 'pending_confirmation')
-      AND b.booking_date >= CURRENT_DATE
+      AND (b.booking_date > ${input.today}
+        OR (b.booking_date = ${input.today} AND b.start_minutes >= ${input.minimumStart}))
     ORDER BY b.booking_date ASC, b.start_minutes ASC
     LIMIT 1
   `;

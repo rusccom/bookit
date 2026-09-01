@@ -1,4 +1,5 @@
 import s from "./customerSearchForm.module.css";
+import { getTodayIso } from "@/features/shared/server/dateTime";
 
 type CustomerSearchFormProps = {
   cities: string[];
@@ -20,9 +21,11 @@ const durationOptions = [
 ];
 
 export function CustomerSearchForm(props: CustomerSearchFormProps) {
+  const today = getTodayIso();
   return (
     <form className={`panel form-grid ${s.searchForm}`} method="GET">
-      <h2>Найти свободное время</h2>
+      <div className={s.header}><div><p className="eyebrow">Поиск по расписанию</p><h2>Когда хотите играть?</h2></div><span>Бронирование подтверждается сразу</span></div>
+      <div className={s.controls}>
       <label className={s.field}>
         <span>Город</span>
         <select className={s.control} defaultValue={props.values.city || ""} name="city" required>
@@ -36,7 +39,7 @@ export function CustomerSearchForm(props: CustomerSearchFormProps) {
       </label>
       <label className={s.field}>
         <span>Дата</span>
-        <input className={s.control} defaultValue={props.values.date} name="date" required type="date" />
+        <input className={s.control} defaultValue={props.values.date} min={today} name="date" required type="date" />
       </label>
       <label className={s.field}>
         <span>Длительность</span>
@@ -82,8 +85,9 @@ export function CustomerSearchForm(props: CustomerSearchFormProps) {
         />
       </label>
       <button className={`primary-button ${s.submit}`} type="submit">
-        Показать доступность
+        Найти свободное время
       </button>
+      </div>
     </form>
   );
 }

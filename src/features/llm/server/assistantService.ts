@@ -4,7 +4,7 @@ import {
   createTelegramPendingBooking,
   searchAvailability
 } from "@/features/booking/server/bookingService";
-import { toIsoDateLabel } from "@/features/shared/server/dateTime";
+import { getTodayIso } from "@/features/shared/server/dateTime";
 
 type AssistantReply = {
   keyboard?: {
@@ -20,7 +20,7 @@ export async function buildTelegramAssistantReply(input: {
   previousIntent: Record<string, unknown>;
   userId: string;
 }): Promise<AssistantReply> {
-  const todayIso = toIsoDateLabel(new Date());
+  const todayIso = getTodayIso();
   const intent = await extractBookingIntent({
     message: input.message,
     previousIntent: input.previousIntent,

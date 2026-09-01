@@ -2,7 +2,7 @@ import { requireUser } from "@/features/auth/server/requireUser";
 import { getCustomerBookingList } from "@/features/booking/server/bookingService";
 import type { BookingRecord } from "@/features/booking/server/bookingTypes";
 import { BookingHistoryList } from "@/features/booking/ui/BookingHistoryList";
-import { toIsoDateLabel } from "@/features/shared/server/dateTime";
+import { isFutureBookingStart, parseTimeLabel } from "@/features/shared/server/dateTime";
 import { StatusBanner } from "@/features/shared/ui/StatusBanner";
 
 type PageProps = {
@@ -17,8 +17,7 @@ export default async function CustomerBookingsPage(props: PageProps) {
   const success = pick(sp.success);
 
   const all = await getCustomerBookingList(user.id);
-  const today = toIsoDateLabel(new Date());
-  const filtered = filterByTab(all, tab, today);
+  const filtered = filterByTab(all, tab);
 
   return (
     <>
@@ -31,14 +30,18 @@ export default async function CustomerBookingsPage(props: PageProps) {
   );
 }
 
-function filterByTab(items: BookingRecord[], tab: string, today: string) {
+function filterByTab(items: BookingRecord[], tab: string) {
   if (tab === "cancelled") {
     return items.filter((i) => i.status === "cancelled");
   }
   if (tab === "past") {
-    return items.filter((i) => i.status !== "cancelled" && i.dateLabel < today);
+    return items.filter((item) => item.status !== "cancelled" && !isUpcoming(item));
   }
-  return items.filter((i) => i.status !== "cancelled" && i.dateLabel >= today);
+  return items.filter((item) => item.status !== "cancelled" && isUpcoming(item));
+}
+
+function isUpcoming(item: BookingRecord) {
+  return isFutureBookingStart(item.dateLabel, parseTimeLabel(item.startTime));
 }
 
 function pick(v: string | string[] | undefined) {

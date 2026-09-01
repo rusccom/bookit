@@ -1,10 +1,11 @@
 import { requireUser } from "@/features/auth/server/requireUser";
-import { searchAvailability } from "@/features/booking/server/bookingService";
+import { searchAvailabilityForView } from "@/features/booking/server/bookingService";
+import { CourtAvailabilityCard } from "@/features/booking/ui/CourtAvailabilityCard";
 import { CustomerSearchForm } from "@/features/booking/ui/CustomerSearchForm";
-import { SlotTimeline } from "@/features/booking/ui/SlotTimeline";
-import s from "@/features/booking/ui/customer.module.css";
+import { EmptyAvailabilityResults } from "@/features/booking/ui/EmptyAvailabilityResults";
+import styles from "@/features/booking/ui/availability.module.css";
 import { getCityOptions } from "@/features/catalog/server/catalogService";
-import { getTomorrowIso } from "@/features/shared/server/dateTime";
+import { getTodayIso } from "@/features/shared/server/dateTime";
 import { StatusBanner } from "@/features/shared/ui/StatusBanner";
 
 type PageProps = {
@@ -16,50 +17,25 @@ export default async function CustomerSearchPage(props: PageProps) {
   const sp = await props.searchParams;
   const values = getValues(sp);
 
-  const [cities, availability] = await Promise.all([
+  const [cities, result] = await Promise.all([
     getCityOptions(),
-    values.city ? searchAvailability({
+    values.city ? searchAvailabilityForView({
       city: values.city,
       date: values.date,
       durationMinutes: Number(values.durationMinutes),
       endTime: values.endTime,
       startTime: values.startTime,
       venueQuery: values.venueQuery
-    }) : Promise.resolve([])
+    }) : Promise.resolve({ error: "", items: [] })
   ]);
+  const returnTo = buildReturnTo(values);
 
   return (
     <>
-      <StatusBanner error={values.error} success={values.success} />
+      <StatusBanner error={values.error || result.error} success={values.success} />
       <CustomerSearchForm cities={cities} values={values} />
-
-      <section className="panel stack">
-        <h2>Доступные корты</h2>
-        {availability.length ? (
-          <div className={s.searchResults}>
-            {availability.map((item) => (
-              <div key={item.unitId} className={s.courtCard}>
-                <div className={s.courtHeader}>
-                  <h3>{item.venueTitle} / {item.unitTitle}</h3>
-                  <p>{item.city}, {item.address}</p>
-                </div>
-                <SlotTimeline
-                  date={values.date}
-                  durationMinutes={Number(values.durationMinutes)}
-                  options={item.options}
-                  unitId={item.unitId}
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="muted">
-            {values.city
-              ? "По выбранным фильтрам свободных слотов нет."
-              : "Выберите город и дату, чтобы увидеть свободные корты."}
-          </p>
-        )}
-      </section>
+      <header className={styles.resultsHeader}><div><p className="eyebrow">Онлайн-запись</p><h1>Свободные корты</h1><p>{values.city ? `${values.city} · ${values.date}` : "Выберите город и дату"}</p></div>{values.city && <span className={styles.resultsCount}>{result.items.length} найдено</span>}</header>
+      {result.items.length ? <div className={styles.results}>{result.items.map((item) => <CourtAvailabilityCard date={values.date} durationMinutes={Number(values.durationMinutes)} item={item} key={item.unitId} returnTo={returnTo} />)}</div> : <EmptyAvailabilityResults searched={Boolean(values.city)} />}
     </>
   );
 }
@@ -67,7 +43,7 @@ export default async function CustomerSearchPage(props: PageProps) {
 function getValues(input: Record<string, string | string[] | undefined>) {
   return {
     city: pick(input.city),
-    date: pick(input.date) || getTomorrowIso(),
+    date: pick(input.date) || getTodayIso(),
     durationMinutes: pick(input.durationMinutes) || "60",
     endTime: pick(input.endTime),
     error: pick(input.error),
@@ -75,6 +51,14 @@ function getValues(input: Record<string, string | string[] | undefined>) {
     success: pick(input.success),
     venueQuery: pick(input.venueQuery)
   };
+}
+
+function buildReturnTo(values: ReturnType<typeof getValues>) {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(values)) {
+    if (value && key !== "error" && key !== "success") params.set(key, value);
+  }
+  return `/dashboard/customer/search?${params.toString()}`;
 }
 
 function pick(v: string | string[] | undefined) {

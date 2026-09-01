@@ -12,7 +12,10 @@ import {
   getBookingForActor
 } from "@/features/booking/server/bookingQueryRepository";
 import { ensureUnitCanBeBooked } from "@/features/booking/server/availabilityService";
-import { parseTimeLabel } from "@/features/shared/server/dateTime";
+import {
+  isFutureBookingStart,
+  parseTimeLabel
+} from "@/features/shared/server/dateTime";
 
 export async function createCustomerBooking(input: {
   date: string;
@@ -28,7 +31,7 @@ export async function createCustomerBooking(input: {
     createdByUserId: input.userId,
     customerUserId: input.userId,
     durationMinutes: input.durationMinutes,
-    note: input.note,
+    note: normalizeNote(input.note),
     source: "web_customer",
     startTime: input.startTime,
     unitId: input.unitId
@@ -49,7 +52,7 @@ export async function createOwnerManualBooking(input: {
   });
 
   if (!unit) {
-    throw new Error("Unit not found for owner");
+    throw new Error("Корт не найден или отключён");
   }
 
   const durationMinutes = parseTimeLabel(input.endTime) - parseTimeLabel(input.startTime);
@@ -65,7 +68,7 @@ export async function createOwnerManualBooking(input: {
     bookingDate: input.date,
     createdByUserId: input.ownerUserId,
     durationMinutes,
-    note: input.note,
+    note: normalizeNote(input.note),
     source: "owner_manual",
     startTime: input.startTime,
     unitId: input.unitId
@@ -151,8 +154,12 @@ export async function cancelBooking(input: {
   const booking = await getBookingForActor(input);
 
   if (!booking) {
-    throw new Error("Booking not found");
+    throw new Error("Бронирование не найдено");
   }
+
+  if (booking.status === "cancelled") throw new Error("Бронирование уже отменено");
+  const startMinutes = parseTimeLabel(booking.startTime);
+  if (!isFutureBookingStart(booking.dateLabel, startMinutes)) throw new Error("Прошедшее бронирование нельзя отменить");
 
   await updateBookingStatus({
     bookingId: input.bookingId,
@@ -208,7 +215,7 @@ async function ensureNoOverlap(input: {
   const overlap = await hasActiveOverlap(input);
 
   if (overlap) {
-    throw new Error("Slot is already booked");
+    throw new Error("Этот слот уже занят");
   }
 }
 
@@ -219,7 +226,7 @@ async function findTelegramBooking(input: {
   const booking = await findTelegramPendingBooking(input);
 
   if (!booking) {
-    throw new Error("Pending Telegram booking not found");
+    throw new Error("Ожидающее бронирование не найдено");
   }
 
   return {
@@ -228,4 +235,10 @@ async function findTelegramBooking(input: {
     startMinutes: parseTimeLabel(booking.startTime),
     unitId: booking.unitId
   };
+}
+
+function normalizeNote(value?: string) {
+  const note = value?.trim() || "";
+  if (note.length > 500) throw new Error("Комментарий не должен превышать 500 символов");
+  return note;
 }

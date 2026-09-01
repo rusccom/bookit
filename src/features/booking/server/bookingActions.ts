@@ -11,7 +11,8 @@ import {
 
 export async function createCustomerBookingAction(formData: FormData) {
   const user = await requireUser("customer");
-  let target = "/dashboard/customer";
+  const returnTo = safeCustomerPath(String(formData.get("returnTo") || ""));
+  let target = "/dashboard/customer/bookings?success=booking-created";
 
   try {
     await createCustomerBooking({
@@ -22,9 +23,8 @@ export async function createCustomerBookingAction(formData: FormData) {
       unitId: String(formData.get("unitId") || ""),
       userId: user.id
     });
-    target = "/dashboard/customer?success=booking-created";
   } catch (error) {
-    target = `/dashboard/customer/search?error=${encodeURIComponent(getErrorMessage(error))}`;
+    target = appendStatus(returnTo, "error", getErrorMessage(error));
   }
 
   redirect(target);
@@ -92,5 +92,16 @@ async function cancelBookingAction(input: {
 }
 
 function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Unexpected error";
+  return error instanceof Error ? error.message : "Не удалось выполнить действие";
+}
+
+function safeCustomerPath(value: string) {
+  return value.startsWith("/dashboard/customer/search?")
+    ? value
+    : "/dashboard/customer/search";
+}
+
+function appendStatus(path: string, key: "error" | "success", value: string) {
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}${key}=${encodeURIComponent(value)}`;
 }

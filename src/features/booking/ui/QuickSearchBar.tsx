@@ -1,10 +1,10 @@
-import { getTomorrowIso } from "@/features/shared/server/dateTime";
+import { getTodayIso } from "@/features/shared/server/dateTime";
 import s from "./customer.module.css";
 
 type Props = { cities: string[] };
 
 export function QuickSearchBar({ cities }: Props) {
-  const tomorrow = getTomorrowIso();
+  const today = getTodayIso();
 
   return (
     <form action="/dashboard/customer/search" className={s.quickSearch} method="GET">
@@ -19,7 +19,7 @@ export function QuickSearchBar({ cities }: Props) {
       </label>
       <label>
         <span>Дата</span>
-        <input defaultValue={tomorrow} name="date" required type="date" />
+        <input defaultValue={today} min={today} name="date" required type="date" />
       </label>
       <button className="primary-button" type="submit">Найти корт</button>
     </form>

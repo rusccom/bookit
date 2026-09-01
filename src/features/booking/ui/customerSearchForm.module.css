@@ -8,6 +8,25 @@
   justify-self: stretch;
 }
 
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header h2,
+.header p { margin: 0; }
+
+.header > span { color: var(--success); font-size: .75rem; font-weight: 700; }
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  align-items: flex-end;
+}
+
 .field {
   display: grid;
   width: 100%;
@@ -40,4 +59,9 @@
   .submit {
     width: fit-content;
   }
+}
+
+@media (max-width: 780px) {
+  .header { align-items: flex-start; flex-direction: column; }
+  .controls { grid-template-columns: 1fr; width: 100%; }
 }

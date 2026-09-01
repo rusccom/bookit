@@ -2,6 +2,8 @@ export type BookingRecord = {
   address: string;
   bookingId: string;
   city: string;
+  customerName: string | null;
+  customerPhone: string | null;
   dateLabel: string;
   endTime: string;
   note: string;
@@ -16,7 +18,10 @@ export type BookingRecord = {
 export type UnitOption = {
   address: string;
   city: string;
+  description: string;
   kind: string;
+  pricePerHour: number;
+  surface: string;
   unitId: string;
   unitTitle: string;
   venueTitle: string;
@@ -30,8 +35,11 @@ export type AvailabilityOption = {
 export type AvailabilityResult = {
   address: string;
   city: string;
+  description: string;
   kind: string;
   options: AvailabilityOption[];
+  pricePerHour: number;
+  surface: string;
   unitId: string;
   unitTitle: string;
   venueTitle: string;

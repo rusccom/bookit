@@ -12,8 +12,10 @@ export type RuleRow = Row & {
 
 export type BookingRow = Row & {
   address: string;
-  booking_date: string;
+  booking_date: Date | string;
   city: string;
+  customer_name?: string | null;
+  customer_phone?: string | null;
   end_minutes: number;
   id: string;
   note: string;
@@ -28,7 +30,10 @@ export type BookingRow = Row & {
 export type UnitRow = Row & {
   address: string;
   city: string;
+  description: string;
   kind: string;
+  price_per_hour: string;
+  surface: string;
   unit_id: string;
   unit_title: string;
   venue_title: string;

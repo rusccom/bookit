@@ -44,7 +44,9 @@ export function mapBooking(row: BookingRow): BookingRecord {
     address: row.address,
     bookingId: row.id,
     city: row.city,
-    dateLabel: row.booking_date,
+    customerName: row.customer_name || null,
+    customerPhone: row.customer_phone || null,
+    dateLabel: formatBookingDate(row.booking_date),
     endTime: minutesToTime(row.end_minutes),
     note: row.note,
     source: row.source,
@@ -60,7 +62,10 @@ export function mapUnit(row: UnitRow): UnitOption {
   return {
     address: row.address,
     city: row.city,
+    description: row.description,
     kind: row.kind,
+    pricePerHour: Number(row.price_per_hour),
+    surface: row.surface,
     unitId: row.unit_id,
     unitTitle: row.unit_title,
     venueTitle: row.venue_title
@@ -80,4 +85,9 @@ function minutesToTime(value: number): string {
   const hours = Math.floor(value / 60);
   const minutes = value % 60;
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+}
+
+function formatBookingDate(value: Date | string): string {
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return String(value).slice(0, 10);
 }

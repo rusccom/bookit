@@ -15,7 +15,7 @@ const CUSTOMER_NAV = [
 
 const OWNER_NAV = [
   { href: "/dashboard/owner", label: "Обзор" },
-  { href: "/dashboard/owner/units", label: "Объекты" },
+  { href: "/dashboard/owner/units", label: "Корты" },
   { href: "/dashboard/owner/bookings", label: "Бронирования" },
 ];
 

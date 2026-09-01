@@ -71,6 +71,9 @@ export async function listUnitsForAvailability(filters: {
       u.id AS unit_id,
       u.title AS unit_title,
       u.kind,
+      u.surface,
+      u.description,
+      u.price_per_hour::TEXT,
       v.title AS venue_title,
       v.city,
       v.address
@@ -80,7 +83,7 @@ export async function listUnitsForAvailability(filters: {
       AND v.is_active = TRUE
       AND u.is_active = TRUE
       AND (
-        ${venueQuery || null} IS NULL
+        ${venueQuery || null}::TEXT IS NULL
         OR v.title ILIKE ${`%${venueQuery}%`}
         OR u.title ILIKE ${`%${venueQuery}%`}
       )
@@ -100,6 +103,9 @@ export async function findOwnerUnit(input: {
       u.id AS unit_id,
       u.title AS unit_title,
       u.kind,
+      u.surface,
+      u.description,
+      u.price_per_hour::TEXT,
       v.title AS venue_title,
       v.city,
       v.address
@@ -122,6 +128,9 @@ export async function findUnit(unitId: string) {
       u.id AS unit_id,
       u.title AS unit_title,
       u.kind,
+      u.surface,
+      u.description,
+      u.price_per_hour::TEXT,
       v.title AS venue_title,
       v.city,
       v.address

@@ -21,7 +21,7 @@ export function OwnerStatCards(props: OwnerStatCardsProps) {
       </div>
       <div className={s.statCard}>
         <span className={s.statValue}>{props.totalUnits}</span>
-        <span className={s.statLabel}>Всего объектов</span>
+        <span className={s.statLabel}>Всего кортов</span>
       </div>
     </div>
   );

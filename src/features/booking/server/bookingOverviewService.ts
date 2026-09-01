@@ -5,6 +5,7 @@ import {
   listOwnerTodayBookings,
   listUpcomingCustomerBooking
 } from "@/features/booking/server/bookingQueryRepository";
+import { getMinimumBookingMinutes, getTodayIso } from "@/features/shared/server/dateTime";
 
 export async function getOwnerBookingList(ownerUserId: string) {
   return listOwnerBookings(ownerUserId);
@@ -23,5 +24,10 @@ export async function getCustomerBookingList(customerUserId: string) {
 }
 
 export async function getUpcomingCustomerBooking(customerUserId: string) {
-  return listUpcomingCustomerBooking(customerUserId);
+  const today = getTodayIso();
+  return listUpcomingCustomerBooking({
+    customerUserId,
+    minimumStart: getMinimumBookingMinutes(today) || 0,
+    today
+  });
 }

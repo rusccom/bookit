@@ -7,7 +7,7 @@ import s from "./owner.module.css";
 
 const tabs = [
   { href: "/dashboard/owner", label: "Обзор" },
-  { href: "/dashboard/owner/units", label: "Объекты" },
+  { href: "/dashboard/owner/units", label: "Корты" },
   { href: "/dashboard/owner/bookings", label: "Бронирования" },
 ];
 

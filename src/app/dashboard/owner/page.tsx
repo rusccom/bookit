@@ -8,7 +8,7 @@ import {
 import { OwnerStatCards } from "@/features/booking/ui/OwnerStatCards";
 import { TodaySchedule } from "@/features/booking/ui/TodaySchedule";
 import { StatusBanner } from "@/features/shared/ui/StatusBanner";
-import { toIsoDateLabel } from "@/features/shared/server/dateTime";
+import { getTodayIso } from "@/features/shared/server/dateTime";
 
 import s from "@/features/booking/ui/owner.module.css";
 
@@ -22,7 +22,7 @@ export default async function OwnerOverviewPage(props: PageProps) {
   const error = pickValue(sp.error);
   const success = pickValue(sp.success);
 
-  const today = toIsoDateLabel(new Date());
+  const today = getTodayIso();
 
   const [stats, todayBookings] = await Promise.all([
     getOwnerDashboardStats(owner.id, today),
@@ -50,7 +50,7 @@ export default async function OwnerOverviewPage(props: PageProps) {
 
       <div className={s.quickActions}>
         <Link className="primary-link" href="/dashboard/owner/units">
-          Добавить объект
+          Добавить корт
         </Link>
         <Link className="secondary-link" href="/dashboard/owner/bookings">
           Создать бронь

@@ -92,7 +92,7 @@ export async function hasActiveOverlap(input: {
           expires_at IS NULL
           OR expires_at > NOW()
         )
-        AND id != COALESCE($3, id)
+        AND ($3::UUID IS NULL OR id != $3::UUID)
         AND start_minutes < $4
         AND end_minutes > $5
       LIMIT 1
