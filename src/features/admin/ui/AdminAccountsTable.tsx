@@ -1,14 +1,22 @@
 import type { ManagedAdmin } from "@/features/admin/server/adminTypes";
-import { DeleteAdminButton } from "@/features/admin/ui/DeleteAdminButton";
-
-import styles from "./adminSecurity.module.css";
+import { formatAdminDate } from "./adminPresentation";
+import { DeleteAdminButton } from "./DeleteAdminButton";
+import { AdminBadge } from "./shared/AdminBadge";
+import { AdminCard } from "./shared/AdminCard";
+import { AdminCell } from "./shared/AdminCell";
+import { AdminTable, type AdminColumn } from "./shared/AdminTable";
 
 type AdminAccountsTableProps = { admins: ManagedAdmin[]; currentAdminId: string };
 
-export function AdminAccountsTable(props: AdminAccountsTableProps) {
-  return <section className={styles.card}><h2>Администраторы</h2><div className={styles.tableFrame}><table><thead><tr><th>Логин</th><th>Создан</th><th>2FA</th><th>Статус</th><th /></tr></thead><tbody>{props.admins.map((admin) => <tr key={admin.id}><td><strong>{admin.login}</strong>{admin.id === props.currentAdminId && <span>Текущий аккаунт</span>}</td><td>{formatDate(admin.createdAt)}</td><td>{admin.twoFactorEnabled ? "Включена" : "Выключена"}</td><td>{admin.isLocked ? "Временно заблокирован" : "Активен"}</td><td>{admin.id !== props.currentAdminId && <DeleteAdminButton adminId={admin.id} />}</td></tr>)}</tbody></table></div></section>;
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("ru-BY", { dateStyle: "medium" }).format(new Date(value));
+export function AdminAccountsTable({ admins, currentAdminId }: AdminAccountsTableProps) {
+  const columns: AdminColumn<ManagedAdmin>[] = [
+    { key: "login", label: "Логин", render: (admin) => <AdminCell detail={admin.id === currentAdminId && "Текущий аккаунт"}><strong>{admin.login}</strong></AdminCell> },
+    { key: "created", label: "Создан", render: (admin) => formatAdminDate(admin.createdAt) },
+    { key: "2fa", label: "2FA", render: (admin) => <AdminBadge tone={admin.twoFactorEnabled ? "success" : "neutral"}>{admin.twoFactorEnabled ? "Включена" : "Выключена"}</AdminBadge> },
+    { key: "status", label: "Статус", render: (admin) => <AdminBadge tone={admin.isLocked ? "danger" : "success"}>{admin.isLocked ? "Временно заблокирован" : "Активен"}</AdminBadge> },
+    { key: "actions", label: "Управление", render: (admin) => admin.id !== currentAdminId && <DeleteAdminButton adminId={admin.id} /> }
+  ];
+  return <AdminCard title="Администраторы">
+    <AdminTable caption="Администраторы" columns={columns} items={admins} rowKey={(admin) => admin.id} emptyMessage="Администраторы не найдены." />
+  </AdminCard>;
 }

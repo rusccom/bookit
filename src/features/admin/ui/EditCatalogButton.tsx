@@ -1,15 +1,16 @@
-"use client";
-
-import { useState } from "react";
-
 import type { AdminCatalogRecord } from "@/features/admin/server/adminTypes";
-import { EditCatalogModal } from "@/features/admin/ui/EditCatalogModal";
-
-import styles from "./adminDataTable.module.css";
+import { updateAdminCatalogAction } from "@/features/admin/server/adminCatalogActions";
+import { AdminEditDialog } from "./shared/AdminEditDialog";
+import { AdminField } from "./shared/AdminField";
 
 type EditCatalogButtonProps = { city: string; item: AdminCatalogRecord; search: string; status: string };
 
-export function EditCatalogButton(props: EditCatalogButtonProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  return <><button className={styles.actionButton} onClick={() => setIsOpen(true)} type="button">Изменить</button>{isOpen && <EditCatalogModal {...props} onClose={() => setIsOpen(false)} />}</>;
+export function EditCatalogButton({ city, item, search, status }: EditCatalogButtonProps) {
+  const values = { unitId: item.unitId, venueId: item.venueId, search, filterCity: city, filterStatus: status };
+  return <AdminEditDialog eyebrow="Каталог" title="Изменить объект" action={updateAdminCatalogAction} values={values}>
+    <AdminField label="Название объекта"><input defaultValue={item.venueTitle} maxLength={100} name="venueTitle" required /></AdminField>
+    <AdminField label="Город"><input defaultValue={item.city} maxLength={100} name="city" required /></AdminField>
+    <AdminField label="Адрес"><input defaultValue={item.address} maxLength={200} name="address" required /></AdminField>
+    <AdminField label="Название корта"><input defaultValue={item.unitTitle} maxLength={100} name="unitTitle" required /></AdminField>
+  </AdminEditDialog>;
 }

@@ -1,6 +1,5 @@
-import { AdminBookingStatusForm } from "@/features/admin/ui/AdminBookingStatusForm";
-
-import styles from "./adminDataTable.module.css";
+import { AdminBookingStatusForm } from "./AdminBookingStatusForm";
+import { AdminActions } from "./shared/AdminActions";
 
 type AdminBookingActionsProps = {
   bookingId: string;
@@ -10,9 +9,9 @@ type AdminBookingActionsProps = {
   search: string;
 };
 
-export function AdminBookingActions(props: AdminBookingActionsProps) {
-  return <div className={styles.rowActions}>
-    {props.bookingStatus !== "confirmed" && <AdminBookingStatusForm {...props} nextStatus="confirmed" />}
-    {props.bookingStatus !== "cancelled" && <AdminBookingStatusForm {...props} nextStatus="cancelled" />}
-  </div>;
+export function AdminBookingActions({ bookingStatus, ...filters }: AdminBookingActionsProps) {
+  return <AdminActions>
+    {bookingStatus !== "confirmed" && <AdminBookingStatusForm {...filters} nextStatus="confirmed" />}
+    {bookingStatus !== "cancelled" && <AdminBookingStatusForm {...filters} nextStatus="cancelled" />}
+  </AdminActions>;
 }

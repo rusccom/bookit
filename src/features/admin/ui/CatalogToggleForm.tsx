@@ -1,10 +1,5 @@
-"use client";
-
-import type { FormEvent } from "react";
-
 import { toggleAdminCatalogAction } from "@/features/admin/server/adminCatalogActions";
-
-import styles from "./adminDataTable.module.css";
+import { AdminActionForm } from "./shared/AdminActionForm";
 
 type CatalogToggleFormProps = {
   active: boolean;
@@ -15,11 +10,10 @@ type CatalogToggleFormProps = {
   status: string;
 };
 
-export function CatalogToggleForm(props: CatalogToggleFormProps) {
-  const label = props.active ? "Отключить" : "Включить";
-  return <form action={toggleAdminCatalogAction} onSubmit={(event) => confirmToggle(event, label)}><input name="entityId" type="hidden" value={props.entityId} /><input name="entityType" type="hidden" value={props.entityType} /><input name="active" type="hidden" value={String(!props.active)} /><input name="search" type="hidden" value={props.search} /><input name="filterCity" type="hidden" value={props.city} /><input name="filterStatus" type="hidden" value={props.status} /><button className={styles.actionButton} type="submit">{label} {props.entityType === "unit" ? "корт" : "объект"}</button></form>;
-}
-
-function confirmToggle(event: FormEvent<HTMLFormElement>, label: string) {
-  if (!window.confirm(`${label} выбранную позицию?`)) event.preventDefault();
+export function CatalogToggleForm({ active, city, entityId, entityType, search, status }: CatalogToggleFormProps) {
+  const label = active ? "Отключить" : "Включить";
+  const values = { entityId, entityType, active: String(!active), search, filterCity: city, filterStatus: status };
+  return <AdminActionForm action={toggleAdminCatalogAction} values={values} confirmation={label + " выбранную позицию?"}>
+    {label} {entityType === "unit" ? "корт" : "объект"}
+  </AdminActionForm>;
 }

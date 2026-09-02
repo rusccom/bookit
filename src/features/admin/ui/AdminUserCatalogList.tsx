@@ -1,12 +1,14 @@
 import type { AdminUserCatalogItem } from "@/features/admin/server/adminTypes";
+import { AdminBadge } from "./shared/AdminBadge";
+import { AdminCell } from "./shared/AdminCell";
+import { AdminTable, type AdminColumn } from "./shared/AdminTable";
 
-import styles from "./adminUserDetails.module.css";
+const columns: AdminColumn<AdminUserCatalogItem>[] = [
+  { key: "unit", label: "Корт", render: (item) => <strong>{item.unitTitle}</strong> },
+  { key: "venue", label: "Объект", render: (item) => <AdminCell detail={item.city}>{item.venueTitle}</AdminCell> },
+  { key: "status", label: "Статус", render: (item) => <AdminBadge tone={item.isActive ? "success" : "danger"}>{item.isActive ? "Активен" : "Отключён"}</AdminBadge> }
+];
 
-type AdminUserCatalogListProps = {
-  catalog: AdminUserCatalogItem[];
-};
-
-export function AdminUserCatalogList({ catalog }: AdminUserCatalogListProps) {
-  if (!catalog.length) return <p className={styles.empty}>У пользователя нет кортов.</p>;
-  return <div className={styles.catalogGrid}>{catalog.map((item) => <article className={styles.catalogCard} key={item.unitId}><div><strong>{item.unitTitle}</strong><span>{item.venueTitle}, {item.city}</span></div><b className={item.isActive ? styles.active : styles.inactive}>{item.isActive ? "Активен" : "Отключён"}</b></article>)}</div>;
+export function AdminUserCatalogList({ catalog }: { catalog: AdminUserCatalogItem[] }) {
+  return <AdminTable caption="Корты пользователя" columns={columns} items={catalog} rowKey={(item) => item.unitId} emptyMessage="У пользователя нет кортов." />;
 }

@@ -1,14 +1,20 @@
 import { revokeAdminSessionAction } from "@/features/admin/server/adminSecurityActions";
 import type { AdminSessionRecord } from "@/features/admin/server/adminTypes";
+import { formatAdminDate } from "./adminPresentation";
+import { AdminActionForm } from "./shared/AdminActionForm";
+import { AdminCard } from "./shared/AdminCard";
+import { AdminCell } from "./shared/AdminCell";
+import { AdminTable, type AdminColumn } from "./shared/AdminTable";
 
-import styles from "./adminSecurity.module.css";
+const columns: AdminColumn<AdminSessionRecord>[] = [
+  { key: "device", label: "Устройство", render: (session) => <AdminCell detail={session.userAgent}><strong>{session.isCurrent ? "Текущая сессия" : "Другое устройство"}</strong></AdminCell> },
+  { key: "seen", label: "Активность", render: (session) => formatAdminDate(session.lastSeenAt, true) },
+  { key: "expires", label: "Действует до", render: (session) => formatAdminDate(session.expiresAt, true) },
+  { key: "actions", label: "Управление", render: (session) => !session.isCurrent && <AdminActionForm action={revokeAdminSessionAction} values={{ sessionId: session.id }} variant="danger">Завершить</AdminActionForm> }
+];
 
-type AdminSessionsTableProps = { sessions: AdminSessionRecord[] };
-
-export function AdminSessionsTable({ sessions }: AdminSessionsTableProps) {
-  return <section className={styles.card}><h2>Активные сессии</h2><p>Завершите вход на устройствах, которыми больше не пользуетесь.</p><div className={styles.sessionList}>{sessions.map((session) => <article key={session.id}><div><strong>{session.isCurrent ? "Текущая сессия" : "Другое устройство"}</strong><span>{session.userAgent}</span><small>Активность: {formatDate(session.lastSeenAt)} · до {formatDate(session.expiresAt)}</small></div>{!session.isCurrent && <form action={revokeAdminSessionAction}><input name="sessionId" type="hidden" value={session.id} /><button className={styles.dangerButton} type="submit">Завершить</button></form>}</article>)}</div></section>;
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("ru-BY", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
+export function AdminSessionsTable({ sessions }: { sessions: AdminSessionRecord[] }) {
+  return <AdminCard title="Активные сессии" description="Завершите вход на устройствах, которыми больше не пользуетесь.">
+    <AdminTable caption="Активные сессии" columns={columns} items={sessions} rowKey={(session) => session.id} emptyMessage="Активных сессий нет." />
+  </AdminCard>;
 }

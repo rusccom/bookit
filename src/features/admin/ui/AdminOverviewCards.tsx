@@ -1,17 +1,14 @@
 import type { AdminOverviewStats } from "@/features/admin/server/adminTypes";
+import { AdminStats } from "./shared/AdminStats";
 
-import styles from "./adminWorkspace.module.css";
-
-type AdminOverviewCardsProps = {
-  stats: AdminOverviewStats;
-};
-
-export function AdminOverviewCards({ stats }: AdminOverviewCardsProps) {
-  const cards = [
-    ["Пользователи", stats.users], ["Владельцы", stats.owners],
-    ["Объекты", stats.venues], ["Корты", stats.units],
-    ["Брони сегодня", stats.bookingsToday], ["Предстоящие", stats.upcomingBookings],
-    ["Отменённые", stats.cancelledBookings]
-  ];
-  return <div className={styles.statGrid}>{cards.map(([label, value]) => <article className={styles.statCard} key={label}><span>{label}</span><strong>{value}</strong></article>)}</div>;
+export function AdminOverviewCards({ stats }: { stats: AdminOverviewStats }) {
+  return <AdminStats items={[
+    { label: "Пользователи", value: stats.users },
+    { label: "Владельцы", value: stats.owners },
+    { label: "Объекты", value: stats.venues },
+    { label: "Корты", value: stats.units },
+    { label: "Брони сегодня", value: stats.bookingsToday },
+    { label: "Предстоящие", value: stats.upcomingBookings },
+    { label: "Отменённые", value: stats.cancelledBookings }
+  ]} />;
 }

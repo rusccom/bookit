@@ -21,27 +21,9 @@
   box-shadow: var(--public-shadow);
 }
 
-.loginHeader,
-.loginForm,
-.field {
-  display: grid;
-}
-
-.loginHeader {
-  gap: 8px;
-  text-align: center;
-}
-
-.loginHeader h1 {
-  margin: 0;
-  font-family: var(--font-public-display), sans-serif;
-  color: var(--public-text);
-}
-
-.loginHeader p {
-  margin: 0;
-  color: var(--public-muted);
-}
+.loginHeader { display: grid; gap: 8px; text-align: center; }
+.loginHeader h1 { margin: 0; font-family: var(--font-public-display), sans-serif; color: var(--public-text); }
+.loginHeader p { margin: 0; color: var(--public-muted); }
 
 .adminMark {
   display: grid;
@@ -65,62 +47,6 @@
   text-transform: uppercase;
 }
 
-.loginForm {
-  gap: 16px;
-}
-
-.field {
-  gap: 6px;
-}
-
-.field span {
-  color: var(--public-text);
-  font-size: 0.84rem;
-  font-weight: 700;
-}
-
-.field input {
-  min-height: 48px;
-  border: 1px solid var(--public-border);
-  border-radius: 14px;
-  background: #fff;
-}
-
-.remember {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--public-muted);
-  font-size: 0.86rem;
-}
-
-.remember input {
-  width: 17px;
-  height: 17px;
-  accent-color: var(--public-secondary);
-}
-
-.loginButton {
-  min-height: 48px;
-  border: none;
-  border-radius: 999px;
-  background: linear-gradient(135deg, var(--public-primary), #ffd000);
-  color: var(--public-text);
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.loginError {
-  margin: 0;
-  padding: 11px 14px;
-  border-radius: 12px;
-  background: rgba(220, 38, 38, 0.07);
-  color: var(--danger);
-  font-size: 0.86rem;
-}
-
 @media (max-width: 760px) {
-  .loginCard {
-    padding: 26px 22px;
-  }
+  .loginCard { padding: 26px 22px; }
 }
