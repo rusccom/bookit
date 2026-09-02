@@ -5,9 +5,10 @@ import type {
   AdminUserCatalogItem
 } from "@/features/admin/server/adminTypes";
 import { getDb } from "@/features/database/server/client";
+import { formatMinutes, toIsoDateLabel } from "@/features/shared/server/dateTime";
 
 type BookingRow = Row & {
-  booking_date: string;
+  booking_date: Date;
   end_minutes: number;
   id: string;
   start_minutes: number;
@@ -57,9 +58,9 @@ export async function listUserAdminCatalog(userId: string) {
 function mapBooking(row: BookingRow): AdminUserBooking {
   return {
     bookingId: row.id,
-    date: row.booking_date,
+    date: toIsoDateLabel(row.booking_date),
     status: row.status,
-    time: `${toTime(row.start_minutes)}–${toTime(row.end_minutes)}`,
+    time: `${formatMinutes(row.start_minutes)}–${formatMinutes(row.end_minutes)}`,
     unitTitle: row.unit_title,
     venueTitle: row.venue_title
   };
@@ -73,8 +74,4 @@ function mapCatalog(row: CatalogRow): AdminUserCatalogItem {
     unitTitle: row.unit_title,
     venueTitle: row.venue_title
   };
-}
-
-function toTime(value: number) {
-  return `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
 }

@@ -2,9 +2,10 @@ import type { Row } from "postgres";
 
 import type { AdminBookingRecord } from "@/features/admin/server/adminTypes";
 import { getDb } from "@/features/database/server/client";
+import { formatMinutes, toIsoDateLabel } from "@/features/shared/server/dateTime";
 
 type AdminBookingRow = Row & {
-  booking_date: string;
+  booking_date: Date;
   customer_name: string;
   customer_phone: string | null;
   end_minutes: number;
@@ -63,7 +64,7 @@ export async function setAdminBookingStatus(input: {
 export async function findAdminBookingSlot(bookingId: string) {
   const sql = getDb();
   const [row] = await sql<{
-    booking_date: string;
+    booking_date: Date;
     end_minutes: number;
     start_minutes: number;
     unit_id: string;
@@ -71,7 +72,7 @@ export async function findAdminBookingSlot(bookingId: string) {
     SELECT booking_date, start_minutes, end_minutes, unit_id
     FROM bookings WHERE id = ${bookingId}
   `;
-  return row || null;
+  return row ? { ...row, booking_date: toIsoDateLabel(row.booking_date) } : null;
 }
 
 function mapBooking(row: AdminBookingRow): AdminBookingRecord {
@@ -79,16 +80,12 @@ function mapBooking(row: AdminBookingRow): AdminBookingRecord {
     bookingId: row.id,
     customerName: row.customer_name,
     customerPhone: row.customer_phone,
-    date: row.booking_date,
+    date: toIsoDateLabel(row.booking_date),
     ownerName: row.owner_name,
     source: row.source,
     status: row.status,
-    time: `${toTime(row.start_minutes)}–${toTime(row.end_minutes)}`,
+    time: `${formatMinutes(row.start_minutes)}–${formatMinutes(row.end_minutes)}`,
     unitTitle: row.unit_title,
     venueTitle: row.venue_title
   };
-}
-
-function toTime(value: number) {
-  return `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
 }

@@ -7,6 +7,7 @@ import {
   setAdminBookingStatus
 } from "@/features/admin/server/adminBookingRepository";
 import type { AdminAccount } from "@/features/admin/server/adminTypes";
+import { isIsoDate } from "@/features/shared/server/dateTime";
 import {
   hasActiveOverlap,
   runBookingTransaction,
@@ -22,7 +23,8 @@ export async function getAdminBookings(input: {
   status: string;
 }) {
   const parsed = z.enum(["pending_confirmation", "confirmed", "cancelled"]).safeParse(input.status);
-  return listAdminBookings({ ...input, status: parsed.success ? parsed.data : "" });
+  const date = isIsoDate(input.date) && input.date >= "0001-01-01" ? input.date : "";
+  return listAdminBookings({ ...input, date, status: parsed.success ? parsed.data : "" });
 }
 
 export async function changeAdminBookingStatus(
