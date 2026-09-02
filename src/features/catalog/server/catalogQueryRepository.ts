@@ -8,7 +8,7 @@ import { getDb } from "@/features/database/server/client";
 
 const UNIT_COLUMNS = `
   u.id AS unit_id, u.title AS unit_title, u.kind, u.surface, u.description,
-  u.price_per_hour::TEXT, u.is_active, v.is_active AS is_venue_active,
+  u.price_per_hour::TEXT, u.slot_minutes, u.is_active, v.is_active AS is_venue_active,
   v.title AS venue_title, v.city, v.address,
   r.id AS rule_id, r.weekday AS rule_weekday,
   r.start_minutes AS rule_start, r.end_minutes AS rule_end

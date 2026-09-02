@@ -12,7 +12,7 @@ const DAYS = [
 export function WeeklyScheduleFields({ unit }: { unit?: OwnerUnit }) {
   return <fieldset className={styles.schedule}>
     <legend>Еженедельное расписание</legend>
-    <p>Отметьте рабочие дни и задайте отдельное время для каждого дня. Слоты создаются каждые 30 минут.</p>
+    <p>Отметьте рабочие дни и задайте время открытия и закрытия. Свободные слоты появятся автоматически с выбранным шагом.</p>
     {DAYS.map((day) => {
       const rule = unit?.rules.find((item) => item.weekday === day.weekday);
       const enabled = unit ? Boolean(rule) : day.weekday >= 1 && day.weekday <= 5;

@@ -1,95 +1,54 @@
 import type { Row } from "postgres";
 
 import type { AdminCatalogRecord } from "@/features/admin/server/adminTypes";
+import { ADMIN_CATALOG_ATTENTION_QUERY, ADMIN_CATALOG_QUERY } from "@/features/admin/server/adminCatalogSql";
+import { findOwnerUnitDetails } from "@/features/catalog/server/catalogQueryRepository";
+import type { SlotMinutes } from "@/features/catalog/slotOptions";
 import { getDb } from "@/features/database/server/client";
 
 type CatalogRow = Row & {
-  address: string;
-  city: string;
-  is_unit_active: boolean;
-  is_venue_active: boolean;
-  owner_name: string;
-  unit_id: string;
-  unit_title: string;
-  venue_id: string;
-  venue_title: string;
+  address: string; city: string; is_unit_active: boolean; is_venue_active: boolean;
+  owner_id: string; owner_name: string; price_per_hour: string; scheduled_days: number;
+  slot_minutes: SlotMinutes; unit_id: string; unit_title: string; venue_id: string; venue_title: string;
 };
 
-type CatalogUpdate = {
-  address: string;
-  city: string;
-  unitId: string;
-  unitTitle: string;
-  venueId: string;
-  venueTitle: string;
-};
-
-export async function listAdminCatalog(filters: {
-  city: string;
-  search: string;
-  status: string;
-}): Promise<AdminCatalogRecord[]> {
-  const sql = getDb();
+export async function listAdminCatalog(filters: { city: string; search: string; status: string }): Promise<AdminCatalogRecord[]> {
   const query = filters.search.trim();
-  const rows = await sql<CatalogRow[]>`
-    SELECT u.id AS unit_id, u.title AS unit_title, u.is_active AS is_unit_active,
-           v.id AS venue_id, v.title AS venue_title, v.city, v.address,
-           v.is_active AS is_venue_active, o.full_name AS owner_name
-    FROM bookable_units u
-    JOIN venues v ON v.id = u.venue_id
-    JOIN providers p ON p.id = v.provider_id
-    JOIN app_users o ON o.id = p.owner_user_id
-    WHERE (${filters.city} = '' OR v.city ILIKE ${filters.city})
-      AND (${filters.status} = '' OR (${filters.status} = 'active' AND v.is_active AND u.is_active)
-        OR (${filters.status} = 'inactive' AND (NOT v.is_active OR NOT u.is_active)))
-      AND (${query} = '' OR u.title ILIKE ${`%${query}%`}
-        OR v.title ILIKE ${`%${query}%`} OR o.full_name ILIKE ${`%${query}%`}
-        OR v.address ILIKE ${`%${query}%`})
-    ORDER BY v.city, v.title, u.title LIMIT 300
-  `;
+  const rows = await getDb().unsafe<CatalogRow[]>(ADMIN_CATALOG_QUERY, [filters.city, filters.status, query, `%${query}%`]);
   return rows.map(mapCatalog);
 }
 
-export async function updateAdminCatalogItem(input: CatalogUpdate) {
-  const sql = getDb();
-  return sql.begin(async (transaction) => {
-    await transaction.unsafe(
-      "UPDATE venues SET title = $1, city = $2, address = $3 WHERE id = $4",
-      [input.venueTitle, input.city, input.address, input.venueId]
-    );
-    const rows = await transaction.unsafe<{ id: string }[]>(
-      "UPDATE bookable_units SET title = $1 WHERE id = $2 AND venue_id = $3 RETURNING id",
-      [input.unitTitle, input.unitId, input.venueId]
-    );
-    if (!rows[0]) throw new Error("Корт не найден");
-    return true;
-  });
+export async function getAdminCatalogAttention() {
+  const [row] = await getDb().unsafe<{ no_schedule: number; no_price: number }[]>(ADMIN_CATALOG_ATTENTION_QUERY);
+  return { noSchedule: row.no_schedule, noPrice: row.no_price };
 }
 
-export async function setAdminCatalogActive(input: {
-  active: boolean;
-  entityId: string;
-  entityType: "unit" | "venue";
-}) {
+export async function findAdminCourtDetails(unitId: string) {
   const sql = getDb();
+  const [row] = await sql<{ owner_user_id: string; owner_name: string }[]>`
+    SELECT p.owner_user_id, o.full_name AS owner_name FROM bookable_units u
+    JOIN venues v ON v.id = u.venue_id JOIN providers p ON p.id = v.provider_id
+    JOIN app_users o ON o.id = p.owner_user_id WHERE u.id = ${unitId}
+  `;
+  if (!row) return null;
+  const unit = await findOwnerUnitDetails({ ownerUserId: row.owner_user_id, unitId });
+  return unit ? { ownerUserId: row.owner_user_id, ownerName: row.owner_name, unit } : null;
+}
+
+export async function setAdminCatalogActive(input: { active: boolean; entityId: string; entityType: "unit" | "venue" }) {
   const table = input.entityType === "unit" ? "bookable_units" : "venues";
-  const rows = await sql.unsafe<{ id: string }[]>(
-    `UPDATE ${table} SET is_active = $1 WHERE id = $2 RETURNING id`,
-    [input.active, input.entityId]
+  const rows = await getDb().unsafe<{ id: string }[]>(
+    `UPDATE ${table} SET is_active = $1 WHERE id = $2 RETURNING id`, [input.active, input.entityId]
   );
   return Boolean(rows[0]);
 }
 
 function mapCatalog(row: CatalogRow): AdminCatalogRecord {
   return {
-    address: row.address,
-    city: row.city,
-    isUnitActive: row.is_unit_active,
-    isVenueActive: row.is_venue_active,
-    ownerName: row.owner_name,
-    unitId: row.unit_id,
-    unitTitle: row.unit_title,
-    venueId: row.venue_id,
-    venueTitle: row.venue_title
+    address: row.address, city: row.city, isUnitActive: row.is_unit_active,
+    isVenueActive: row.is_venue_active, ownerName: row.owner_name, ownerId: row.owner_id,
+    pricePerHour: Number(row.price_per_hour), scheduledDays: row.scheduled_days,
+    slotMinutes: row.slot_minutes, unitId: row.unit_id, unitTitle: row.unit_title,
+    venueId: row.venue_id, venueTitle: row.venue_title
   };
 }

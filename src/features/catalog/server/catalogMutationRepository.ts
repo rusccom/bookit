@@ -1,6 +1,7 @@
 import type { Sql } from "postgres";
 
 import type { WeeklyScheduleEntry } from "@/features/catalog/server/catalogTypes";
+import type { SlotMinutes } from "@/features/catalog/slotOptions";
 import { getDb } from "@/features/database/server/client";
 import { createId } from "@/features/shared/server/id";
 
@@ -14,6 +15,7 @@ export type CourtMutationInput = {
   ownerUserId: string;
   pricePerHour: number;
   schedule: WeeklyScheduleEntry[];
+  slotMinutes: SlotMinutes;
   surface: string;
   title: string;
   venueTitle: string;
@@ -82,20 +84,20 @@ async function insertVenue(
 async function insertUnit(sql: CatalogDb, input: CourtMutationInput, unitId: string, venueId: string) {
   await sql.unsafe(`
     INSERT INTO bookable_units (
-      id, venue_id, kind, title, surface, description, price_per_hour
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-  `, [unitId, venueId, input.kind, input.title, input.surface, input.description, input.pricePerHour]);
+      id, venue_id, kind, title, surface, description, price_per_hour, slot_minutes
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+  `, [unitId, venueId, input.kind, input.title, input.surface, input.description, input.pricePerHour, input.slotMinutes]);
 }
 
 async function updateOwnedUnit(sql: CatalogDb, input: CourtMutationInput & { unitId: string }) {
   const [row] = await sql.unsafe<{ venue_id: string }[]>(`
     UPDATE bookable_units u SET kind = $1, title = $2, surface = $3,
-      description = $4, price_per_hour = $5, updated_at = NOW()
+      description = $4, price_per_hour = $5, slot_minutes = $8, updated_at = NOW()
     FROM venues v JOIN providers p ON p.id = v.provider_id
     WHERE u.id = $6 AND u.venue_id = v.id AND p.owner_user_id = $7
     RETURNING u.venue_id
   `, [input.kind, input.title, input.surface, input.description,
-    input.pricePerHour, input.unitId, input.ownerUserId]);
+    input.pricePerHour, input.unitId, input.ownerUserId, input.slotMinutes]);
   if (!row) throw new Error("Корт не найден");
   return row.venue_id;
 }

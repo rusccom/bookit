@@ -19,10 +19,11 @@ export async function getAdminOverviewStats(): Promise<AdminOverviewStats> {
       (SELECT COUNT(*) FROM app_users WHERE role = 'owner')::TEXT AS owners,
       (SELECT COUNT(*) FROM venues)::TEXT AS venues,
       (SELECT COUNT(*) FROM bookable_units)::TEXT AS units,
-      (SELECT COUNT(*) FROM bookings WHERE booking_date = CURRENT_DATE)::TEXT AS bookings_today,
+      (SELECT COUNT(*) FROM bookings WHERE booking_date = (NOW() AT TIME ZONE 'Europe/Minsk')::DATE)::TEXT AS bookings_today,
       (SELECT COUNT(*) FROM bookings WHERE status = 'cancelled')::TEXT AS cancelled_bookings,
-      (SELECT COUNT(*) FROM bookings WHERE booking_date >= CURRENT_DATE
-        AND status IN ('confirmed', 'pending_confirmation'))::TEXT AS upcoming_bookings
+      (SELECT COUNT(*) FROM bookings WHERE booking_date + make_interval(mins => start_minutes) > NOW() AT TIME ZONE 'Europe/Minsk'
+        AND status IN ('confirmed', 'pending_confirmation')
+        AND (expires_at IS NULL OR expires_at > NOW()))::TEXT AS upcoming_bookings
   `;
   return mapStats(row);
 }

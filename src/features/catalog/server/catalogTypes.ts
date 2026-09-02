@@ -1,3 +1,5 @@
+import type { SlotMinutes } from "@/features/catalog/slotOptions";
+
 export type AvailabilityRule = {
   endMinutes: number;
   id: string;
@@ -20,6 +22,7 @@ export type OwnerUnit = {
   kind: string;
   pricePerHour: number;
   rules: AvailabilityRule[];
+  slotMinutes: SlotMinutes;
   surface: string;
   unitId: string;
   unitTitle: string;
@@ -32,6 +35,7 @@ export type SearchUnit = {
   description: string;
   kind: string;
   pricePerHour: number;
+  slotMinutes: SlotMinutes;
   surface: string;
   unitId: string;
   unitTitle: string;

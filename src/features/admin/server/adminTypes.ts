@@ -1,4 +1,5 @@
 import type { UserRole } from "@/features/auth/server/authTypes";
+import type { SlotMinutes } from "@/features/catalog/slotOptions";
 
 export type AdminAccount = {
   id: string;
@@ -69,6 +70,10 @@ export type AdminCatalogRecord = {
   isUnitActive: boolean;
   isVenueActive: boolean;
   ownerName: string;
+  ownerId: string;
+  pricePerHour: number;
+  scheduledDays: number;
+  slotMinutes: SlotMinutes;
   unitId: string;
   unitTitle: string;
   venueId: string;

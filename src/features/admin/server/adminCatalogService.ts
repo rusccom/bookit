@@ -4,36 +4,32 @@ import { createAdminAudit } from "@/features/admin/server/adminAuditRepository";
 import {
   listAdminCatalog,
   setAdminCatalogActive,
-  updateAdminCatalogItem
+  findAdminCourtDetails
 } from "@/features/admin/server/adminCatalogRepository";
 import type { AdminAccount } from "@/features/admin/server/adminTypes";
+import { updateOwnerUnit } from "@/features/catalog/server/catalogService";
 
-const catalogUpdateSchema = z.object({
-  address: z.string().trim().min(5, "Укажите адрес").max(200),
-  city: z.string().trim().min(2, "Укажите город").max(100),
-  unitId: z.string().uuid(),
-  unitTitle: z.string().trim().min(2, "Укажите название корта").max(100),
-  venueId: z.string().uuid(),
-  venueTitle: z.string().trim().min(2, "Укажите название объекта").max(100)
-});
+type CatalogUpdate = Omit<Parameters<typeof updateOwnerUnit>[0], "ownerUserId">;
 
 export async function getAdminCatalog(filters: {
   city: string;
   search: string;
   status: string;
 }) {
-  const parsed = z.enum(["active", "inactive"]).safeParse(filters.status);
+  const parsed = z.enum(["active", "inactive", "no_schedule", "no_price"]).safeParse(filters.status);
   return listAdminCatalog({ ...filters, status: parsed.success ? parsed.data : "" });
 }
 
 export async function editAdminCatalog(
   admin: AdminAccount,
-  input: z.input<typeof catalogUpdateSchema>
+  input: CatalogUpdate
 ) {
-  const values = parseCatalogUpdate(input);
-  const changed = await updateAdminCatalogItem(values);
-  if (!changed) throw new Error("Корт не найден");
-  await createAdminAudit({ action: "update", admin, details: values, entityId: values.unitId, entityType: "catalog" });
+  const unitId = z.string().uuid("Корт не найден").parse(input.unitId);
+  const details = await findAdminCourtDetails(unitId);
+  if (!details) throw new Error("Корт не найден");
+  await updateOwnerUnit({ ...input, ownerUserId: details.ownerUserId, unitId });
+  const audit = { title: input.title, city: input.city, slotMinutes: input.slotMinutes, pricePerHour: input.pricePerHour, schedule: JSON.stringify(input.schedule) };
+  await createAdminAudit({ action: "update", admin, details: audit, entityId: unitId, entityType: "catalog" });
 }
 
 export async function changeAdminCatalogActive(
@@ -44,10 +40,4 @@ export async function changeAdminCatalogActive(
   const changed = await setAdminCatalogActive(values);
   if (!changed) throw new Error("Объект не найден");
   await createAdminAudit({ action: values.active ? "enable" : "disable", admin, entityId: values.entityId, entityType: values.entityType });
-}
-
-function parseCatalogUpdate(input: z.input<typeof catalogUpdateSchema>) {
-  const result = catalogUpdateSchema.safeParse(input);
-  if (!result.success) throw new Error(result.error.issues[0]?.message);
-  return result.data;
 }

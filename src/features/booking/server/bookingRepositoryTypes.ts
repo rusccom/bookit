@@ -1,4 +1,5 @@
 import type { Row, Sql } from "postgres";
+import type { SlotMinutes } from "@/features/catalog/slotOptions";
 
 export type DbExecutor = Pick<Sql<Record<string, never>>, "unsafe">;
 
@@ -33,6 +34,7 @@ export type UnitRow = Row & {
   description: string;
   kind: string;
   price_per_hour: string;
+  slot_minutes: SlotMinutes;
   surface: string;
   unit_id: string;
   unit_title: string;

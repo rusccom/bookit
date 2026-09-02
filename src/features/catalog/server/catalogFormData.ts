@@ -6,8 +6,9 @@ export function readCourtFormData(formData: FormData) {
     city: read(formData, "city"),
     description: read(formData, "description"),
     kind: read(formData, "kind"),
-    pricePerHour: Number(read(formData, "pricePerHour")),
+    pricePerHour: readNumber(formData, "pricePerHour"),
     schedule: readSchedule(formData),
+    slotMinutes: readNumber(formData, "slotMinutes"),
     surface: read(formData, "surface"),
     title: read(formData, "title"),
     venueTitle: read(formData, "venueTitle")
@@ -29,4 +30,9 @@ function readSchedule(formData: FormData): WeeklyScheduleEntry[] {
 
 function read(formData: FormData, name: string) {
   return String(formData.get(name) || "");
+}
+
+function readNumber(formData: FormData, name: string) {
+  const value = read(formData, name).trim();
+  return value ? Number(value) : Number.NaN;
 }

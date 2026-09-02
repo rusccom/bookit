@@ -35,12 +35,13 @@ const courtSchema = z.object({
   ownerUserId: z.string().uuid(),
   pricePerHour: z.number().finite().min(0, "Цена не может быть отрицательной").max(10000, "Проверьте цену"),
   schedule: z.array(scheduleSchema).min(1, "Выберите хотя бы один рабочий день").max(7),
+  slotMinutes: z.union([z.literal(30), z.literal(60), z.literal(120)], { errorMap: () => ({ message: "Выберите шаг слотов: 30 минут, 1 час или 2 часа" }) }),
   surface: z.string().refine((value) => allowedSurfaces.has(value), "Выберите покрытие"),
   title: z.string().trim().min(2, "Укажите название корта").max(100),
   venueTitle: z.string().trim().min(2, "Укажите название площадки").max(100)
 });
 
-type CourtInput = z.input<typeof courtSchema>;
+type CourtInput = Omit<z.input<typeof courtSchema>, "slotMinutes"> & { slotMinutes: number };
 
 export async function createOwnerUnit(input: CourtInput) {
   await createUnitWithRules(parseCourt(input));
@@ -77,7 +78,13 @@ function parseCourt(input: CourtInput) {
   const result = courtSchema.safeParse(input);
   if (!result.success) throw new Error(result.error.issues[0]?.message || "Проверьте данные корта");
   assertUniqueDays(result.data.schedule);
+  assertSlotFitsSchedule(result.data);
   return result.data;
+}
+
+function assertSlotFitsSchedule(input: z.output<typeof courtSchema>) {
+  const tooShort = input.schedule.some((day) => parseTimeLabel(day.endTime) - parseTimeLabel(day.startTime) < input.slotMinutes);
+  if (tooShort) throw new Error("В каждом рабочем дне должен помещаться хотя бы один полный слот");
 }
 
 function assertUniqueDays(schedule: WeeklyScheduleEntry[]) {

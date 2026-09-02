@@ -1,4 +1,5 @@
 import type { AvailabilityRule } from "@/features/catalog/server/catalogTypes";
+import type { SlotMinutes } from "@/features/catalog/slotOptions";
 import { formatMinutes, isHalfHourAligned } from "@/features/shared/server/dateTime";
 
 type TimeRange = {
@@ -6,12 +7,11 @@ type TimeRange = {
   startMinutes: number;
 };
 
-export function buildAvailabilityOptions(input: {
-  blocks: TimeRange[];
-  durationMinutes: number;
-  endFilter?: number;
-  startFilter?: number;
-}) {
+type OpenBlock = TimeRange & { anchorMinutes: number };
+type SlotFilters = { durationMinutes: number; endFilter?: number; slotMinutes: SlotMinutes; startFilter?: number };
+
+export function buildAvailabilityOptions(input: SlotFilters & { blocks: OpenBlock[] }) {
+  if (input.durationMinutes <= 0 || input.durationMinutes % input.slotMinutes !== 0) return [];
   const options = new Map<string, { endTime: string; startTime: string }>();
   for (const block of input.blocks) appendOptions(options, block, input);
   return [...options.values()];
@@ -23,7 +23,7 @@ export function buildOpenBlocks(input: {
 }) {
   const rules = mergeRanges(input.rules.map(toRange).filter(isValidBlock));
   const bookings = mergeRanges(input.bookings.filter(isValidBlock));
-  return rules.flatMap((rule) => subtractBookings(rule, bookings));
+  return rules.flatMap((rule) => subtractBookings(rule, bookings).map((block) => ({ ...block, anchorMinutes: rule.startMinutes })));
 }
 
 export function isBookingWindowValid(input: {
@@ -44,11 +44,12 @@ export function isRangeValid(range: TimeRange) {
 
 function appendOptions(
   options: Map<string, { endTime: string; startTime: string }>,
-  block: TimeRange,
-  input: { durationMinutes: number; endFilter?: number; startFilter?: number }
+  block: OpenBlock,
+  input: SlotFilters
 ) {
   const maxStart = block.endMinutes - input.durationMinutes;
-  for (let start = block.startMinutes; start <= maxStart; start += 30) {
+  const firstStart = block.anchorMinutes + Math.ceil((block.startMinutes - block.anchorMinutes) / input.slotMinutes) * input.slotMinutes;
+  for (let start = firstStart; start <= maxStart; start += input.slotMinutes) {
     const end = start + input.durationMinutes;
     if (!matchesFilters(start, end, input)) continue;
     const startTime = formatMinutes(start);

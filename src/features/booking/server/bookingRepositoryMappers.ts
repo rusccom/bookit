@@ -65,6 +65,7 @@ export function mapUnit(row: UnitRow): UnitOption {
     description: row.description,
     kind: row.kind,
     pricePerHour: Number(row.price_per_hour),
+    slotMinutes: row.slot_minutes,
     surface: row.surface,
     unitId: row.unit_id,
     unitTitle: row.unit_title,

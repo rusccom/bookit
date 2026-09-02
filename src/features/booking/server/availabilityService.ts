@@ -1,4 +1,5 @@
 import type { UnitOption } from "@/features/booking/server/bookingTypes";
+import { formatSlotMinutes } from "@/features/catalog/slotOptions";
 import {
   findUnit,
   listActiveBookingsByUnits,
@@ -41,6 +42,7 @@ export async function ensureUnitCanBeBooked(input: {
   const parsed = parseBookingSlot(input);
   const unit = await findUnit(parsed.unitId);
   if (!unit) throw new Error("Корт недоступен для бронирования");
+  if (parsed.durationMinutes % unit.slotMinutes !== 0) throw new Error(`Длительность записи должна быть кратна шагу корта: ${formatSlotMinutes(unit.slotMinutes)}`);
   const maps = await loadAvailabilityMaps([unit], parsed.date);
   const result = buildUnitResult(unit, maps, parsed);
   const endTime = addMinutes(parsed.startTime, parsed.durationMinutes);
@@ -71,6 +73,7 @@ function buildUnitResult(
     blocks,
     durationMinutes: input.durationMinutes,
     endFilter: toMinutes(input.endTime),
+    slotMinutes: unit.slotMinutes,
     startFilter: minimumStart(input.date, input.startTime)
   });
   return { ...unit, options };

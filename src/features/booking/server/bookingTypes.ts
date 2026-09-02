@@ -1,3 +1,5 @@
+import type { SearchUnit } from "@/features/catalog/server/catalogTypes";
+
 export type BookingRecord = {
   address: string;
   bookingId: string;
@@ -15,32 +17,13 @@ export type BookingRecord = {
   venueTitle: string;
 };
 
-export type UnitOption = {
-  address: string;
-  city: string;
-  description: string;
-  kind: string;
-  pricePerHour: number;
-  surface: string;
-  unitId: string;
-  unitTitle: string;
-  venueTitle: string;
-};
+export type UnitOption = SearchUnit;
 
 export type AvailabilityOption = {
   endTime: string;
   startTime: string;
 };
 
-export type AvailabilityResult = {
-  address: string;
-  city: string;
-  description: string;
-  kind: string;
+export type AvailabilityResult = UnitOption & {
   options: AvailabilityOption[];
-  pricePerHour: number;
-  surface: string;
-  unitId: string;
-  unitTitle: string;
-  venueTitle: string;
 };

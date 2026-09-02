@@ -1,4 +1,5 @@
 import type { Row } from "postgres";
+import type { SlotMinutes } from "@/features/catalog/slotOptions";
 
 import type {
   AvailabilityRule,
@@ -18,6 +19,7 @@ export type CatalogUnitRow = Row & {
   rule_id: string | null;
   rule_start: number | null;
   rule_weekday: number | null;
+  slot_minutes: SlotMinutes;
   surface: string;
   unit_id: string;
   unit_title: string;
@@ -37,6 +39,7 @@ export function mapSearchUnit(row: CatalogUnitRow): SearchUnit {
     description: row.description,
     kind: row.kind,
     pricePerHour: Number(row.price_per_hour),
+    slotMinutes: row.slot_minutes,
     surface: row.surface,
     unitId: row.unit_id,
     unitTitle: row.unit_title,

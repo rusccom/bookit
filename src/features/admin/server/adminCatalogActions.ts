@@ -7,17 +7,19 @@ import {
   editAdminCatalog
 } from "@/features/admin/server/adminCatalogService";
 import { requireAdmin } from "@/features/admin/server/requireAdmin";
+import { readCourtFormData } from "@/features/catalog/server/catalogFormData";
 
 export async function updateAdminCatalogAction(formData: FormData) {
   const admin = await requireAdmin();
   const params = readFilters(formData);
+  const unitId = String(formData.get("unitId") || "");
   try {
-    await editAdminCatalog(admin, readUpdate(formData));
-    params.set("success", "Данные объекта обновлены");
+    await editAdminCatalog(admin, { ...readCourtFormData(formData), unitId });
+    params.set("success", "Данные корта и расписание обновлены");
   } catch (error) {
     params.set("error", getMessage(error));
   }
-  redirect(`/adminpanel/catalog?${params}`);
+  redirect(`/adminpanel/catalog/${encodeURIComponent(unitId)}?${params}`);
 }
 
 export async function toggleAdminCatalogAction(formData: FormData) {
@@ -34,10 +36,6 @@ export async function toggleAdminCatalogAction(formData: FormData) {
 
 function readFilters(formData: FormData) {
   return new URLSearchParams({ city: String(formData.get("filterCity") || ""), q: String(formData.get("search") || ""), status: String(formData.get("filterStatus") || "") });
-}
-
-function readUpdate(formData: FormData) {
-  return { address: String(formData.get("address") || ""), city: String(formData.get("city") || ""), unitId: String(formData.get("unitId") || ""), unitTitle: String(formData.get("unitTitle") || ""), venueId: String(formData.get("venueId") || ""), venueTitle: String(formData.get("venueTitle") || "") };
 }
 
 function getMessage(error: unknown) {
