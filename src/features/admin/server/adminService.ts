@@ -10,6 +10,7 @@ import {
 } from "@/features/admin/server/adminRepository";
 import { createAdminAudit } from "@/features/admin/server/adminAuditRepository";
 import type { AdminAccount } from "@/features/admin/server/adminTypes";
+import { listAdminUserNotes } from "@/features/admin/server/adminUserNotesRepository";
 import {
   listUserAdminBookings,
   listUserAdminCatalog
@@ -121,11 +122,12 @@ export async function getAdminUserDetails(userId: string) {
   const id = parsed.data;
   const user = await findUserForAdmin(id);
   if (!user) return null;
-  const [bookings, catalog] = await Promise.all([
-    listUserAdminBookings(id),
-    listUserAdminCatalog(id)
+  const [bookings, catalog, notes] = await Promise.all([
+    user.role === "customer" ? listUserAdminBookings(id) : Promise.resolve([]),
+    user.role === "owner" ? listUserAdminCatalog(id) : Promise.resolve([]),
+    listAdminUserNotes(id)
   ]);
-  return { bookings, catalog, user };
+  return { bookings, catalog, notes, user };
 }
 
 type AdminCandidate = NonNullable<Awaited<ReturnType<typeof findAdminByLogin>>>;

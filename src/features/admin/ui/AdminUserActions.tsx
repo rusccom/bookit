@@ -12,6 +12,6 @@ export function AdminUserActions({ user, search, showDetails = true }: AdminUser
     {showDetails && <AdminLink button href={`/adminpanel/users/${user.id}`}>Карточка</AdminLink>}
     <EditUserButton search={search} user={user} />
     <BlockUserButton blocked={user.isBlocked} search={search} userId={user.id} />
-    <DeleteUserButton bookingsCount={user.bookingsCount} search={search} unitsCount={user.unitsCount} userId={user.id} />
+    <DeleteUserButton bookingsCount={user.bookingsCount} role={user.role} search={search} unitsCount={user.unitsCount} userId={user.id} />
   </AdminActions>;
 }

@@ -1,16 +1,10 @@
-import Link from "next/link";
-
 import { requireUser } from "@/features/auth/server/requireUser";
-import {
-  getOwnerDashboardStats,
-  getOwnerTodayBookings,
-} from "@/features/booking/server/bookingService";
+import { getOwnerDashboardStats, getOwnerTodayBookings } from "@/features/booking/server/bookingService";
+import { OwnerQuickActions } from "@/features/booking/ui/OwnerQuickActions";
 import { OwnerStatCards } from "@/features/booking/ui/OwnerStatCards";
 import { TodaySchedule } from "@/features/booking/ui/TodaySchedule";
 import { StatusBanner } from "@/features/shared/ui/StatusBanner";
 import { getTodayIso } from "@/features/shared/server/dateTime";
-
-import s from "@/features/booking/ui/owner.module.css";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -19,45 +13,21 @@ type PageProps = {
 export default async function OwnerOverviewPage(props: PageProps) {
   const owner = await requireUser("owner");
   const sp = await props.searchParams;
-  const error = pickValue(sp.error);
-  const success = pickValue(sp.success);
-
   const today = getTodayIso();
-
   const [stats, todayBookings] = await Promise.all([
     getOwnerDashboardStats(owner.id, today),
-    getOwnerTodayBookings(owner.id, today),
+    getOwnerTodayBookings(owner.id, today)
   ]);
-
-  const nextBooking = todayBookings.length > 0
-    ? `${todayBookings[0].startTime}`
-    : null;
-
-  return (
-    <>
-      <StatusBanner error={error} success={success} />
-
-      <OwnerStatCards
-        nextBookingLabel={nextBooking}
-        todayCount={stats.todayCount}
-        totalUnits={stats.totalUnits}
-      />
-
-      <section className="panel stack">
-        <h2>Расписание на сегодня</h2>
-        <TodaySchedule bookings={todayBookings} />
-      </section>
-
-      <div className={s.quickActions}>
-        <Link className="primary-link" href="/dashboard/owner/units">
-          Добавить корт
-        </Link>
-        <Link className="secondary-link" href="/dashboard/owner/bookings">
-          Создать бронь
-        </Link>
-      </div>
-    </>
-  );
+  return <>
+    <StatusBanner error={pickValue(sp.error)} success={pickValue(sp.success)} />
+    <OwnerStatCards nextBookingLabel={todayBookings[0]?.startTime || null}
+      todayCount={stats.todayCount} totalUnits={stats.totalUnits} />
+    <section className="panel stack">
+      <h2>Расписание на сегодня</h2>
+      <TodaySchedule bookings={todayBookings} />
+    </section>
+    <OwnerQuickActions />
+  </>;
 }
 
 function pickValue(value: string | string[] | undefined) {

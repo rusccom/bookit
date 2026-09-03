@@ -1,0 +1,15 @@
+.page { display: grid; gap: 20px; min-width: 0; }
+.intro h1 { margin: 5px 0 8px; font-size: clamp(1.6rem, 4vw, 2.2rem); }
+.intro p { max-width: 840px; margin: 0; color: var(--muted); line-height: 1.6; }
+.filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; padding: 18px; border: 1px solid var(--panel-border); border-radius: var(--radius-xl); background: var(--surface); }
+.filters label { display: grid; gap: 6px; }
+.tableFrame { overflow: auto; border: 1px solid var(--panel-border); border-radius: var(--radius-xl); background: var(--surface); }
+.tableFrame:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.table { width: 100%; min-width: 980px; border-collapse: collapse; }
+.table caption { padding: 16px; text-align: left; font-weight: 700; }
+.table th, .table td { padding: 16px 12px; border-top: 1px solid var(--panel-border); text-align: left; font-size: .82rem; }
+.table thead { background: var(--surface-hover); }
+.table th:first-child { min-width: 190px; max-width: 280px; overflow-wrap: anywhere; }
+.table small { display: block; margin-top: 5px; color: var(--muted); font-weight: 400; }
+.progress { display: block; width: 88px; height: 7px; margin-top: 10px; accent-color: var(--primary); }
+@media (max-width: 600px) { .filters { align-items: stretch; flex-direction: column; } }

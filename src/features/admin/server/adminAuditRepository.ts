@@ -23,16 +23,15 @@ export async function createAdminAudit(input: {
   details?: Record<string, string | number | boolean | null>;
   entityId: string;
   entityType: string;
-}) {
-  const sql = getDb();
-  await sql`
+}, executor?: Pick<ReturnType<typeof getDb>, "unsafe" | "json">) {
+  const sql = executor || getDb();
+  await sql.unsafe(`
     INSERT INTO admin_audit_log (
       id, admin_user_id, admin_login, action, entity_type, entity_id, details
     ) VALUES (
-      ${createId()}, ${input.admin.id}, ${input.admin.login}, ${input.action},
-      ${input.entityType}, ${input.entityId}, ${sql.json(input.details || {})}
+      $1, $2, $3, $4, $5, $6, $7::JSONB
     )
-  `;
+  `, [createId(), input.admin.id, input.admin.login, input.action, input.entityType, input.entityId, sql.json(input.details || {})]);
 }
 
 export async function listAdminAudit(search: string): Promise<AdminAuditRecord[]> {

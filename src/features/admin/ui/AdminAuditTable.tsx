@@ -15,6 +15,7 @@ export function AdminAuditTable({ records }: { records: AdminAuditRecord[] }) {
 }
 
 function translateAction(action: string) {
+  if (action === "note:add") return "Добавление заметки";
   const labels: Record<string, string> = { block: "Блокировка", create: "Создание", delete: "Удаление", disable: "Отключение", enable: "Включение", export: "Экспорт CSV", password: "Смена пароля", revoke: "Завершение сессии", unblock: "Разблокировка", update: "Изменение", "2fa:disable": "Отключение 2FA", "2fa:enable": "Включение 2FA", "2fa:setup": "Настройка 2FA" };
   if (action.startsWith("status:")) return "Статус: " + getAdminBookingStatus(action.slice(7)).label;
   return labels[action] || action;

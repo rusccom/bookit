@@ -1,0 +1,4 @@
+.note { padding: 14px 16px; border: 1px solid var(--public-border); border-radius: 12px; background: #f8fafc; }
+.note header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; font-size: .78rem; }
+.note time { color: var(--public-muted); }
+.note p { white-space: pre-wrap; overflow-wrap: anywhere; }

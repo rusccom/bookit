@@ -58,8 +58,7 @@ const LIST_USERS = `
   LEFT JOIN providers p ON p.owner_user_id = a.id
   LEFT JOIN venues v ON v.provider_id = p.id
   LEFT JOIN bookable_units u ON u.venue_id = v.id
-  LEFT JOIN bookings b ON b.customer_user_id = a.id OR b.created_by_user_id = a.id
-    OR b.unit_id = u.id
+  LEFT JOIN bookings b ON a.role = 'customer' AND b.customer_user_id = a.id
   WHERE $1 = ''
     OR a.full_name ILIKE $2
     OR COALESCE(a.email, '') ILIKE $2
@@ -73,11 +72,7 @@ const FIND_USER = `
   SELECT a.id, a.role, a.full_name, a.email, a.phone, a.created_at,
          a.is_blocked,
          (SELECT COUNT(*) FROM bookings b
-          WHERE b.customer_user_id = a.id OR b.created_by_user_id = a.id
-            OR EXISTS (SELECT 1 FROM bookable_units bu
-              JOIN venues bv ON bv.id = bu.venue_id
-              JOIN providers bp ON bp.id = bv.provider_id
-              WHERE bu.id = b.unit_id AND bp.owner_user_id = a.id))::TEXT AS bookings_count,
+          WHERE a.role = 'customer' AND b.customer_user_id = a.id)::TEXT AS bookings_count,
          (SELECT COUNT(*) FROM bookable_units u
           JOIN venues v ON v.id = u.venue_id
           JOIN providers p ON p.id = v.provider_id

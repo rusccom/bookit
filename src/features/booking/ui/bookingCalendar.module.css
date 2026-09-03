@@ -1,0 +1,8 @@
+.calendarAction {
+  display: grid;
+  gap: 6px;
+  max-width: 235px;
+}
+
+.calendarAction a { text-align: center; }
+.calendarAction small { color: var(--muted); font-size: .72rem; line-height: 1.4; }

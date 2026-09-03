@@ -5,7 +5,7 @@ import { formatBelarusPhone } from "@/features/shared/server/phone";
 export async function createUsersCsv() {
   const users = await listUsers("");
   return toCsv([
-    ["ID", "Имя", "Email", "Телефон", "Роль", "Статус", "Регистрация", "Бронирования", "Корты"],
+    ["ID", "Имя", "Email", "Телефон", "Роль", "Статус", "Регистрация", "Личные бронирования", "Корты"],
     ...users.map((user) => [user.id, user.fullName, user.email || "", formatBelarusPhone(user.phone), user.role, user.isBlocked ? "Заблокирован" : "Активен", user.createdAt, user.bookingsCount, user.unitsCount])
   ]);
 }

@@ -1,5 +1,6 @@
 import type { UserRole } from "@/features/auth/server/authTypes";
 import type { SlotMinutes } from "@/features/catalog/slotOptions";
+import type { AdminUserNote } from "@/features/admin/server/adminUserNotesTypes";
 
 export type AdminAccount = {
   id: string;
@@ -38,6 +39,7 @@ export type AdminUserCatalogItem = {
 export type AdminUserDetails = {
   bookings: AdminUserBooking[];
   catalog: AdminUserCatalogItem[];
+  notes: AdminUserNote[];
   user: AdminUserRecord;
 };
 
