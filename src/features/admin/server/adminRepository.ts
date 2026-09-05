@@ -36,18 +36,10 @@ type UserUpdate = {
   phone: string | null;
 };
 
-const FIND_ADMIN_BY_LOGIN = `
+const FIND_ADMIN = `
   SELECT id, login, password_hash, failed_login_count, locked_until,
          two_factor_enabled, two_factor_secret
   FROM admin_users
-  WHERE login = $1
-`;
-
-const FIND_ADMIN_BY_ID = `
-  SELECT id, login, password_hash, failed_login_count, locked_until,
-         two_factor_enabled, two_factor_secret
-  FROM admin_users
-  WHERE id = $1
 `;
 
 const LIST_USERS = `
@@ -82,15 +74,18 @@ const FIND_USER = `
 `;
 
 export async function findAdminByLogin(login: string) {
-  const sql = getDb();
-  const [row] = await sql.unsafe<AdminRow[]>(FIND_ADMIN_BY_LOGIN, [login]);
+  const row = await findAdminRow("login", login);
   return row ? mapAdminWithPassword(row) : null;
 }
 
 export async function findAdminById(id: string) {
-  const sql = getDb();
-  const [row] = await sql.unsafe<AdminRow[]>(FIND_ADMIN_BY_ID, [id]);
+  const row = await findAdminRow("id", id);
   return row ? mapAdmin(row) : null;
+}
+
+async function findAdminRow(column: "id" | "login", value: string) {
+  const [row] = await getDb().unsafe<AdminRow[]>(`${FIND_ADMIN} WHERE ${column} = $1`, [value]);
+  return row || null;
 }
 
 export async function listUsers(search: string) {
@@ -102,13 +97,13 @@ export async function listUsers(search: string) {
     `%${normalized}%`,
     phoneQuery ? `%${phoneQuery}%` : ""
   ]);
-  return rows.map(mapUser);
+  return rows.map(mapAdminUser);
 }
 
 export async function findUserForAdmin(id: string) {
   const sql = getDb();
   const [row] = await sql.unsafe<UserRow[]>(FIND_USER, [id]);
-  return row ? mapUser(row) : null;
+  return row ? mapAdminUser(row) : null;
 }
 
 export async function deleteUserById(id: string) {
@@ -166,7 +161,7 @@ function mapAdminWithPassword(row: AdminRow) {
   };
 }
 
-function mapUser(row: UserRow): AdminUserRecord {
+function mapAdminUser(row: UserRow): AdminUserRecord {
   return {
     bookingsCount: Number(row.bookings_count),
     createdAt: row.created_at.toISOString(),

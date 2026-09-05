@@ -5,9 +5,10 @@ import { OwnerStatCards } from "@/features/booking/ui/OwnerStatCards";
 import { TodaySchedule } from "@/features/booking/ui/TodaySchedule";
 import { StatusBanner } from "@/features/shared/ui/StatusBanner";
 import { getTodayIso } from "@/features/shared/server/dateTime";
+import { getSearchParam, type SearchParams } from "@/features/shared/server/searchParams";
 
 type PageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<SearchParams>;
 };
 
 export default async function OwnerOverviewPage(props: PageProps) {
@@ -19,7 +20,7 @@ export default async function OwnerOverviewPage(props: PageProps) {
     getOwnerTodayBookings(owner.id, today)
   ]);
   return <>
-    <StatusBanner error={pickValue(sp.error)} success={pickValue(sp.success)} />
+    <StatusBanner error={getSearchParam(sp.error)} success={getSearchParam(sp.success)} />
     <OwnerStatCards nextBookingLabel={todayBookings[0]?.startTime || null}
       todayCount={stats.todayCount} totalUnits={stats.totalUnits} />
     <section className="panel stack">
@@ -28,8 +29,4 @@ export default async function OwnerOverviewPage(props: PageProps) {
     </section>
     <OwnerQuickActions />
   </>;
-}
-
-function pickValue(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
 }

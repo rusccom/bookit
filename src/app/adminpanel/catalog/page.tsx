@@ -1,9 +1,10 @@
 import { getAdminCatalog } from "@/features/admin/server/adminCatalogService";
-import { getAdminParam as pick, type AdminPageProps } from "@/features/admin/ui/adminPageParams";
+import type { AdminPageProps } from "@/features/admin/ui/adminPageParams";
 import { AdminCatalogTable } from "@/features/admin/ui/AdminCatalogTable";
 import { AdminField } from "@/features/admin/ui/shared/AdminField";
 import { AdminFilters } from "@/features/admin/ui/shared/AdminFilters";
 import { AdminPage } from "@/features/admin/ui/shared/AdminPage";
+import { getSearchParam as pick } from "@/features/shared/server/searchParams";
 
 export default async function AdminCatalogPage(props: AdminPageProps) {
   const params = await props.searchParams;

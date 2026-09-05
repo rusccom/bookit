@@ -3,16 +3,17 @@ import Link from "next/link";
 import { ModernAuthLayout } from "@/features/auth/ui/ModernAuthLayout";
 import { ModernRegisterForm } from "@/features/auth/ui/ModernRegisterForm";
 import { StatusBanner } from "@/features/shared/ui/StatusBanner";
+import { getSearchParam, type SearchParams } from "@/features/shared/server/searchParams";
 
 import styles from "@/features/auth/ui/auth.module.css";
 
 type PageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<SearchParams>;
 };
 
 export default async function RegisterHostPage(props: PageProps) {
   const searchParams = await props.searchParams;
-  const error = pickValue(searchParams.error);
+  const error = getSearchParam(searchParams.error);
 
   return (
     <ModernAuthLayout>
@@ -26,8 +27,4 @@ export default async function RegisterHostPage(props: PageProps) {
       </p>
     </ModernAuthLayout>
   );
-}
-
-function pickValue(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
 }

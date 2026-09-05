@@ -1,9 +1,6 @@
-"use client";
-
-import { useState } from "react";
-
 import s from "./landingFaq.module.css";
 import shared from "./landing.module.css";
+import { FaqItem } from "./FaqItem";
 
 const QUESTIONS = [
   {
@@ -11,8 +8,8 @@ const QUESTIONS = [
     a: "Да, потребуется быстрая регистрация — email и пароль. Это занимает меньше минуты и позволяет управлять бронями.",
   },
   {
-    q: "Как отменить или перенести бронь?",
-    a: "В личном кабинете можно отменить или изменить бронирование до начала сеанса. Ограничения зависят от правил площадки.",
+    q: "Как отменить бронь?",
+    a: "Будущую бронь можно отменить в личном кабинете. После отмены время снова станет доступно другим клиентам.",
   },
   {
     q: "Какие виды оплаты поддерживаются?",
@@ -27,24 +24,6 @@ const QUESTIONS = [
     a: "Зарегистрируйтесь как владелец, добавьте корты, настройте расписание и цены — клиенты начнут бронировать сразу.",
   },
 ];
-
-function FaqItem(props: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <div className={`${s.item} ${open ? s.itemOpen : ""}`}>
-      <button
-        className={s.question}
-        type="button"
-        onClick={() => setOpen(!open)}
-      >
-        <span>{props.q}</span>
-        <span className={s.icon}>{open ? "−" : "+"}</span>
-      </button>
-      {open && <p className={s.answer}>{props.a}</p>}
-    </div>
-  );
-}
 
 export function LandingFaq() {
   return (

@@ -5,6 +5,7 @@ import { getCurrentAdmin } from "@/features/admin/server/requireAdmin";
 import { AdminLoginForm } from "@/features/admin/ui/AdminLoginForm";
 import { createNoIndexMetadata } from "@/features/app/server/metadata";
 import styles from "@/features/admin/ui/adminLogin.module.css";
+import { getSearchParam, type SearchParams } from "@/features/shared/server/searchParams";
 
 export const metadata: Metadata = createNoIndexMetadata(
   "Вход администратора",
@@ -12,20 +13,16 @@ export const metadata: Metadata = createNoIndexMetadata(
 );
 
 type AdminLoginPageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<SearchParams>;
 };
 
 export default async function AdminLoginPage(props: AdminLoginPageProps) {
   if (await getCurrentAdmin()) redirect("/adminpanel");
   const params = await props.searchParams;
-  const error = pickValue(params.error);
+  const error = getSearchParam(params.error);
   return (
     <main className={styles.loginPage}>
       <AdminLoginForm error={error} />
     </main>
   );
-}
-
-function pickValue(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
 }

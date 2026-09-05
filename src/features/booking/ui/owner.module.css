@@ -96,89 +96,9 @@
 
 /* ── Empty state ── */
 
-.emptyCard {
-  display: grid;
-  gap: 12px;
-  justify-items: center;
-  padding: 32px 20px;
-  text-align: center;
-  border-radius: var(--radius-xl);
-  background: var(--surface-hover);
-  border: 1px dashed rgba(15, 23, 42, 0.1);
-}
-
-.emptyCard p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.875rem;
-}
-
 /* ── Unit cards ── */
 
-.unitGrid {
-  display: grid;
-  gap: 10px;
-}
-
-.unitCard {
-  display: grid;
-  gap: 8px;
-  padding: 14px 16px;
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  border: 1px solid var(--panel-border);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.15s;
-}
-
-.unitCard:hover {
-  box-shadow: var(--shadow);
-}
-
-.unitCard h3 {
-  margin: 0;
-  font-size: 0.9375rem;
-}
-
-.unitMeta {
-  font-size: 0.8rem;
-  color: var(--muted);
-  margin: 0;
-}
-
-.unitSchedule {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.dayChip {
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  background: var(--primary-soft);
-  color: var(--primary);
-}
-
 /* ── Booking cards (owner) ── */
-
-.bookingCard {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
-  align-items: start;
-  padding: 12px 14px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--panel-border);
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.15s;
-}
-
-.bookingCard:hover {
-  box-shadow: var(--shadow);
-}
 
 .bookingMeta {
   display: grid;
@@ -212,42 +132,6 @@
 
 /* ── Filter tabs ── */
 
-.filterTabs {
-  display: flex;
-  gap: 3px;
-  padding: 3px;
-  background: var(--bg);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--panel-border);
-}
-
-.filterTab {
-  padding: 6px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  border: none;
-  background: transparent;
-  color: var(--muted);
-  text-decoration: none;
-  transition: all 0.15s;
-}
-
-.filterTab:hover {
-  color: var(--text);
-  background: var(--surface);
-}
-
-.filterTabActive {
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: var(--shadow-sm);
-}
-
-.filterTabActive:hover {
-  color: var(--text);
-}
-
 /* ── Responsive ── */
 
 @media (max-width: 780px) {
@@ -257,10 +141,6 @@
 
   .quickActions {
     flex-direction: column;
-  }
-
-  .bookingCard {
-    grid-template-columns: 1fr;
   }
 
   .scheduleItem {

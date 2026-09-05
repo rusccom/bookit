@@ -12,17 +12,19 @@ import {
   revokeAdminDevice
 } from "@/features/admin/server/adminSecurityService";
 import { requireAdmin } from "@/features/admin/server/requireAdmin";
+import { getErrorMessage, isUniqueConstraintError } from "@/features/shared/server/errors";
+import { readFormText } from "@/features/shared/server/formData";
 
 export async function addAdminAction(formData: FormData) {
-  await runSecurityAction("Администратор добавлен", (admin) => addAdmin(admin, { login: read(formData, "login"), password: read(formData, "password") }));
+  await runSecurityAction("Администратор добавлен", (admin) => addAdmin(admin, { login: readFormText(formData, "login"), password: readFormText(formData, "password") }));
 }
 
 export async function removeAdminAction(formData: FormData) {
-  await runSecurityAction("Администратор удалён", (admin) => removeAdmin(admin, read(formData, "adminId")));
+  await runSecurityAction("Администратор удалён", (admin) => removeAdmin(admin, readFormText(formData, "adminId")));
 }
 
 export async function changeAdminPasswordAction(formData: FormData) {
-  await runSecurityAction("Пароль изменён, остальные сессии завершены", (admin) => changeOwnAdminPassword(admin, { currentPassword: read(formData, "currentPassword"), newPassword: read(formData, "newPassword") }));
+  await runSecurityAction("Пароль изменён, остальные сессии завершены", (admin) => changeOwnAdminPassword(admin, { currentPassword: readFormText(formData, "currentPassword"), newPassword: readFormText(formData, "newPassword") }));
 }
 
 export async function beginAdminTwoFactorAction() {
@@ -30,15 +32,15 @@ export async function beginAdminTwoFactorAction() {
 }
 
 export async function confirmAdminTwoFactorAction(formData: FormData) {
-  await runSecurityAction("Двухфакторная защита включена", (admin) => confirmAdminTwoFactor(admin, read(formData, "token")));
+  await runSecurityAction("Двухфакторная защита включена", (admin) => confirmAdminTwoFactor(admin, readFormText(formData, "token")));
 }
 
 export async function disableAdminTwoFactorAction(formData: FormData) {
-  await runSecurityAction("Двухфакторная защита отключена", (admin) => disableAdminTwoFactor(admin, read(formData, "password")));
+  await runSecurityAction("Двухфакторная защита отключена", (admin) => disableAdminTwoFactor(admin, readFormText(formData, "password")));
 }
 
 export async function revokeAdminSessionAction(formData: FormData) {
-  await runSecurityAction("Сессия завершена", (admin) => revokeAdminDevice(admin, read(formData, "sessionId")));
+  await runSecurityAction("Сессия завершена", (admin) => revokeAdminDevice(admin, readFormText(formData, "sessionId")));
 }
 
 async function runSecurityAction(success: string, operation: (admin: Awaited<ReturnType<typeof requireAdmin>>) => Promise<void>) {
@@ -48,16 +50,12 @@ async function runSecurityAction(success: string, operation: (admin: Awaited<Ret
     await operation(admin);
     params.set("success", success);
   } catch (error) {
-    params.set("error", getMessage(error));
+    params.set("error", getSecurityErrorMessage(error));
   }
   redirect(`/adminpanel/admins?${params}`);
 }
 
-function read(formData: FormData, key: string) {
-  return String(formData.get(key) || "");
-}
-
-function getMessage(error: unknown) {
-  if (typeof error === "object" && error && "code" in error && error.code === "23505") return "Такой логин уже используется";
-  return error instanceof Error ? error.message : "Не удалось выполнить действие";
+function getSecurityErrorMessage(error: unknown) {
+  if (isUniqueConstraintError(error)) return "Такой логин уже используется";
+  return getErrorMessage(error, "Не удалось выполнить действие");
 }

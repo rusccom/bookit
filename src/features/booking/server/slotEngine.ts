@@ -1,6 +1,6 @@
 import type { AvailabilityRule } from "@/features/catalog/server/catalogTypes";
 import type { SlotMinutes } from "@/features/catalog/slotOptions";
-import { formatMinutes, isHalfHourAligned } from "@/features/shared/server/dateTime";
+import { formatMinutes } from "@/features/shared/server/dateTime";
 
 type TimeRange = {
   endMinutes: number;
@@ -24,22 +24,6 @@ export function buildOpenBlocks(input: {
   const rules = mergeRanges(input.rules.map(toRange).filter(isValidBlock));
   const bookings = mergeRanges(input.bookings.filter(isValidBlock));
   return rules.flatMap((rule) => subtractBookings(rule, bookings).map((block) => ({ ...block, anchorMinutes: rule.startMinutes })));
-}
-
-export function isBookingWindowValid(input: {
-  durationMinutes: number;
-  endMinutes: number;
-  startMinutes: number;
-}) {
-  return input.endMinutes - input.startMinutes === input.durationMinutes && isRangeValid(input);
-}
-
-export function isRangeValid(range: TimeRange) {
-  return range.startMinutes < range.endMinutes
-    && range.startMinutes >= 0
-    && range.endMinutes <= 1440
-    && isHalfHourAligned(range.startMinutes)
-    && isHalfHourAligned(range.endMinutes);
 }
 
 function appendOptions(

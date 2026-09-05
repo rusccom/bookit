@@ -35,13 +35,13 @@ export async function changeAdminBookingStatus(
   const id = bookingIdSchema.parse(bookingId);
   const nextStatus = bookingStatusSchema.parse(status);
   const changed = nextStatus === "confirmed"
-    ? await confirmBooking(id)
+    ? await confirmAdminBooking(id)
     : await setAdminBookingStatus({ bookingId: id, status: nextStatus });
   if (!changed) throw new Error("Бронирование не найдено");
   await createAdminAudit({ action: `status:${nextStatus}`, admin, entityId: id, entityType: "booking" });
 }
 
-async function confirmBooking(bookingId: string) {
+async function confirmAdminBooking(bookingId: string) {
   const slot = await findAdminBookingSlot(bookingId);
   if (!slot) return false;
   await runBookingTransaction(slot.unit_id, async (sql) => {

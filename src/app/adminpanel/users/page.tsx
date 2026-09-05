@@ -1,9 +1,10 @@
 import { getAdminUsers } from "@/features/admin/server/adminService";
-import { getAdminParam as pick, type AdminPageProps } from "@/features/admin/ui/adminPageParams";
+import type { AdminPageProps } from "@/features/admin/ui/adminPageParams";
 import { AdminUsersTable } from "@/features/admin/ui/AdminUsersTable";
 import { AdminFilters } from "@/features/admin/ui/shared/AdminFilters";
 import { AdminLink } from "@/features/admin/ui/shared/AdminLink";
 import { AdminPage } from "@/features/admin/ui/shared/AdminPage";
+import { getSearchParam as pick } from "@/features/shared/server/searchParams";
 
 export default async function AdminUsersPage(props: AdminPageProps) {
   const params = await props.searchParams;

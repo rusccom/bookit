@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { createAdminAudit } from "@/features/admin/server/adminAuditRepository";
+import { parseWithMessage } from "@/features/shared/server/validation";
 import { findAdminByLogin } from "@/features/admin/server/adminRepository";
 import {
   createAdminAccount,
@@ -114,13 +115,9 @@ function readTwoFactorSetup(login: string, candidate: NonNullable<Awaited<Return
 }
 
 function parseCredentials(input: z.input<typeof credentialsSchema>) {
-  const result = credentialsSchema.safeParse(input);
-  if (!result.success) throw new Error(result.error.issues[0]?.message);
-  return result.data;
+  return parseWithMessage(credentialsSchema, input, "Проверьте данные администратора");
 }
 
 function parsePasswordChange(input: z.input<typeof passwordChangeSchema>) {
-  const result = passwordChangeSchema.safeParse(input);
-  if (!result.success) throw new Error(result.error.issues[0]?.message);
-  return result.data;
+  return parseWithMessage(passwordChangeSchema, input, "Проверьте новый пароль");
 }

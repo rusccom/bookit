@@ -11,11 +11,18 @@ import {
   findTelegramPendingBooking,
   getBookingForActor
 } from "@/features/booking/server/bookingQueryRepository";
-import { ensureUnitCanBeBooked } from "@/features/booking/server/availabilityService";
 import {
-  isFutureBookingStart,
+  ensureOwnerUnitCanBeBooked,
+  ensureUnitCanBeBooked
+} from "@/features/booking/server/availabilityService";
+import {
   parseTimeLabel
 } from "@/features/shared/server/dateTime";
+import { isFutureBooking } from "@/features/booking/server/bookingTime";
+import type { CreateBookingInput } from "@/features/booking/server/bookingRepositoryTypes";
+import type { DbExecutor } from "@/features/database/server/types";
+
+type BookingDraft = Omit<CreateBookingInput, "sql">;
 
 export async function createCustomerBooking(input: {
   date: string;
@@ -46,33 +53,21 @@ export async function createOwnerManualBooking(input: {
   startTime: string;
   unitId: string;
 }) {
-  const unit = await findOwnerUnit({
-    ownerUserId: input.ownerUserId,
-    unitId: input.unitId
-  });
-
-  if (!unit) {
-    throw new Error("Корт не найден или отключён");
-  }
-
   const durationMinutes = parseTimeLabel(input.endTime) - parseTimeLabel(input.startTime);
-
-  await ensureUnitCanBeBooked({
-    date: input.date,
-    durationMinutes,
-    startTime: input.startTime,
-    unitId: input.unitId
+  await ensureOwnerUnitExists(input.ownerUserId, input.unitId);
+  await ensureOwnerUnitCanBeBooked({
+    date: input.date, durationMinutes, startTime: input.startTime, unitId: input.unitId
   });
-
   return createConfirmedBooking({
-    bookingDate: input.date,
-    createdByUserId: input.ownerUserId,
-    durationMinutes,
-    note: normalizeNote(input.note),
-    source: "owner_manual",
-    startTime: input.startTime,
-    unitId: input.unitId
+    bookingDate: input.date, createdByUserId: input.ownerUserId, durationMinutes,
+    note: normalizeNote(input.note), source: "owner_manual",
+    startTime: input.startTime, unitId: input.unitId
   });
+}
+
+async function ensureOwnerUnitExists(ownerUserId: string, unitId: string) {
+  const unit = await findOwnerUnit({ ownerUserId, unitId });
+  if (!unit) throw new Error("Корт не найден или отключён");
 }
 
 export async function createTelegramPendingBooking(input: {
@@ -84,32 +79,13 @@ export async function createTelegramPendingBooking(input: {
   userId: string;
 }) {
   await ensureUnitCanBeBooked(input);
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
   const startMinutes = parseTimeLabel(input.startTime);
-  const endMinutes = startMinutes + input.durationMinutes;
-
-  return runBookingTransaction(input.unitId, async (sql) => {
-    await ensureNoOverlap({
-      bookingDate: input.date,
-      endMinutes,
-      sql,
-      startMinutes,
-      unitId: input.unitId
-    });
-
-    return createBooking({
-      bookingDate: input.date,
-      createdByUserId: input.userId,
-      customerUserId: input.userId,
-      endMinutes,
-      expiresAt,
-      source: "telegram_llm",
-      sql,
-      startMinutes,
-      status: "pending_confirmation",
-      telegramChatId: input.chatId,
-      unitId: input.unitId
-    });
+  return insertBookingSafely({
+    bookingDate: input.date, createdByUserId: input.userId, customerUserId: input.userId,
+    endMinutes: startMinutes + input.durationMinutes,
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+    source: "telegram_llm", startMinutes, status: "pending_confirmation",
+    telegramChatId: input.chatId, unitId: input.unitId
   });
 }
 
@@ -118,24 +94,17 @@ export async function confirmTelegramBooking(input: {
   chatId: number;
 }) {
   const pending = await findTelegramBooking(input);
+  return runBookingTransaction(pending.unitId, (sql) => confirmPendingBooking(input, sql));
+}
 
-  return runBookingTransaction(pending.unitId, async (sql) => {
-    const booking = await findTelegramBooking(input);
-    await ensureNoOverlap({
-      bookingDate: booking.bookingDate,
-      bookingId: input.bookingId,
-      endMinutes: booking.endMinutes,
-      sql,
-      startMinutes: booking.startMinutes,
-      unitId: booking.unitId
-    });
-
-    await updateBookingStatus({
-      bookingId: input.bookingId,
-      sql,
-      status: "confirmed"
-    });
+async function confirmPendingBooking(input: { bookingId: string; chatId: number }, sql: DbExecutor) {
+  const booking = await findTelegramBooking(input);
+  await ensureNoOverlap({
+    bookingDate: booking.bookingDate, bookingId: input.bookingId,
+    endMinutes: booking.endMinutes, sql,
+    startMinutes: booking.startMinutes, unitId: booking.unitId
   });
+  await updateBookingStatus({ bookingId: input.bookingId, sql, status: "confirmed" });
 }
 
 export async function rejectTelegramBooking(input: {
@@ -158,8 +127,7 @@ export async function cancelBooking(input: {
   }
 
   if (booking.status === "cancelled") throw new Error("Бронирование уже отменено");
-  const startMinutes = parseTimeLabel(booking.startTime);
-  if (!isFutureBookingStart(booking.dateLabel, startMinutes)) throw new Error("Прошедшее бронирование нельзя отменить");
+  if (!isFutureBooking(booking)) throw new Error("Прошедшее бронирование нельзя отменить");
 
   await updateBookingStatus({
     bookingId: input.bookingId,
@@ -178,29 +146,21 @@ async function createConfirmedBooking(input: {
   unitId: string;
 }) {
   const startMinutes = parseTimeLabel(input.startTime);
-  const endMinutes = startMinutes + input.durationMinutes;
+  return insertBookingSafely({
+    bookingDate: input.bookingDate, createdByUserId: input.createdByUserId,
+    customerUserId: input.customerUserId, endMinutes: startMinutes + input.durationMinutes,
+    note: input.note, source: input.source, startMinutes,
+    status: "confirmed", unitId: input.unitId
+  });
+}
 
+async function insertBookingSafely(input: BookingDraft) {
   return runBookingTransaction(input.unitId, async (sql) => {
     await ensureNoOverlap({
-      bookingDate: input.bookingDate,
-      endMinutes,
-      sql,
-      startMinutes,
-      unitId: input.unitId
+      bookingDate: input.bookingDate, endMinutes: input.endMinutes,
+      sql, startMinutes: input.startMinutes, unitId: input.unitId
     });
-
-    return createBooking({
-      bookingDate: input.bookingDate,
-      createdByUserId: input.createdByUserId,
-      customerUserId: input.customerUserId,
-      endMinutes,
-      note: input.note,
-      source: input.source,
-      sql,
-      startMinutes,
-      status: "confirmed",
-      unitId: input.unitId
-    });
+    return createBooking({ ...input, sql });
   });
 }
 

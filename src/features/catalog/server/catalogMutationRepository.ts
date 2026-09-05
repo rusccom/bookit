@@ -1,11 +1,9 @@
-import type { Sql } from "postgres";
-
 import type { WeeklyScheduleEntry } from "@/features/catalog/server/catalogTypes";
 import type { SlotMinutes } from "@/features/catalog/slotOptions";
 import { getDb } from "@/features/database/server/client";
+import type { DbExecutor } from "@/features/database/server/types";
+import { parseTimeLabel } from "@/features/shared/server/dateTime";
 import { createId } from "@/features/shared/server/id";
-
-type CatalogDb = Pick<Sql<Record<string, never>>, "unsafe">;
 
 export type CourtMutationInput = {
   address: string;
@@ -60,7 +58,7 @@ async function findProviderIdByOwner(ownerUserId: string) {
   return row?.id || null;
 }
 
-async function insertCourt(sql: CatalogDb, input: CourtMutationInput, providerId: string) {
+async function insertCourt(sql: DbExecutor, input: CourtMutationInput, providerId: string) {
   const venueId = createId();
   const unitId = createId();
   await insertVenue(sql, input, venueId, providerId);
@@ -70,7 +68,7 @@ async function insertCourt(sql: CatalogDb, input: CourtMutationInput, providerId
 }
 
 async function insertVenue(
-  sql: CatalogDb,
+  sql: DbExecutor,
   input: CourtMutationInput,
   venueId: string,
   providerId: string
@@ -81,7 +79,7 @@ async function insertVenue(
   `, [venueId, providerId, input.city, input.venueTitle, input.address]);
 }
 
-async function insertUnit(sql: CatalogDb, input: CourtMutationInput, unitId: string, venueId: string) {
+async function insertUnit(sql: DbExecutor, input: CourtMutationInput, unitId: string, venueId: string) {
   await sql.unsafe(`
     INSERT INTO bookable_units (
       id, venue_id, kind, title, surface, description, price_per_hour, slot_minutes
@@ -89,7 +87,7 @@ async function insertUnit(sql: CatalogDb, input: CourtMutationInput, unitId: str
   `, [unitId, venueId, input.kind, input.title, input.surface, input.description, input.pricePerHour, input.slotMinutes]);
 }
 
-async function updateOwnedUnit(sql: CatalogDb, input: CourtMutationInput & { unitId: string }) {
+async function updateOwnedUnit(sql: DbExecutor, input: CourtMutationInput & { unitId: string }) {
   const [row] = await sql.unsafe<{ venue_id: string }[]>(`
     UPDATE bookable_units u SET kind = $1, title = $2, surface = $3,
       description = $4, price_per_hour = $5, slot_minutes = $8, updated_at = NOW()
@@ -102,27 +100,22 @@ async function updateOwnedUnit(sql: CatalogDb, input: CourtMutationInput & { uni
   return row.venue_id;
 }
 
-async function updateVenue(sql: CatalogDb, input: CourtMutationInput, venueId: string) {
+async function updateVenue(sql: DbExecutor, input: CourtMutationInput, venueId: string) {
   await sql.unsafe(`
     UPDATE venues SET title = $1, city = $2, address = $3 WHERE id = $4
   `, [input.venueTitle, input.city, input.address, venueId]);
 }
 
-async function replaceSchedule(sql: CatalogDb, unitId: string, schedule: WeeklyScheduleEntry[]) {
+async function replaceSchedule(sql: DbExecutor, unitId: string, schedule: WeeklyScheduleEntry[]) {
   await sql.unsafe("DELETE FROM availability_rules WHERE unit_id = $1", [unitId]);
   await insertSchedule(sql, unitId, schedule);
 }
 
-async function insertSchedule(sql: CatalogDb, unitId: string, schedule: WeeklyScheduleEntry[]) {
+async function insertSchedule(sql: DbExecutor, unitId: string, schedule: WeeklyScheduleEntry[]) {
   for (const rule of schedule) {
     await sql.unsafe(`
       INSERT INTO availability_rules (id, unit_id, weekday, start_minutes, end_minutes)
       VALUES ($1, $2, $3, $4, $5)
-    `, [createId(), unitId, rule.weekday, toMinutes(rule.startTime), toMinutes(rule.endTime)]);
+    `, [createId(), unitId, rule.weekday, parseTimeLabel(rule.startTime), parseTimeLabel(rule.endTime)]);
   }
-}
-
-function toMinutes(value: string) {
-  const [hours, minutes] = value.split(":").map(Number);
-  return hours * 60 + minutes;
 }

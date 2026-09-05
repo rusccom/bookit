@@ -1,11 +1,12 @@
 import { getAdminBookings } from "@/features/admin/server/adminBookingService";
-import { getAdminParam as pick, type AdminPageProps } from "@/features/admin/ui/adminPageParams";
+import type { AdminPageProps } from "@/features/admin/ui/adminPageParams";
 import { adminBookingStatuses } from "@/features/admin/ui/adminPresentation";
 import { AdminBookingsTable } from "@/features/admin/ui/AdminBookingsTable";
 import { AdminField } from "@/features/admin/ui/shared/AdminField";
 import { AdminFilters } from "@/features/admin/ui/shared/AdminFilters";
 import { AdminLink } from "@/features/admin/ui/shared/AdminLink";
 import { AdminPage } from "@/features/admin/ui/shared/AdminPage";
+import { getSearchParam as pick } from "@/features/shared/server/searchParams";
 
 export default async function AdminBookingsPage(props: AdminPageProps) {
   const params = await props.searchParams;

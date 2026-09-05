@@ -30,10 +30,7 @@
   pointer-events: none;
   z-index: -1;
 }
-.shell {
-  width: min(1480px, calc(100% - 40px));
-  margin: 0 auto;
-}
+.shell { width: min(1480px, calc(100% - 40px)); margin: 0 auto; }
 .layout {
   display: grid;
   grid-template-columns: minmax(340px, 0.9fr) minmax(0, 1.24fr);
@@ -41,9 +38,7 @@
   padding: 48px 0 84px;
   align-items: start;
 }
-.layoutLarge {
-  grid-template-columns: minmax(340px, 0.84fr) minmax(0, 1.4fr);
-}
+.layoutLarge { grid-template-columns: minmax(340px, 0.84fr) minmax(0, 1.4fr); }
 .layoutCentered {
   display: grid;
   width: 100%;
@@ -51,16 +46,9 @@
   margin: 0 auto;
   padding: 48px 0 84px;
 }
-.layoutCentered .content {
-  width: 100%;
-}
-.layoutCentered .formCard {
-  max-width: 480px;
-  margin: 0 auto;
-}
-.layoutCentered .footer {
-  text-align: center;
-}
+.layoutCentered .content { width: 100%; }
+.layoutCentered .formCard { max-width: 480px; margin: 0 auto; }
+.layoutCentered .footer { text-align: center; }
 .intro,
 .formCard,
 .choiceCard {
@@ -103,10 +91,7 @@
   letter-spacing: -0.04em;
   color: var(--public-text);
 }
-.intro h1 {
-  font-size: clamp(2rem, 3.5vw, 3rem);
-  line-height: 0.98;
-}
+.intro h1 { font-size: clamp(2rem, 3.5vw, 3rem); line-height: 0.98; }
 .description,
 .cardHeader p,
 .choiceCard p,
@@ -161,22 +146,14 @@
   background: linear-gradient(135deg, var(--public-secondary), #d98cbb);
   box-shadow: 0 0 0 6px var(--public-accent-soft);
 }
-.formCard {
-  padding: 34px;
-  background: var(--public-surface-strong);
-}
-.cardHeader h2 {
-  font-size: 1.65rem;
-  line-height: 1.02;
-}
+.formCard { padding: 34px; background: var(--public-surface-strong); }
+.cardHeader h2 { font-size: 1.65rem; line-height: 1.02; }
 .fieldGrid,
 .choiceGrid {
   display: grid;
   gap: 16px;
 }
-.fieldGrid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
+.fieldGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .field span {
   color: #4a4a62;
   font-size: 0.88rem;

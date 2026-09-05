@@ -1,38 +1,30 @@
 import type { WeeklyScheduleEntry } from "@/features/catalog/server/catalogTypes";
+import { readFormFlag, readFormNumber, readFormText } from "@/features/shared/server/formData";
 
 export function readCourtFormData(formData: FormData) {
   return {
-    address: read(formData, "address"),
-    city: read(formData, "city"),
-    description: read(formData, "description"),
-    kind: read(formData, "kind"),
-    pricePerHour: readNumber(formData, "pricePerHour"),
+    address: readFormText(formData, "address"),
+    city: readFormText(formData, "city"),
+    description: readFormText(formData, "description"),
+    kind: readFormText(formData, "kind"),
+    pricePerHour: readFormNumber(formData, "pricePerHour"),
     schedule: readSchedule(formData),
-    slotMinutes: readNumber(formData, "slotMinutes"),
-    surface: read(formData, "surface"),
-    title: read(formData, "title"),
-    venueTitle: read(formData, "venueTitle")
+    slotMinutes: readFormNumber(formData, "slotMinutes"),
+    surface: readFormText(formData, "surface"),
+    title: readFormText(formData, "title"),
+    venueTitle: readFormText(formData, "venueTitle")
   };
 }
 
 function readSchedule(formData: FormData): WeeklyScheduleEntry[] {
   const schedule: WeeklyScheduleEntry[] = [];
   for (let weekday = 0; weekday < 7; weekday += 1) {
-    if (formData.get(`day-${weekday}-enabled`) !== "true") continue;
+    if (!readFormFlag(formData, `day-${weekday}-enabled`)) continue;
     schedule.push({
-      endTime: read(formData, `day-${weekday}-end`),
-      startTime: read(formData, `day-${weekday}-start`),
+      endTime: readFormText(formData, `day-${weekday}-end`),
+      startTime: readFormText(formData, `day-${weekday}-start`),
       weekday
     });
   }
   return schedule;
-}
-
-function read(formData: FormData, name: string) {
-  return String(formData.get(name) || "");
-}
-
-function readNumber(formData: FormData, name: string) {
-  const value = read(formData, name).trim();
-  return value ? Number(value) : Number.NaN;
 }

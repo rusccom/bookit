@@ -1,5 +1,4 @@
-import { cookies, headers } from "next/headers";
-import { SignJWT, jwtVerify } from "jose";
+import { headers } from "next/headers";
 
 import {
   createAdminSessionRecord,
@@ -8,7 +7,7 @@ import {
   touchAdminSession
 } from "@/features/admin/server/adminSessionRepository";
 import type { AdminAccount } from "@/features/admin/server/adminTypes";
-import { getEnv } from "@/features/shared/server/env";
+import { deletePrivateCookie, readSignedCookie, saveSignedCookie } from "@/features/shared/server/signedCookie";
 
 const ADMIN_COOKIE = "bookit_admin_session";
 const REMEMBER_SECONDS = 60 * 60 * 24 * 30;
@@ -30,51 +29,20 @@ export async function createAdminSession(
     expiresAt,
     userAgent: requestHeaders.get("user-agent") || "Неизвестное устройство"
   });
-  const token = await signToken({ adminId: admin.id, sessionId }, duration);
-  const store = await cookies();
-  store.set(ADMIN_COOKIE, token, getCookieOptions(remember));
+  await saveSignedCookie(ADMIN_COOKIE, { adminId: admin.id, sessionId }, `${duration}s`, remember ? REMEMBER_SECONDS : undefined);
 }
 
 export async function clearAdminSession() {
   const session = await readAdminSession();
   if (session) await revokeAdminSessionById(session.sessionId);
-  const store = await cookies();
-  store.delete(ADMIN_COOKIE);
+  await deletePrivateCookie(ADMIN_COOKIE);
 }
 
 export async function readAdminSession(): Promise<AdminSession | null> {
-  const store = await cookies();
-  const token = store.get(ADMIN_COOKIE)?.value;
-  if (!token) return null;
-  try {
-    const result = await jwtVerify<AdminSession>(token, getSecret());
-    const session = await findActiveAdminSession(result.payload.sessionId);
-    if (!session || session.admin_user_id !== result.payload.adminId) return null;
-    await touchAdminSession(session.id);
-    return result.payload;
-  } catch {
-    return null;
-  }
-}
-
-async function signToken(payload: AdminSession, duration: number) {
-  return new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime(`${duration}s`)
-    .setIssuedAt()
-    .sign(getSecret());
-}
-
-function getCookieOptions(remember: boolean) {
-  const options = {
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax" as const,
-    secure: getEnv().APP_URL.startsWith("https://")
-  };
-  return remember ? { ...options, maxAge: REMEMBER_SECONDS } : options;
-}
-
-function getSecret() {
-  return new TextEncoder().encode(getEnv().SESSION_SECRET);
+  const payload = await readSignedCookie<AdminSession>(ADMIN_COOKIE);
+  if (!payload) return null;
+  const session = await findActiveAdminSession(payload.sessionId);
+  if (!session || session.admin_user_id !== payload.adminId) return null;
+  await touchAdminSession(session.id);
+  return payload;
 }

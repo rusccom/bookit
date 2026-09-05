@@ -1,23 +1,23 @@
 import type { AvailabilityRule } from "@/features/catalog/server/catalogTypes";
-import type { BookingRecord, UnitOption } from "@/features/booking/server/bookingTypes";
+import { mapAvailabilityRule } from "@/features/catalog/server/catalogRepositoryMappers";
+import type { BookingRecord } from "@/features/booking/server/bookingTypes";
 import type {
   BookingRow,
   RuleRow,
-  UnitRow
 } from "@/features/booking/server/bookingRepositoryTypes";
+import { formatMinutes, toIsoDateLabel } from "@/features/shared/server/dateTime";
 
 export function groupRules(rows: RuleRow[]) {
   const map = new Map<string, AvailabilityRule[]>();
 
   for (const row of rows) {
     const items = map.get(row.unit_id) || [];
-    items.push(mapRule(row));
+    items.push(mapAvailabilityRule(row));
     map.set(row.unit_id, items);
   }
 
   return map;
 }
-
 export function groupBookings(
   rows: {
     end_minutes: number;
@@ -46,49 +46,14 @@ export function mapBooking(row: BookingRow): BookingRecord {
     city: row.city,
     customerName: row.customer_name || null,
     customerPhone: row.customer_phone || null,
-    dateLabel: formatBookingDate(row.booking_date),
-    endTime: minutesToTime(row.end_minutes),
+    dateLabel: toIsoDateLabel(row.booking_date),
+    endTime: formatMinutes(row.end_minutes),
     note: row.note,
     source: row.source,
-    startTime: minutesToTime(row.start_minutes),
+    startTime: formatMinutes(row.start_minutes),
     status: row.status,
     unitId: row.unit_id,
     unitTitle: row.unit_title,
     venueTitle: row.venue_title
   };
-}
-
-export function mapUnit(row: UnitRow): UnitOption {
-  return {
-    address: row.address,
-    city: row.city,
-    description: row.description,
-    kind: row.kind,
-    pricePerHour: Number(row.price_per_hour),
-    slotMinutes: row.slot_minutes,
-    surface: row.surface,
-    unitId: row.unit_id,
-    unitTitle: row.unit_title,
-    venueTitle: row.venue_title
-  };
-}
-
-function mapRule(row: RuleRow): AvailabilityRule {
-  return {
-    endMinutes: row.end_minutes,
-    id: row.id,
-    startMinutes: row.start_minutes,
-    weekday: row.weekday
-  };
-}
-
-function minutesToTime(value: number): string {
-  const hours = Math.floor(value / 60);
-  const minutes = value % 60;
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-}
-
-function formatBookingDate(value: Date | string): string {
-  if (value instanceof Date) return value.toISOString().slice(0, 10);
-  return String(value).slice(0, 10);
 }

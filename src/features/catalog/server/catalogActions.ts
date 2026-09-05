@@ -9,6 +9,8 @@ import {
   toggleOwnerUnit,
   updateOwnerUnit
 } from "@/features/catalog/server/catalogService";
+import { getErrorMessage } from "@/features/shared/server/errors";
+import { readFormFlag, readFormText } from "@/features/shared/server/formData";
 
 const UNITS_PATH = "/dashboard/owner/units";
 
@@ -27,7 +29,7 @@ export async function updateOwnerUnitAction(formData: FormData) {
   const owner = await requireUser("owner");
   let target = `${UNITS_PATH}?success=unit-updated`;
   try {
-    await updateOwnerUnit({ ...readCourtFormData(formData), ownerUserId: owner.id, unitId: read(formData, "unitId") });
+    await updateOwnerUnit({ ...readCourtFormData(formData), ownerUserId: owner.id, unitId: readFormText(formData, "unitId") });
   } catch (error) {
     target = errorTarget(error);
   }
@@ -38,7 +40,7 @@ export async function toggleOwnerUnitAction(formData: FormData) {
   const owner = await requireUser("owner");
   let target = `${UNITS_PATH}?success=unit-status-updated`;
   try {
-    await toggleOwnerUnit({ active: read(formData, "active") === "true", ownerUserId: owner.id, unitId: read(formData, "unitId") });
+    await toggleOwnerUnit({ active: readFormFlag(formData, "active"), ownerUserId: owner.id, unitId: readFormText(formData, "unitId") });
   } catch (error) {
     target = errorTarget(error);
   }
@@ -46,10 +48,6 @@ export async function toggleOwnerUnitAction(formData: FormData) {
 }
 
 function errorTarget(error: unknown) {
-  const message = error instanceof Error ? error.message : "Не удалось сохранить корт";
+  const message = getErrorMessage(error, "Не удалось сохранить корт");
   return `${UNITS_PATH}?error=${encodeURIComponent(message)}`;
-}
-
-function read(formData: FormData, name: string) {
-  return String(formData.get(name) || "");
 }

@@ -11,21 +11,20 @@ export async function GET() {
   try {
     const sql = getDb();
     await sql`SELECT 1`;
-
-    return NextResponse.json({
-      aiConfigured: isAiConfigured(),
-      smsConfigured: isSmsConfigured(),
-      status: "ok",
-      telegramConfigured: isTelegramConfigured()
-    });
+    return healthyResponse();
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unexpected error";
-    return NextResponse.json(
-      {
-        error: message,
-        status: "error"
-      },
-      { status: 500 }
-    );
+    return unhealthyResponse(error);
   }
+}
+
+function healthyResponse() {
+  return NextResponse.json({
+    aiConfigured: isAiConfigured(), smsConfigured: isSmsConfigured(),
+    status: "ok", telegramConfigured: isTelegramConfigured()
+  });
+}
+
+function unhealthyResponse(error: unknown) {
+  console.error("Health check failed", error);
+  return NextResponse.json({ status: "error" }, { status: 500 });
 }

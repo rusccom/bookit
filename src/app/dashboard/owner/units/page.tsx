@@ -4,16 +4,17 @@ import { OwnerCourtGrid } from "@/features/catalog/ui/OwnerCourtGrid";
 import { OwnerUnitForm } from "@/features/catalog/ui/OwnerUnitForm";
 import { StatusBanner } from "@/features/shared/ui/StatusBanner";
 import styles from "@/features/catalog/ui/courtManagement.module.css";
+import { getSearchParam, type SearchParams } from "@/features/shared/server/searchParams";
 
 type PageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<SearchParams>;
 };
 
 export default async function OwnerUnitsPage(props: PageProps) {
   const owner = await requireUser("owner");
   const sp = await props.searchParams;
-  const error = pickValue(sp.error);
-  const success = pickValue(sp.success);
+  const error = getSearchParam(sp.error);
+  const success = getSearchParam(sp.success);
 
   const units = await getOwnerUnits(owner.id);
 
@@ -29,13 +30,8 @@ export default async function OwnerUnitsPage(props: PageProps) {
     </>
   );
 }
-
 function pluralizeCourts(value: number) {
   if (value % 10 === 1 && value % 100 !== 11) return "корт";
   if ([2, 3, 4].includes(value % 10) && ![12, 13, 14].includes(value % 100)) return "корта";
   return "кортов";
-}
-
-function pickValue(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
 }

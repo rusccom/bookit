@@ -1,7 +1,8 @@
 import type { AvailabilityRule } from "@/features/catalog/server/catalogTypes";
 
 import { getDb } from "@/features/database/server/client";
-import { groupBookings, groupRules, mapUnit } from "@/features/booking/server/bookingRepositoryMappers";
+import { groupBookings, groupRules } from "@/features/booking/server/bookingRepositoryMappers";
+import { mapSearchUnit } from "@/features/catalog/server/catalogRepositoryMappers";
 import type {
   RuleRow,
   UnitRow
@@ -66,7 +67,7 @@ export async function listUnitsForAvailability(filters: {
     ORDER BY v.title, u.title
   `, [filters.city, venueQuery, venueQuery ? `%${venueQuery}%` : null]);
 
-  return rows.map(mapUnit);
+  return rows.map(mapSearchUnit);
 }
 
 export async function findOwnerUnit(input: {
@@ -82,7 +83,7 @@ export async function findOwnerUnit(input: {
     WHERE u.id = $1 AND p.owner_user_id = $2 AND v.is_active AND u.is_active
   `, [input.unitId, input.ownerUserId]);
 
-  return row ? mapUnit(row) : null;
+  return row ? mapSearchUnit(row) : null;
 }
 
 export async function findUnit(unitId: string) {
@@ -94,5 +95,5 @@ export async function findUnit(unitId: string) {
     WHERE u.id = $1 AND v.is_active AND u.is_active
   `, [unitId]);
 
-  return row ? mapUnit(row) : null;
+  return row ? mapSearchUnit(row) : null;
 }

@@ -2,6 +2,7 @@ import type { Row } from "postgres";
 
 import type { AuthUser, UserRole } from "@/features/auth/server/authTypes";
 import { getDb } from "@/features/database/server/client";
+import type { DbExecutor } from "@/features/database/server/types";
 import { createId } from "@/features/shared/server/id";
 
 type UserInsert = {
@@ -26,99 +27,58 @@ type DbUserRow = Row & {
   is_blocked: boolean;
 };
 
-export async function findUserByEmail(email: string) {
-  const sql = getDb();
-  const [row] = await sql<DbUserRow[]>`
-    SELECT id, role, full_name, email, phone, is_blocked
-    FROM app_users
-    WHERE email = ${email}
-  `;
+type AccountInsert = UserInsert & { providerTitle?: string };
+type PasswordUserRow = DbUserRow & { password_hash: string | null };
 
-  return row ? mapUser(row) : null;
+const USER_SELECT = "SELECT id, role, full_name, email, phone, is_blocked FROM app_users";
+
+export async function findUserByEmail(email: string) {
+  return findUserBy("email", email);
 }
 
 export async function findUserById(id: string) {
-  const sql = getDb();
-  const [row] = await sql<DbUserRow[]>`
-    SELECT id, role, full_name, email, phone, is_blocked
-    FROM app_users
-    WHERE id = ${id}
-  `;
-
-  return row ? mapUser(row) : null;
+  return findUserBy("id", id);
 }
 
 export async function findUserByPhone(phone: string) {
-  const sql = getDb();
-  const [row] = await sql<DbUserRow[]>`
-    SELECT id, role, full_name, email, phone, is_blocked
-    FROM app_users
-    WHERE phone = ${phone}
-  `;
-
-  return row ? mapUser(row) : null;
+  return findUserBy("phone", phone);
 }
 
 export async function findUserWithPassword(email: string) {
   const sql = getDb();
-  const [row] = await sql<
-    (DbUserRow & {
-      password_hash: string | null;
-    })[]
-  >`
+  const [row] = await sql<PasswordUserRow[]>`
     SELECT id, role, full_name, email, phone, password_hash, is_blocked
     FROM app_users
     WHERE email = ${email}
   `;
-
-  if (!row) {
-    return null;
-  }
-
-  return {
-    passwordHash: row.password_hash,
-    user: mapUser(row)
-  };
+  return row ? { passwordHash: row.password_hash, user: mapAuthUser(row) } : null;
 }
 
-export async function createUser(input: UserInsert) {
-  const sql = getDb();
+export async function createUserAccount(input: AccountInsert) {
+  return getDb().begin(async (sql) => {
+    const user = await insertUser(sql, input);
+    if (input.role === "owner") await insertProvider(sql, {
+      ownerUserId: user.id, title: input.providerTitle || `${input.fullName} Booking`
+    });
+    return user;
+  });
+}
+
+async function insertUser(sql: DbExecutor, input: UserInsert) {
   const userId = createId();
-  const [row] = await sql<DbUserRow[]>`
+  const [row] = await sql.unsafe<DbUserRow[]>(`
     INSERT INTO app_users (
-      id,
-      role,
-      full_name,
-      email,
-      phone,
-      password_hash
-    ) VALUES (
-      ${userId},
-      ${input.role},
-      ${input.fullName},
-      ${input.email},
-      ${input.phone},
-      ${input.passwordHash}
-    )
+      id, role, full_name, email, phone, password_hash
+    ) VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING id, role, full_name, email, phone, is_blocked
-  `;
-
-  return mapUser(row);
+  `, [userId, input.role, input.fullName, input.email, input.phone, input.passwordHash]);
+  return mapAuthUser(row);
 }
 
-export async function createProvider(input: ProviderInsert) {
-  const sql = getDb();
-  await sql`
-    INSERT INTO providers (
-      id,
-      owner_user_id,
-      title
-    ) VALUES (
-      ${createId()},
-      ${input.ownerUserId},
-      ${input.title}
-    )
-  `;
+async function insertProvider(sql: DbExecutor, input: ProviderInsert) {
+  await sql.unsafe(`
+    INSERT INTO providers (id, owner_user_id, title) VALUES ($1, $2, $3)
+  `, [createId(), input.ownerUserId, input.title]);
 }
 
 export async function upsertTelegramCustomer(input: {
@@ -127,26 +87,17 @@ export async function upsertTelegramCustomer(input: {
 }) {
   const sql = getDb();
   const [row] = await sql<DbUserRow[]>`
-    INSERT INTO app_users (
-      id,
-      role,
-      full_name,
-      phone
-    ) VALUES (
-      ${createId()},
-      'customer',
-      ${input.fullName},
-      ${input.phone}
-    )
+    INSERT INTO app_users (id, role, full_name, phone)
+    VALUES (${createId()}, 'customer', ${input.fullName}, ${input.phone})
     ON CONFLICT (phone) DO UPDATE
     SET full_name = EXCLUDED.full_name
     RETURNING id, role, full_name, email, phone, is_blocked
   `;
 
-  return mapUser(row);
+  return mapAuthUser(row);
 }
 
-function mapUser(row: DbUserRow): AuthUser {
+function mapAuthUser(row: DbUserRow): AuthUser {
   return {
     email: row.email,
     fullName: row.full_name,
@@ -155,4 +106,10 @@ function mapUser(row: DbUserRow): AuthUser {
     role: row.role,
     isBlocked: row.is_blocked
   };
+}
+
+async function findUserBy(column: "email" | "id" | "phone", value: string) {
+  const sql = getDb();
+  const [row] = await sql.unsafe<DbUserRow[]>(`${USER_SELECT} WHERE ${column} = $1`, [value]);
+  return row ? mapAuthUser(row) : null;
 }

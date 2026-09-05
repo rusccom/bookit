@@ -4,9 +4,6 @@
   gap: 32px;
   align-items: start;
 }
-
-/* --- capabilities list --- */
-
 .capabilities {
   display: grid;
   gap: 14px;
@@ -14,7 +11,6 @@
   padding: 0;
   list-style: none;
 }
-
 .capItem {
   display: flex;
   align-items: flex-start;
@@ -30,38 +26,30 @@
   box-shadow: var(--public-shadow-soft);
   transition: transform 0.2s, box-shadow 0.2s;
 }
-
 .capItem:hover {
   transform: translateY(-3px);
   box-shadow: 0 18px 38px rgba(20, 30, 60, 0.11);
 }
-
 .capIcon {
   flex-shrink: 0;
   font-size: 1.4rem;
   line-height: 1;
 }
-
 .capContent {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-
 .capTitle {
   font-size: 0.96rem;
   font-weight: 700;
   color: var(--public-text);
 }
-
 .capText {
   font-size: 0.88rem;
   color: var(--public-muted);
   line-height: 1.55;
 }
-
-/* --- phone frame --- */
-
 .phone {
   position: sticky;
   top: 32px;
@@ -75,7 +63,6 @@
     0 0 0 6px #bfc1c5,
     0 28px 60px rgba(0, 0, 0, 0.18);
 }
-
 .phoneNotch {
   width: 120px;
   height: 5px;
@@ -83,9 +70,6 @@
   border-radius: 99px;
   background: #d4d6da;
 }
-
-/* --- telegram header --- */
-
 .tgHeader {
   display: flex;
   align-items: center;
@@ -93,14 +77,12 @@
   padding: 8px 12px 10px;
   background: #517da2;
 }
-
 .tgBack {
   width: 22px;
   height: 22px;
   color: #fff;
   flex-shrink: 0;
 }
-
 .tgAvatar {
   display: flex;
   align-items: center;
@@ -114,14 +96,12 @@
   font-size: 0.95rem;
   flex-shrink: 0;
 }
-
 .tgInfo {
   display: flex;
   flex-direction: column;
   gap: 1px;
   min-width: 0;
 }
-
 .tgName {
   font-weight: 600;
   font-size: 0.92rem;
@@ -130,13 +110,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .tgStatus {
   font-size: 0.74rem;
   color: rgba(255, 255, 255, 0.7);
   transition: color 0.2s;
 }
-
 .tgDots {
   width: 20px;
   height: 20px;
@@ -144,9 +122,6 @@
   margin-left: auto;
   flex-shrink: 0;
 }
-
-/* --- chat body --- */
-
 .tgBody {
   display: flex;
   flex-direction: column;
@@ -160,11 +135,9 @@
   scroll-behavior: smooth;
   scrollbar-width: none;
 }
-
 .tgBody::-webkit-scrollbar {
   display: none;
 }
-
 .rowBot,
 .rowUser {
   display: flex;
@@ -172,21 +145,15 @@
   gap: 6px;
   max-width: 92%;
 }
-
 .rowBot {
   align-self: flex-start;
 }
-
 .rowUser {
   align-self: flex-end;
 }
-
-/* --- message appear animation --- */
-
 .msgAppear {
   animation: msgSlideIn 0.3s ease-out both;
 }
-
 @keyframes msgSlideIn {
   from {
     opacity: 0;
@@ -197,7 +164,6 @@
     transform: translateY(0) scale(1);
   }
 }
-
 .msgAvatar {
   display: flex;
   align-items: center;
@@ -211,9 +177,6 @@
   font-size: 0.7rem;
   flex-shrink: 0;
 }
-
-/* --- bubbles --- */
-
 .bubbleBot,
 .bubbleUser {
   position: relative;
@@ -224,25 +187,19 @@
   border-radius: 12px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
-
 .bubbleBot {
   background: #fff;
   color: #222;
   border-bottom-left-radius: 4px;
 }
-
 .bubbleUser {
   background: #eeffde;
   color: #222;
   border-bottom-right-radius: 4px;
 }
-
 .bubbleText {
   display: inline;
 }
-
-/* --- typing indicator --- */
-
 .typing {
   display: flex;
   align-items: center;
@@ -250,7 +207,6 @@
   padding: 12px 16px;
   min-height: 38px;
 }
-
 .dot {
   width: 7px;
   height: 7px;
@@ -258,15 +214,12 @@
   background: #90a4ae;
   animation: dotBounce 1.4s ease-in-out infinite;
 }
-
 .dot:nth-child(2) {
   animation-delay: 0.2s;
 }
-
 .dot:nth-child(3) {
   animation-delay: 0.4s;
 }
-
 @keyframes dotBounce {
   0%, 60%, 100% {
     opacity: 0.35;
@@ -277,9 +230,6 @@
     transform: translateY(-4px);
   }
 }
-
-/* --- meta: time + checks --- */
-
 .meta {
   display: inline-flex;
   align-items: center;
@@ -287,21 +237,16 @@
   float: right;
   margin: 6px 0 0 10px;
 }
-
 .time {
   font-size: 0.68rem;
   color: rgba(0, 0, 0, 0.35);
   line-height: 1;
 }
-
 .checks {
   width: 16px;
   height: 11px;
   color: #4fae4e;
 }
-
-/* --- input bar --- */
-
 .tgInput {
   display: flex;
   align-items: center;
@@ -309,34 +254,27 @@
   padding: 8px 12px;
   background: #f0f1f5;
 }
-
 .tgClip {
   width: 22px;
   height: 22px;
   color: #8e99a4;
   flex-shrink: 0;
 }
-
 .tgPlaceholder {
   flex: 1;
   font-size: 0.86rem;
   color: rgba(0, 0, 0, 0.35);
 }
-
 .tgMic {
   width: 22px;
   height: 22px;
   color: #8e99a4;
   flex-shrink: 0;
 }
-
-/* --- responsive --- */
-
 @media (max-width: 860px) {
   .layout {
     grid-template-columns: 1fr;
   }
-
   .phone {
     position: static;
     max-width: 400px;

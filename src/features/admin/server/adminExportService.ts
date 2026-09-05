@@ -1,8 +1,25 @@
 import { listAdminBookings } from "@/features/admin/server/adminBookingRepository";
 import { listUsers } from "@/features/admin/server/adminRepository";
-import { formatBelarusPhone } from "@/features/shared/server/phone";
+import { formatBelarusPhone } from "@/features/shared/phone";
+import { createAdminAudit } from "@/features/admin/server/adminAuditRepository";
+import { getCurrentAdmin } from "@/features/admin/server/requireAdmin";
 
-export async function createUsersCsv() {
+type ExportKind = "bookings" | "users";
+
+export async function downloadAdminExport(kind: ExportKind) {
+  const admin = await getCurrentAdmin();
+  if (!admin) return new Response("Unauthorized", { status: 401 });
+  const csv = kind === "users" ? await createUsersCsv() : await createBookingsCsv();
+  const entityType = kind === "users" ? "user" : "booking";
+  await createAdminAudit({ action: "export", admin, entityId: kind, entityType });
+  return createCsvResponse(csv, `bookit-${kind}.csv`);
+}
+
+export function createAdminExportRoute(kind: ExportKind) {
+  return () => downloadAdminExport(kind);
+}
+
+async function createUsersCsv() {
   const users = await listUsers("");
   return toCsv([
     ["ID", "Имя", "Email", "Телефон", "Роль", "Статус", "Регистрация", "Личные бронирования", "Корты"],
@@ -10,7 +27,7 @@ export async function createUsersCsv() {
   ]);
 }
 
-export async function createBookingsCsv() {
+async function createBookingsCsv() {
   const bookings = await listAdminBookings({ date: "", limit: 10000, search: "", status: "" });
   return toCsv([
     ["ID", "Дата", "Время", "Клиент", "Телефон", "Объект", "Корт", "Владелец", "Статус", "Источник"],
@@ -18,7 +35,7 @@ export async function createBookingsCsv() {
   ]);
 }
 
-export function createCsvResponse(csv: string, filename: string) {
+function createCsvResponse(csv: string, filename: string) {
   return new Response(csv, {
     headers: {
       "Content-Disposition": `attachment; filename="${filename}"`,

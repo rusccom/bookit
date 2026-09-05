@@ -6,6 +6,10 @@ export const SLOT_OPTIONS = [
 
 export type SlotMinutes = typeof SLOT_OPTIONS[number]["value"];
 
+export function isSlotMinutes(value: number): value is SlotMinutes {
+  return SLOT_OPTIONS.some((option) => option.value === value);
+}
+
 export function formatSlotMinutes(value: number) {
   return SLOT_OPTIONS.find((option) => option.value === value)?.label || `${value} мин`;
 }

@@ -1,5 +1,4 @@
-import Link from "next/link";
-
+import { RegisterChoiceCard } from "./RegisterChoiceCard";
 import styles from "./auth.module.css";
 
 const OPTIONS = [
@@ -20,27 +19,5 @@ const OPTIONS = [
 ];
 
 export function ModernRegisterChoice() {
-  return <div className={styles.choiceGrid}>{OPTIONS.map(renderOption)}</div>;
-}
-
-function renderOption(option: {
-  href: string;
-  label: string;
-  points: string[];
-  text: string;
-  title: string;
-}) {
-  return (
-    <Link key={option.href} className={styles.choiceCard} href={option.href}>
-      <span className={styles.choiceBadge}>{option.label}</span>
-      <h2>{option.title}</h2>
-      <p>{option.text}</p>
-      <ul className={styles.choiceList}>{option.points.map(renderPoint)}</ul>
-      <span className={styles.choiceAction}>Открыть форму</span>
-    </Link>
-  );
-}
-
-function renderPoint(point: string) {
-  return <li key={point}>{point}</li>;
+  return <div className={styles.choiceGrid}>{OPTIONS.map((option) => <RegisterChoiceCard key={option.href} option={option} />)}</div>;
 }

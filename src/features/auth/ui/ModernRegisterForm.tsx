@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { registerUserAction } from "@/features/auth/server/authActions";
 import type { UserRole } from "@/features/auth/server/authTypes";
-import { BelarusPhoneInput } from "@/features/shared/ui/BelarusPhoneInput";
+import { RegistrationFields } from "@/features/auth/ui/RegistrationFields";
 
 import styles from "./auth.module.css";
 
@@ -15,45 +15,15 @@ export function ModernRegisterForm(props: ModernRegisterFormProps) {
   const title = isOwner ? "Регистрация арендодателя" : "Регистрация клиента";
   const text = isOwner ? "Укажите данные, чтобы начать сдавать корты в аренду." : "Создайте аккаунт, чтобы быстро находить и бронировать корты.";
 
-  return (
-    <section className={styles.formCard}>
+  return <section className={styles.formCard}>
       <div className={styles.cardHeader}>
-        <h2>{title}</h2>
-        <p>{text}</p>
+        <h2>{title}</h2><p>{text}</p>
       </div>
       <form action={registerUserAction} className={styles.form}>
         <input name="role" type="hidden" value={props.role} />
-        <div className={styles.fieldGrid}>
-          <label className={styles.field}>
-            <span>Имя и фамилия</span>
-            <input autoComplete="name" className={styles.input} name="fullName" placeholder="Анна Иванова" required />
-          </label>
-          <label className={styles.field}>
-            <span>Email</span>
-            <input autoComplete="email" className={styles.input} name="email" placeholder="name@example.com" required type="email" />
-          </label>
-          <label className={styles.field}>
-            <span>Телефон</span>
-            <BelarusPhoneInput className={styles.input} required />
-          </label>
-          {isOwner ? renderProviderField() : null}
-          <label className={styles.field}>
-            <span>Пароль</span>
-            <input autoComplete="new-password" className={styles.input} name="password" placeholder="Минимум 8 символов" required type="password" />
-          </label>
-        </div>
+        <RegistrationFields owner={isOwner} />
         <button className={styles.primaryButton} type="submit">Создать аккаунт</button>
       </form>
       <p className={styles.footer}>Уже зарегистрированы? <Link className={styles.link} href="/login">Войти в кабинет</Link>.</p>
-    </section>
-  );
-}
-
-function renderProviderField() {
-  return (
-    <label className={styles.field}>
-      <span>Название площадки или бренда</span>
-      <input className={styles.input} name="providerTitle" placeholder="North Hall, Loft 17" />
-    </label>
-  );
+    </section>;
 }

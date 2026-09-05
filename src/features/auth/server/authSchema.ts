@@ -1,13 +1,14 @@
 import { z } from "zod";
 
 import {
+  BELARUS_PHONE_VALIDATION_MESSAGE,
   isBelarusPhoneValid,
   normalizeBelarusPhone
-} from "@/features/shared/server/phone";
+} from "@/features/shared/phone";
 
 export const belarusPhoneSchema = z.string().trim()
   .transform(normalizeBelarusPhone)
-  .refine(isBelarusPhoneValid, "Телефон должен быть в формате +375 XX XXX XX XX с кодом 25, 29, 33 или 44");
+  .refine(isBelarusPhoneValid, BELARUS_PHONE_VALIDATION_MESSAGE);
 
 export const registrationSchema = z.object({
   email: z.string().email(),

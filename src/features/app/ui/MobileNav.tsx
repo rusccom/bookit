@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 
+import { MobileMenu } from "./MobileMenu";
+import type { NavItem } from "./dashboardNavigation";
 import styles from "./dashboardHeader.module.css";
-
-type NavItem = { href: string; label: string };
 
 type MobileNavProps = {
   items: NavItem[];
@@ -15,9 +14,8 @@ type MobileNavProps = {
 export function MobileNav({ items, logoutAction }: MobileNavProps) {
   const [open, setOpen] = useState(false);
   const menuId = "dashboard-mobile-menu";
-
-  return (
-    <div className={styles.mobileNavShell}>
+  const lineClass = open ? `${styles.burgerLine} ${styles.burgerLineOpen}` : styles.burgerLine;
+  return <div className={styles.mobileNavShell}>
       <button
         aria-controls={menuId}
         aria-expanded={open}
@@ -26,32 +24,8 @@ export function MobileNav({ items, logoutAction }: MobileNavProps) {
         onClick={() => setOpen(!open)}
         type="button"
       >
-        <span className={open ? `${styles.burgerLine} ${styles.burgerLineOpen}` : styles.burgerLine} />
-        <span className={open ? `${styles.burgerLine} ${styles.burgerLineOpen}` : styles.burgerLine} />
-        <span className={open ? `${styles.burgerLine} ${styles.burgerLineOpen}` : styles.burgerLine} />
+        <span className={lineClass} /><span className={lineClass} /><span className={lineClass} />
       </button>
-      {open && (
-        <nav className={styles.mobileMenu} id={menuId}>
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              className={styles.mobileLink}
-              href={item.href}
-              onClick={() => setOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
-          <form action={logoutAction}>
-            <button
-              className={`${styles.mobileLink} ${styles.mobileLogout}`}
-              type="submit"
-            >
-              Выйти
-            </button>
-          </form>
-        </nav>
-      )}
-    </div>
-  );
+      {open && <MobileMenu close={() => setOpen(false)} id={menuId} items={items} logoutAction={logoutAction} />}
+    </div>;
 }

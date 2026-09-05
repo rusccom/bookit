@@ -12,7 +12,7 @@ export default function DashboardLayout(props: { children: React.ReactNode }) {
   return (
     <div className="page-shell">
       <SiteHeader />
-      <main className="page-content">{props.children}</main>
+      <main className="page-content stack-large">{props.children}</main>
     </div>
   );
 }

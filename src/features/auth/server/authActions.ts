@@ -1,7 +1,6 @@
 'use server';
 
 import { redirect } from "next/navigation";
-import { ZodError } from "zod";
 
 import { loginSchema, registrationSchema } from "@/features/auth/server/authSchema";
 import { getRegisterPath } from "@/features/auth/server/registrationPaths";
@@ -19,66 +18,34 @@ import {
   savePendingRegistration
 } from "@/features/auth/server/pendingRegistration";
 import { isSmsConfigured } from "@/features/shared/server/env";
-import { generateOtpCode, hashOtpCode, verifyOtpCode } from "@/features/telegram/server/otp";
-import { sendOtpSms } from "@/features/telegram/server/smsService";
+import { generateOtpCode, hashOtpCode, verifyOtpCode } from "@/features/shared/server/otp";
+import { sendOtpSms } from "@/features/shared/server/smsService";
+import { getErrorMessage, isUniqueConstraintError } from "@/features/shared/server/errors";
+import { readFormText } from "@/features/shared/server/formData";
 
 export async function registerUserAction(formData: FormData) {
   const role = readRole(formData);
   let target = getRegisterPath(role);
-
   try {
-    const values = registrationSchema.parse(getRegistrationValues(formData));
-
-    if (!isSmsConfigured()) {
-      const user = await registerUser(values);
-      await createSession(user);
-      target = getDashboardPath(user.role);
-    } else {
-      const prepared = await prepareRegistration(values);
-      const code = generateOtpCode();
-      await sendOtpSms({ code, phone: prepared.phone });
-      await savePendingRegistration({ ...prepared, codeHash: hashOtpCode(code) });
-      target = `/register/verify?role=${prepared.role}&success=${encodeURIComponent("Код подтверждения отправлен по SMS.")}`;
-    }
+    target = await beginRegistration(formData);
   } catch (error) {
-    target = `${getRegisterPath(role)}?error=${encodeURIComponent(getErrorMessage(error))}`;
+    target = `${getRegisterPath(role)}?error=${encodeURIComponent(getRegistrationError(error))}`;
   }
-
   redirect(target);
 }
 
 export async function confirmRegistrationAction(formData: FormData) {
   const pending = await readPendingRegistration();
-
-  if (!pending) {
-    redirect("/register?error=Сессия подтверждения истекла. Зарегистрируйтесь заново.");
-  }
-
-  const code = String(formData.get("code") || "").trim();
-
-  if (!verifyOtpCode({ code, hash: pending.codeHash })) {
-    redirect(`/register/verify?role=${pending.role}&error=${encodeURIComponent("Код неверный или уже истёк.")}`);
-  }
-
+  if (!pending) redirect("/register?error=Сессия подтверждения истекла. Зарегистрируйтесь заново.");
+  const code = readFormText(formData, "code").trim();
+  if (!verifyOtpCode({ code, hash: pending.codeHash })) redirect(`/register/verify?role=${pending.role}&error=${encodeURIComponent("Код неверный или уже истёк.")}`);
   let target: string;
-
   try {
-    const user = await registerPreparedUser({
-      email: pending.email,
-      fullName: pending.fullName,
-      passwordHash: pending.passwordHash,
-      phone: pending.phone,
-      providerTitle: pending.providerTitle,
-      role: pending.role
-    });
-    await clearPendingRegistration();
-    await createSession(user);
-    target = getDashboardPath(user.role);
+    target = await completePendingRegistration(pending);
   } catch (error) {
     await clearPendingRegistration();
-    target = `${getRegisterPath(pending.role)}?error=${encodeURIComponent(getErrorMessage(error))}`;
+    target = `${getRegisterPath(pending.role)}?error=${encodeURIComponent(getRegistrationError(error))}`;
   }
-
   redirect(target);
 }
 
@@ -91,7 +58,7 @@ export async function loginUserAction(formData: FormData) {
     await createSession(user);
     target = getDashboardPath(user.role);
   } catch (error) {
-    target = `/login?error=${encodeURIComponent(getErrorMessage(error))}`;
+    target = `/login?error=${encodeURIComponent(getErrorMessage(error, "Не удалось войти"))}`;
   }
 
   redirect(target);
@@ -103,28 +70,49 @@ export async function logoutUserAction() {
 }
 
 function readRole(formData: FormData) {
-  return String(formData.get("role") || "customer");
+  return readFormText(formData, "role") || "customer";
 }
 
 function getRegistrationValues(formData: FormData) {
   return {
-    email: String(formData.get("email") || ""),
-    fullName: String(formData.get("fullName") || ""),
-    password: String(formData.get("password") || ""),
-    phone: String(formData.get("phone") || ""),
-    providerTitle: String(formData.get("providerTitle") || ""),
+    email: readFormText(formData, "email"),
+    fullName: readFormText(formData, "fullName"),
+    password: readFormText(formData, "password"),
+    phone: readFormText(formData, "phone"),
+    providerTitle: readFormText(formData, "providerTitle"),
     role: readRole(formData)
   };
 }
 
 function getLoginValues(formData: FormData) {
   return {
-    email: String(formData.get("email") || ""),
-    password: String(formData.get("password") || "")
+    email: readFormText(formData, "email"),
+    password: readFormText(formData, "password")
   };
 }
 
-function getErrorMessage(error: unknown): string {
-  if (error instanceof ZodError) return error.issues[0]?.message || "Проверьте введённые данные";
-  return error instanceof Error ? error.message : "Unexpected error";
+async function beginRegistration(formData: FormData) {
+  const values = registrationSchema.parse(getRegistrationValues(formData));
+  if (!isSmsConfigured()) {
+    const user = await registerUser(values);
+    await createSession(user);
+    return getDashboardPath(user.role);
+  }
+  const prepared = await prepareRegistration(values);
+  const code = generateOtpCode();
+  await sendOtpSms({ code, phone: prepared.phone });
+  await savePendingRegistration({ ...prepared, codeHash: hashOtpCode(code) });
+  return `/register/verify?role=${prepared.role}&success=${encodeURIComponent("Код подтверждения отправлен по SMS.")}`;
+}
+
+async function completePendingRegistration(pending: NonNullable<Awaited<ReturnType<typeof readPendingRegistration>>>) {
+  const user = await registerPreparedUser(pending);
+  await clearPendingRegistration();
+  await createSession(user);
+  return getDashboardPath(user.role);
+}
+
+function getRegistrationError(error: unknown) {
+  if (isUniqueConstraintError(error)) return "Email или телефон уже используется";
+  return getErrorMessage(error, "Проверьте введённые данные");
 }

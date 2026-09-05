@@ -28,22 +28,14 @@ export async function answerTelegramCallback(input: {
 
 async function callTelegram(method: string, payload: Record<string, unknown>) {
   const token = getEnv().TELEGRAM_BOT_TOKEN;
-
-  if (!token) {
-    throw new Error("Telegram bot token is not configured");
-  }
-
-  const response = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
-    body: JSON.stringify(payload),
-    headers: {
-      "Content-Type": "application/json"
-    },
-    method: "POST"
-  });
-
-  if (!response.ok) {
-    throw new Error(`Telegram API request failed: ${response.status}`);
-  }
-
+  if (!token) throw new Error("Telegram bot token is not configured");
+  const response = await fetch(`https://api.telegram.org/bot${token}/${method}`, buildRequest(payload));
+  if (!response.ok) throw new Error(`Telegram API request failed: ${response.status}`);
   return response.json();
+}
+
+function buildRequest(payload: Record<string, unknown>): RequestInit {
+  return {
+    body: JSON.stringify(payload), headers: { "Content-Type": "application/json" }, method: "POST"
+  };
 }

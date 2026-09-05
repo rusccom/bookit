@@ -25,9 +25,11 @@ import {
 } from "@/features/admin/server/adminTwoFactor";
 import { verifyPassword } from "@/features/auth/server/password";
 import {
+  BELARUS_PHONE_VALIDATION_MESSAGE,
   isBelarusPhoneValid,
   normalizeBelarusPhone
-} from "@/features/shared/server/phone";
+} from "@/features/shared/phone";
+import { parseWithMessage } from "@/features/shared/server/validation";
 
 const credentialsSchema = z.object({
   login: z.string().trim().min(1),
@@ -44,7 +46,7 @@ const userUpdateSchema = z.object({
     .max(100, "Имя не должно быть длиннее 100 символов"),
   phone: z.string().trim().transform(normalizeBelarusPhone).refine(
     (value) => !value || isBelarusPhoneValid(value),
-    "Телефон: +375 XX XXX XX XX, код 25, 29, 33 или 44"
+    BELARUS_PHONE_VALIDATION_MESSAGE
   ),
   userId: userIdSchema
 });
@@ -78,9 +80,7 @@ export async function updateUser(
   admin: AdminAccount,
   input: z.input<typeof userUpdateSchema>
 ) {
-  const result = userUpdateSchema.safeParse(input);
-  if (!result.success) throw new Error(result.error.issues[0]?.message);
-  const values = result.data;
+  const values = parseWithMessage(userUpdateSchema, input, "Проверьте данные пользователя");
   const updated = await updateUserById(toUserUpdate(values));
   if (!updated) throw new Error("Пользователь не найден");
   await auditUserUpdate(admin, values);

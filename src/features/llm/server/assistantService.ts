@@ -20,64 +20,21 @@ export async function buildTelegramAssistantReply(input: {
   previousIntent: Record<string, unknown>;
   userId: string;
 }): Promise<AssistantReply> {
-  const todayIso = getTodayIso();
   const intent = await extractBookingIntent({
     message: input.message,
     previousIntent: input.previousIntent,
-    todayIso
+    todayIso: getTodayIso()
   });
-
-  if (intent.needsClarification) {
-    return {
-      nextIntent: compactIntent(intent),
-      text: intent.clarificationQuestion || intent.responseText
-    };
-  }
-
-  if (intent.action === "availability") {
-    return buildAvailabilityReply(intent);
-  }
-
-  if (intent.action === "book") {
-    return buildBookingReply({
-      chatId: input.chatId,
-      intent,
-      userId: input.userId
-    });
-  }
-
-  return {
-    nextIntent: {},
-    text: intent.responseText
-  };
+  if (intent.needsClarification) return buildClarificationReply(intent);
+  if (intent.action === "availability") return buildAvailabilityReply(intent);
+  if (intent.action === "book") return buildBookingReply({ chatId: input.chatId, intent, userId: input.userId });
+  return { nextIntent: {}, text: intent.responseText };
 }
 
 async function buildAvailabilityReply(intent: BookingIntent): Promise<AssistantReply> {
-  const items = await searchAvailability({
-    city: intent.city || "",
-    date: intent.date || "",
-    durationMinutes: intent.durationMinutes || 60,
-    endTime: intent.endTime || undefined,
-    startTime: intent.startTime || undefined,
-    venueQuery: intent.venueQuery || undefined
-  });
-
-  if (!items.length) {
-    return {
-      nextIntent: compactIntent(intent),
-      text: "Свободных слотов по таким условиям не найдено."
-    };
-  }
-
-  const lines = items.slice(0, 6).map((item) => {
-    const firstOptions = item.options
-      .slice(0, 4)
-      .map((option) => `${option.startTime}-${option.endTime}`)
-      .join(", ");
-
-    return `• ${item.venueTitle} / ${item.unitTitle}: ${firstOptions}`;
-  });
-
+  const items = await searchAvailability(toAvailabilityInput(intent));
+  if (!items.length) return { nextIntent: compactIntent(intent), text: "Свободных слотов по таким условиям не найдено." };
+  const lines = items.slice(0, 6).map(formatAvailabilityItem);
   return {
     nextIntent: compactIntent(intent),
     text: [`Свободно на ${intent.date}:`, ...lines].join("\n")
@@ -89,49 +46,46 @@ async function buildBookingReply(input: {
   intent: BookingIntent;
   userId: string;
 }): Promise<AssistantReply> {
-  const items = await searchAvailability({
-    city: input.intent.city || "",
-    date: input.intent.date || "",
-    durationMinutes: input.intent.durationMinutes || 60,
-    startTime: input.intent.startTime || undefined,
-    venueQuery: input.intent.venueQuery || undefined
-  });
+  const items = await searchAvailability(toAvailabilityInput(input.intent));
   const match = pickBookingMatch(items, input.intent);
+  if (!match) return buildAmbiguousBookingReply(input.intent);
+  const bookingId = await createTelegramPendingBooking(toPendingBooking(input, match.unitId));
+  return buildConfirmationReply(bookingId, match, input.intent);
+}
 
-  if (!match) {
-    return {
-      nextIntent: compactIntent(input.intent),
-      text:
-        "Не смог однозначно определить нужный корт. Уточните площадку или название корта."
-    };
-  }
+function buildClarificationReply(intent: BookingIntent): AssistantReply {
+  return { nextIntent: compactIntent(intent), text: intent.clarificationQuestion || intent.responseText };
+}
 
-  const bookingId = await createTelegramPendingBooking({
-    chatId: input.chatId,
-    date: input.intent.date || "",
-    durationMinutes: input.intent.durationMinutes || 60,
-    startTime: input.intent.startTime || "",
-    unitId: match.unitId,
-    userId: input.userId
-  });
-
+function toAvailabilityInput(intent: BookingIntent) {
   return {
-    keyboard: {
-      inline_keyboard: [
-        [
-          { callback_data: `confirm:${bookingId}`, text: "Да" },
-          { callback_data: `reject:${bookingId}`, text: "Нет" }
-        ]
-      ]
-    },
-    nextIntent: {},
-    text: [
-      "Подтвердите бронирование:",
-      `${match.venueTitle} / ${match.unitTitle}`,
-      `${input.intent.date} ${input.intent.startTime} на ${
-        input.intent.durationMinutes
-      } минут`
-    ].join("\n")
+    city: intent.city || "", date: intent.date || "", durationMinutes: intent.durationMinutes || 60,
+    endTime: intent.endTime || undefined, startTime: intent.startTime || undefined,
+    venueQuery: intent.venueQuery || undefined
+  };
+}
+
+function formatAvailabilityItem(item: Awaited<ReturnType<typeof searchAvailability>>[number]) {
+  const options = item.options.slice(0, 4).map((option) => `${option.startTime}-${option.endTime}`).join(", ");
+  return `• ${item.venueTitle} / ${item.unitTitle}: ${options}`;
+}
+
+function buildAmbiguousBookingReply(intent: BookingIntent): AssistantReply {
+  return { nextIntent: compactIntent(intent), text: "Не смог однозначно определить нужный корт. Уточните площадку или название корта." };
+}
+
+function toPendingBooking(input: { chatId: number; intent: BookingIntent; userId: string }, unitId: string) {
+  return {
+    chatId: input.chatId, date: input.intent.date || "", durationMinutes: input.intent.durationMinutes || 60,
+    startTime: input.intent.startTime || "", unitId, userId: input.userId
+  };
+}
+
+function buildConfirmationReply(bookingId: string, match: { unitTitle: string; venueTitle: string }, intent: BookingIntent): AssistantReply {
+  const buttons = [{ callback_data: `confirm:${bookingId}`, text: "Да" }, { callback_data: `reject:${bookingId}`, text: "Нет" }];
+  return {
+    keyboard: { inline_keyboard: [buttons] }, nextIntent: {},
+    text: ["Подтвердите бронирование:", `${match.venueTitle} / ${match.unitTitle}`, `${intent.date} ${intent.startTime} на ${intent.durationMinutes} минут`].join("\n")
   };
 }
 

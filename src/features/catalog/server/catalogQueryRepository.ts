@@ -1,9 +1,8 @@
 import type { CatalogUnitRow } from "@/features/catalog/server/catalogRepositoryMappers";
 import {
-  groupOwnerUnits,
-  mapSearchUnit
+  groupOwnerUnits
 } from "@/features/catalog/server/catalogRepositoryMappers";
-import type { OwnerUnit, SearchUnit } from "@/features/catalog/server/catalogTypes";
+import type { OwnerUnit } from "@/features/catalog/server/catalogTypes";
 import { getDb } from "@/features/database/server/client";
 
 const UNIT_COLUMNS = `
@@ -47,22 +46,4 @@ export async function listDistinctCities(): Promise<string[]> {
     ORDER BY city
   `;
   return rows.map((row) => row.city);
-}
-
-export async function listSearchUnits(filters: {
-  city: string;
-  venueQuery?: string;
-}): Promise<SearchUnit[]> {
-  const sql = getDb();
-  const query = filters.venueQuery?.trim() || null;
-  const rows = await sql.unsafe<CatalogUnitRow[]>(`
-    SELECT ${UNIT_COLUMNS}
-    FROM venues v
-    JOIN bookable_units u ON u.venue_id = v.id
-    LEFT JOIN availability_rules r ON FALSE
-    WHERE v.city = $1 AND v.is_active = TRUE AND u.is_active = TRUE
-      AND ($2::TEXT IS NULL OR v.title ILIKE $3 OR u.title ILIKE $3)
-    ORDER BY v.title, u.title
-  `, [filters.city, query, query ? `%${query}%` : null]);
-  return rows.map(mapSearchUnit);
 }

@@ -1,0 +1,53 @@
+.emptyCard {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  padding: 32px 20px;
+  text-align: center;
+  border-radius: var(--radius-xl);
+  background: var(--surface-hover);
+  border: 1px dashed rgba(15, 23, 42, 0.1);
+}
+.emptyCard p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.filterTabs {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--panel-border);
+}
+.filterTab {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.filterTab:hover { color: var(--text); background: var(--surface); }
+.filterTabActive { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
+.filterTabActive:hover { color: var(--text); }
+.recordCard {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--panel-border);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s;
+}
+.recordCard:hover { box-shadow: var(--shadow); }
+@media (max-width: 780px) {
+  .recordCard { grid-template-columns: 1fr; }
+}

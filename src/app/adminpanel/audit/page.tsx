@@ -1,8 +1,9 @@
 import { listAdminAudit } from "@/features/admin/server/adminAuditRepository";
-import { getAdminParam as pick, type AdminPageProps } from "@/features/admin/ui/adminPageParams";
+import type { AdminPageProps } from "@/features/admin/ui/adminPageParams";
 import { AdminAuditTable } from "@/features/admin/ui/AdminAuditTable";
 import { AdminFilters } from "@/features/admin/ui/shared/AdminFilters";
 import { AdminPage } from "@/features/admin/ui/shared/AdminPage";
+import { getSearchParam as pick } from "@/features/shared/server/searchParams";
 
 export default async function AdminAuditPage(props: AdminPageProps) {
   const params = await props.searchParams;

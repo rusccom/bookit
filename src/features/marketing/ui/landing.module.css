@@ -10,7 +10,6 @@
   color: var(--public-text);
   font-family: var(--font-public-sans), sans-serif;
 }
-
 .page::before {
   content: "";
   position: absolute;
@@ -19,7 +18,6 @@
   pointer-events: none;
   z-index: -1;
 }
-
 .page::after {
   content: "";
   position: absolute;
@@ -33,7 +31,6 @@
   transform: rotate(-4deg);
   z-index: -1;
 }
-
 .shell {
   position: relative;
   display: grid;
@@ -42,7 +39,6 @@
   margin: 0 auto;
   padding: 0 0 88px;
 }
-
 .hero {
   display: grid;
   width: 100vw;
@@ -50,7 +46,6 @@
   margin-inline: calc(50% - 50vw);
   isolation: isolate;
 }
-
 .heroCopy {
   grid-area: 1 / 1;
   position: relative;
@@ -62,7 +57,6 @@
   margin: 0 auto;
   padding: clamp(120px, 18vw, 190px) 0 clamp(56px, 10vw, 96px);
 }
-
 .heroTitle {
   margin: 0;
   max-width: 10ch;
@@ -74,7 +68,6 @@
   color: #f4f8ff;
   text-shadow: 0 12px 40px rgba(10, 20, 49, 0.36);
 }
-
 .heroText {
   max-width: 34rem;
   margin: 0;
@@ -83,7 +76,6 @@
   line-height: 1.78;
   text-shadow: 0 8px 28px rgba(10, 20, 49, 0.28);
 }
-
 .heroAction {
   display: inline-flex;
   align-items: center;
@@ -99,13 +91,11 @@
   font-weight: 700;
   transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
-
 .heroAction:hover {
   transform: translateY(-2px);
   background: #fff033;
   box-shadow: 0 24px 44px rgba(200, 180, 0, 0.36);
 }
-
 .heroImage {
   position: relative;
   grid-area: 1 / 1;
@@ -117,7 +107,6 @@
     linear-gradient(180deg, rgba(74, 173, 232, 0.16), rgba(74, 173, 232, 0)),
     linear-gradient(135deg, rgba(74, 173, 232, 0.2), rgba(217, 140, 187, 0.08));
 }
-
 .heroImage::after {
   content: "";
   position: absolute;
@@ -127,29 +116,24 @@
     linear-gradient(180deg, rgba(10, 15, 35, 0.16), rgba(10, 15, 35, 0.08) 34%, rgba(10, 15, 35, 0.34));
   pointer-events: none;
 }
-
 .heroImage img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   filter: saturate(0.96) contrast(1.02);
 }
-
 .heroImageDesktop {
   display: block;
 }
-
 .heroImageMobile {
   display: none;
 }
-
 .section {
   position: relative;
   display: grid;
   gap: 34px;
   padding-top: 88px;
 }
-
 .section::before {
   content: "";
   display: block;
@@ -159,7 +143,6 @@
   border-radius: 2px;
   background: linear-gradient(90deg, transparent, var(--public-accent), transparent);
 }
-
 .section::after {
   content: "";
   position: absolute;
@@ -170,29 +153,24 @@
   pointer-events: none;
   z-index: -1;
 }
-
 .section:nth-of-type(odd)::after {
   left: -6rem;
   background: radial-gradient(circle, var(--public-accent-soft), transparent 70%);
 }
-
 .section:nth-of-type(even)::after {
   right: -6rem;
   background: radial-gradient(circle, rgba(74, 173, 232, 0.08), transparent 70%);
 }
-
 .sectionHeader {
   display: grid;
   gap: 12px;
   max-width: 52rem;
 }
-
 .sectionHeaderCentered {
   justify-items: center;
   margin: 0 auto;
   text-align: center;
 }
-
 .sectionHeader h2 {
   margin: 0;
   font-family: var(--font-public-display), sans-serif;
@@ -202,20 +180,17 @@
   line-height: 1.05;
   color: var(--public-text);
 }
-
 .sectionHeader p {
   margin: 0;
   color: var(--public-muted);
   font-size: 1rem;
   line-height: 1.7;
 }
-
 .cardGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
 }
-
 .card {
   position: relative;
   display: grid;
@@ -228,7 +203,6 @@
   box-shadow: var(--public-shadow-soft);
   transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
-
 .card::before {
   content: "";
   position: absolute;
@@ -237,75 +211,61 @@
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(74, 173, 232, 0.45), transparent);
 }
-
 .card:hover {
   transform: translateY(-4px);
   border-color: var(--public-border-strong);
   box-shadow: 0 22px 44px rgba(20, 30, 60, 0.12);
 }
-
 .card h3 {
   margin: 0;
   font-size: 1.12rem;
   font-weight: 700;
   color: var(--public-text);
 }
-
 .card p {
   margin: 0;
   color: var(--public-muted);
   font-size: 0.95rem;
   line-height: 1.7;
 }
-
 @media (max-width: 860px) {
   .cardGrid {
     grid-template-columns: 1fr;
   }
-
   .hero {
     min-height: 500px;
   }
-
   .heroTitle {
     max-width: 12ch;
   }
-
   .heroCopy {
     width: min(100%, calc(100% - 24px));
     padding: 116px 0 44px;
   }
-
   .heroImageDesktop {
     display: none;
   }
-
   .heroImageMobile {
     display: block;
   }
 }
-
 @media (max-width: 640px) {
   .shell {
     gap: 32px;
     width: min(100% - 24px, 1480px);
     padding: 0 0 64px;
   }
-
   .section {
     padding-top: 32px;
   }
-
   .heroTitle {
     font-size: clamp(2.3rem, 11vw, 3.3rem);
   }
-
   .heroText {
     max-width: 28rem;
     font-size: 1rem;
     line-height: 1.7;
   }
-
   .card,
   .heroImage {
     border-radius: 0;

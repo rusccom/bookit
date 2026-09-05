@@ -5,21 +5,21 @@ import { getRegisterPath } from "@/features/auth/server/registrationPaths";
 import { ModernAuthLayout } from "@/features/auth/ui/ModernAuthLayout";
 import { RegisterVerificationForm } from "@/features/auth/ui/RegisterVerificationForm";
 import { StatusBanner } from "@/features/shared/ui/StatusBanner";
+import { getSearchParam, type SearchParams } from "@/features/shared/server/searchParams";
 
 import styles from "@/features/auth/ui/auth.module.css";
 
 type PageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<SearchParams>;
 };
 
 export default async function RegisterVerifyPage(props: PageProps) {
   const searchParams = await props.searchParams;
   const role = resolveRole(searchParams.role);
-  const error = pickValue(searchParams.error);
-  const success = pickValue(searchParams.success);
+  const error = getSearchParam(searchParams.error);
+  const success = getSearchParam(searchParams.success);
 
-  return (
-    <ModernAuthLayout
+  return <ModernAuthLayout
       description="Введите код из SMS, чтобы завершить регистрацию."
       eyebrow="Подтверждение"
       highlights={getHighlights(role)}
@@ -28,12 +28,9 @@ export default async function RegisterVerifyPage(props: PageProps) {
       <StatusBanner error={error} success={success} />
       <RegisterVerificationForm />
       <p className={styles.footer}>
-        <Link className={styles.link} href={getRegisterPath(role)}>
-          Вернуться к анкете
-        </Link>
+        <Link className={styles.link} href={getRegisterPath(role)}>Вернуться к анкете</Link>
       </p>
-    </ModernAuthLayout>
-  );
+    </ModernAuthLayout>;
 }
 
 function getHighlights(role: UserRole) {
@@ -41,11 +38,7 @@ function getHighlights(role: UserRole) {
 }
 
 function resolveRole(value: string | string[] | undefined): UserRole {
-  return pickValue(value) === "owner" ? "owner" : "customer";
-}
-
-function pickValue(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
+  return getSearchParam(value) === "owner" ? "owner" : "customer";
 }
 
 const GUEST_HIGHLIGHTS = [

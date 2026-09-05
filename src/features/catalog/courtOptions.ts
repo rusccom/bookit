@@ -16,9 +16,17 @@ export const COURT_SURFACE_OPTIONS = [
 ] as const;
 
 export function formatCourtKind(value: string) {
-  return COURT_KIND_OPTIONS.find((item) => item.value === value)?.label || value;
+  return formatCourtOption(COURT_KIND_OPTIONS, value);
 }
 
 export function formatCourtSurface(value: string) {
-  return COURT_SURFACE_OPTIONS.find((item) => item.value === value)?.label || value;
+  return formatCourtOption(COURT_SURFACE_OPTIONS, value);
+}
+
+export function formatHourlyPrice(value: number, fallback: string) {
+  return value > 0 ? `${value.toFixed(2)} BYN/ч` : fallback;
+}
+
+function formatCourtOption(options: ReadonlyArray<{ label: string; value: string }>, value: string) {
+  return options.find((item) => item.value === value)?.label || value;
 }

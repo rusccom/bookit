@@ -8,23 +8,25 @@ import {
   createCustomerBooking,
   createOwnerManualBooking
 } from "@/features/booking/server/bookingService";
+import { getErrorMessage } from "@/features/shared/server/errors";
+import { readFormNumber, readFormText } from "@/features/shared/server/formData";
 
 export async function createCustomerBookingAction(formData: FormData) {
   const user = await requireUser("customer");
-  const returnTo = safeCustomerPath(String(formData.get("returnTo") || ""));
+  const returnTo = safeCustomerPath(readFormText(formData, "returnTo"));
   let target = "/dashboard/customer/bookings?success=booking-created";
 
   try {
     await createCustomerBooking({
-      date: String(formData.get("date") || ""),
-      durationMinutes: Number(formData.get("durationMinutes") || 0),
-      note: String(formData.get("note") || ""),
-      startTime: String(formData.get("startTime") || ""),
-      unitId: String(formData.get("unitId") || ""),
+      date: readFormText(formData, "date"),
+      durationMinutes: readFormNumber(formData, "durationMinutes"),
+      note: readFormText(formData, "note"),
+      startTime: readFormText(formData, "startTime"),
+      unitId: readFormText(formData, "unitId"),
       userId: user.id
     });
   } catch (error) {
-    target = appendStatus(returnTo, "error", getErrorMessage(error));
+    target = appendStatus(returnTo, "error", getErrorMessage(error, "Не удалось создать бронирование"));
   }
 
   redirect(target);
@@ -36,16 +38,16 @@ export async function createOwnerManualBookingAction(formData: FormData) {
 
   try {
     await createOwnerManualBooking({
-      date: String(formData.get("date") || ""),
-      endTime: String(formData.get("endTime") || ""),
-      note: String(formData.get("note") || ""),
+      date: readFormText(formData, "date"),
+      endTime: readFormText(formData, "endTime"),
+      note: readFormText(formData, "note"),
       ownerUserId: owner.id,
-      startTime: String(formData.get("startTime") || ""),
-      unitId: String(formData.get("unitId") || "")
+      startTime: readFormText(formData, "startTime"),
+      unitId: readFormText(formData, "unitId")
     });
     target = "/dashboard/owner/bookings?success=manual-booking-created";
   } catch (error) {
-    target = `/dashboard/owner/bookings?error=${encodeURIComponent(getErrorMessage(error))}`;
+    target = `/dashboard/owner/bookings?error=${encodeURIComponent(getErrorMessage(error, "Не удалось создать бронирование"))}`;
   }
 
   redirect(target);
@@ -53,12 +55,12 @@ export async function createOwnerManualBookingAction(formData: FormData) {
 
 export async function cancelCustomerBookingAction(formData: FormData) {
   const user = await requireUser("customer");
-  const returnTo = String(formData.get("returnTo") || "/dashboard/customer");
+  const returnTo = readFormText(formData, "returnTo") || "/dashboard/customer";
   const safePath = returnTo.startsWith("/dashboard/customer") ? returnTo : "/dashboard/customer";
   await cancelBookingAction({
     actorRole: "customer",
     actorUserId: user.id,
-    bookingId: String(formData.get("bookingId") || ""),
+    bookingId: readFormText(formData, "bookingId"),
     redirectPath: safePath
   });
 }
@@ -68,7 +70,7 @@ export async function cancelOwnerBookingAction(formData: FormData) {
   await cancelBookingAction({
     actorRole: "owner",
     actorUserId: owner.id,
-    bookingId: String(formData.get("bookingId") || ""),
+    bookingId: readFormText(formData, "bookingId"),
     redirectPath: "/dashboard/owner/bookings"
   });
 }
@@ -85,14 +87,10 @@ async function cancelBookingAction(input: {
     await cancelBooking(input);
     target = `${input.redirectPath}?success=booking-cancelled`;
   } catch (error) {
-    target = `${input.redirectPath}?error=${encodeURIComponent(getErrorMessage(error))}`;
+    target = `${input.redirectPath}?error=${encodeURIComponent(getErrorMessage(error, "Не удалось отменить бронирование"))}`;
   }
 
   redirect(target);
-}
-
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Не удалось выполнить действие";
 }
 
 function safeCustomerPath(value: string) {

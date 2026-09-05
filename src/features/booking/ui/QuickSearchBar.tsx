@@ -6,15 +6,12 @@ type Props = { cities: string[] };
 export function QuickSearchBar({ cities }: Props) {
   const today = getTodayIso();
 
-  return (
-    <form action="/dashboard/customer/search" className={s.quickSearch} method="GET">
+  return <form action="/dashboard/customer/search" className={s.quickSearch} method="GET">
       <label>
         <span>Город</span>
         <select name="city" required>
           <option value="">Выберите город</option>
-          {cities.map((city) => (
-            <option key={city} value={city}>{city}</option>
-          ))}
+          {cities.map((city) => <option key={city} value={city}>{city}</option>)}
         </select>
       </label>
       <label>
@@ -22,6 +19,5 @@ export function QuickSearchBar({ cities }: Props) {
         <input defaultValue={today} min={today} name="date" required type="date" />
       </label>
       <button className="primary-button" type="submit">Найти корт</button>
-    </form>
-  );
+    </form>;
 }

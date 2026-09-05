@@ -13,15 +13,17 @@ import {
   updateUser
 } from "@/features/admin/server/adminService";
 import { requireAdmin } from "@/features/admin/server/requireAdmin";
+import { getErrorMessage, isUniqueConstraintError } from "@/features/shared/server/errors";
+import { readFormFlag, readFormText } from "@/features/shared/server/formData";
 
 export async function loginAdminAction(formData: FormData) {
   let target = "/admin";
   try {
     const admin = await authenticateAdmin(readCredentials(formData));
-    await createAdminSession(admin, formData.get("remember") === "on");
+    await createAdminSession(admin, readFormText(formData, "remember") === "on");
     target = "/adminpanel";
   } catch (error) {
-    const message = encodeURIComponent(getMessage(error));
+    const message = encodeURIComponent(getAdminErrorMessage(error));
     target = `/admin?error=${message}`;
   }
   redirect(target);
@@ -34,64 +36,59 @@ export async function logoutAdminAction() {
 
 export async function deleteUserAction(formData: FormData) {
   const admin = await requireAdmin();
-  const search = String(formData.get("search") || "");
+  const search = readFormText(formData, "search");
   let status = `success=${encodeURIComponent("Пользователь удалён")}`;
   try {
-    await removeUser(admin, String(formData.get("userId") || ""));
+    await removeUser(admin, readFormText(formData, "userId"));
   } catch (error) {
-    status = `error=${encodeURIComponent(getMessage(error))}`;
+    status = `error=${encodeURIComponent(getAdminErrorMessage(error))}`;
   }
   redirect(`/adminpanel/users?q=${encodeURIComponent(search)}&${status}`);
 }
 
 export async function updateUserAction(formData: FormData) {
   const admin = await requireAdmin();
-  const search = String(formData.get("search") || "");
+  const search = readFormText(formData, "search");
   let status = `success=${encodeURIComponent("Данные пользователя обновлены")}`;
   try {
     await updateUser(admin, readUserUpdate(formData));
   } catch (error) {
-    status = `error=${encodeURIComponent(getMessage(error))}`;
+    status = `error=${encodeURIComponent(getAdminErrorMessage(error))}`;
   }
   redirect(`/adminpanel/users?q=${encodeURIComponent(search)}&${status}`);
 }
 
 export async function blockUserAction(formData: FormData) {
   const admin = await requireAdmin();
-  const search = String(formData.get("search") || "");
-  const blocked = formData.get("blocked") === "true";
+  const search = readFormText(formData, "search");
+  const blocked = readFormFlag(formData, "blocked");
   let status = `success=${encodeURIComponent(blocked ? "Пользователь заблокирован" : "Пользователь разблокирован")}`;
   try {
-    await changeUserBlocked(admin, String(formData.get("userId") || ""), blocked);
+    await changeUserBlocked(admin, readFormText(formData, "userId"), blocked);
   } catch (error) {
-    status = `error=${encodeURIComponent(getMessage(error))}`;
+    status = `error=${encodeURIComponent(getAdminErrorMessage(error))}`;
   }
   redirect(`/adminpanel/users?q=${encodeURIComponent(search)}&${status}`);
 }
 
 function readCredentials(formData: FormData) {
   return {
-    login: String(formData.get("login") || ""),
-    otp: String(formData.get("otp") || ""),
-    password: String(formData.get("password") || "")
+    login: readFormText(formData, "login"),
+    otp: readFormText(formData, "otp"),
+    password: readFormText(formData, "password")
   };
 }
 
 function readUserUpdate(formData: FormData) {
   return {
-    email: String(formData.get("email") || ""),
-    fullName: String(formData.get("fullName") || ""),
-    phone: String(formData.get("phone") || ""),
-    userId: String(formData.get("userId") || "")
+    email: readFormText(formData, "email"),
+    fullName: readFormText(formData, "fullName"),
+    phone: readFormText(formData, "phone"),
+    userId: readFormText(formData, "userId")
   };
 }
 
-function getMessage(error: unknown) {
-  if (isUniqueConflict(error)) return "Email или телефон уже используется";
-  return error instanceof Error ? error.message : "Неожиданная ошибка";
-}
-
-function isUniqueConflict(error: unknown) {
-  return typeof error === "object" && error !== null
-    && "code" in error && error.code === "23505";
+function getAdminErrorMessage(error: unknown) {
+  if (isUniqueConstraintError(error)) return "Email или телефон уже используется";
+  return getErrorMessage(error, "Неожиданная ошибка");
 }

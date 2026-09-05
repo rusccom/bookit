@@ -3,8 +3,7 @@ import {
   registrationSchema
 } from "@/features/auth/server/authSchema";
 import {
-  createProvider,
-  createUser,
+  createUserAccount,
   findUserByEmail,
   findUserByPhone,
   findUserWithPassword,
@@ -54,22 +53,15 @@ export async function prepareRegistration(input: RegistrationInput) {
 export async function registerPreparedUser(input: PreparedRegistration) {
   await assertRegistrationAvailable(input.email, input.phone);
 
-  const user = await createUser({
+  return createUserAccount({
     email: input.email,
     fullName: input.fullName,
     passwordHash: input.passwordHash,
     phone: input.phone,
+    providerTitle: input.role === "owner"
+      ? input.providerTitle || `${input.fullName} Booking` : undefined,
     role: input.role
   });
-
-  if (input.role === "owner") {
-    await createProvider({
-      ownerUserId: user.id,
-      title: input.providerTitle || `${input.fullName} Booking`
-    });
-  }
-
-  return user;
 }
 
 export async function loginUser(input: {
@@ -77,24 +69,12 @@ export async function loginUser(input: {
   password: string;
 }) {
   const candidate = await findUserWithPassword(input.email);
-
-  if (!candidate?.passwordHash) {
-    throw new Error("Неверный email или пароль");
-  }
-
-  if (candidate.user.isBlocked) {
-    throw new Error("Аккаунт заблокирован администратором");
-  }
-
-  const isValid = await verifyPassword({
+  assertLoginCandidate(candidate);
+  const valid = await verifyPassword({
     hash: candidate.passwordHash,
     password: input.password
   });
-
-  if (!isValid) {
-    throw new Error("Неверный email или пароль");
-  }
-
+  if (!valid) throw new Error("Неверный email или пароль");
   return candidate.user;
 }
 
@@ -111,14 +91,12 @@ export async function registerTelegramCustomer(input: {
 }
 
 async function assertRegistrationAvailable(email: string, phone: string) {
-  const existing = await findUserByEmail(email);
-  const phoneOwner = await findUserByPhone(phone);
+  const [existing, phoneOwner] = await Promise.all([findUserByEmail(email), findUserByPhone(phone)]);
+  if (existing) throw new Error("Пользователь с таким email уже зарегистрирован");
+  if (phoneOwner) throw new Error("Пользователь с таким телефоном уже зарегистрирован");
+}
 
-  if (existing) {
-    throw new Error("Email already registered");
-  }
-
-  if (phoneOwner) {
-    throw new Error("Phone already registered");
-  }
+function assertLoginCandidate(candidate: Awaited<ReturnType<typeof findUserWithPassword>>): asserts candidate is NonNullable<typeof candidate> & { passwordHash: string } {
+  if (!candidate?.passwordHash) throw new Error("Неверный email или пароль");
+  if (candidate.user.isBlocked) throw new Error("Аккаунт заблокирован администратором");
 }

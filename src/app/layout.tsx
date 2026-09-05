@@ -41,7 +41,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
   ].join(" ");
 
   return (
-    <html className={className} lang="ru">
+    <html className={className} data-scroll-behavior="smooth" lang="ru">
       <body>{props.children}</body>
     </html>
   );

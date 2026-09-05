@@ -1,4 +1,4 @@
-import type { Row } from "postgres";
+import type { JSONValue, Row } from "postgres";
 
 import type { TelegramProfile } from "@/features/telegram/server/telegramTypes";
 import { getDb } from "@/features/database/server/client";
@@ -13,6 +13,13 @@ type ProfileRow = Row & {
   stage: TelegramProfile["stage"];
   user_id: string | null;
 };
+
+const UPDATE_PROFILE = `
+  UPDATE telegram_profiles SET user_id = $1, stage = $2, pending_name = $3,
+    pending_phone = $4, pending_code_hash = $5, code_expires_at = $6,
+    pending_intent = $7::jsonb, updated_at = NOW()
+  WHERE chat_id = $8
+`;
 
 export async function getTelegramProfile(chatId: number) {
   const sql = getDb();
@@ -59,31 +66,11 @@ export async function updateTelegramProfile(input: {
     pendingIntent: input.patch.pendingIntent ?? current.pendingIntent
   };
   const sql = getDb();
-  await sql.unsafe(
-    `
-      UPDATE telegram_profiles
-      SET
-        user_id = $1,
-        stage = $2,
-        pending_name = $3,
-        pending_phone = $4,
-        pending_code_hash = $5,
-        code_expires_at = $6,
-        pending_intent = $7::jsonb,
-        updated_at = NOW()
-      WHERE chat_id = $8
-    `,
-    [
-      next.userId,
-      next.stage,
-      next.pendingName,
-      next.pendingPhone,
-      next.pendingCodeHash,
-      next.codeExpiresAt,
-      JSON.stringify(next.pendingIntent),
-      input.chatId
-    ]
-  );
+  await sql.unsafe(UPDATE_PROFILE, [
+    next.userId, next.stage, next.pendingName, next.pendingPhone,
+    next.pendingCodeHash, next.codeExpiresAt,
+    sql.json(next.pendingIntent as JSONValue), input.chatId
+  ]);
 }
 
 export async function resetTelegramProfile(chatId: number) {

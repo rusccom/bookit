@@ -1,5 +1,5 @@
 import type { AdminBookingRecord } from "@/features/admin/server/adminTypes";
-import { formatBelarusPhone } from "@/features/shared/server/phone";
+import { formatBelarusPhone } from "@/features/shared/phone";
 import { AdminBookingActions } from "./AdminBookingActions";
 import { AdminBookingBadge } from "./AdminBookingBadge";
 import { AdminCell } from "./shared/AdminCell";

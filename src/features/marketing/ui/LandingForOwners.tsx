@@ -13,40 +13,27 @@ const BENEFITS = [
     text: "Система сама управляет слотами. Клиенты видят только свободное время.",
   },
   {
-    title: "Аналитика и статистика",
-    text: "Отслеживайте загрузку, доход и популярные часы в личном кабинете.",
+    title: "Загрузка и статистика",
+    text: "Смотрите занятые и свободные слоты каждого корта по дням недели.",
   },
 ];
 
 export function LandingForOwners() {
-  return (
-    <section className={shared.section}>
+  return <section className={shared.section}>
       <div className={shared.sectionHeader}>
         <h2>Для владельцев площадок</h2>
-        <p>
-          Подключите свои корты к платформе и получайте клиентов
-          без дополнительных затрат на рекламу.
-        </p>
+        <p>Подключите свои корты к платформе и получайте клиентов без дополнительных затрат на рекламу.</p>
       </div>
       <div className={s.grid}>
         <div className={s.benefits}>
-          {BENEFITS.map((item) => (
-            <article key={item.title} className={s.benefit}>
-              <h3 className={s.benefitTitle}>{item.title}</h3>
-              <p className={s.benefitText}>{item.text}</p>
-            </article>
-          ))}
+          {BENEFITS.map((item) => <article key={item.title} className={s.benefit}>
+            <h3 className={s.benefitTitle}>{item.title}</h3><p className={s.benefitText}>{item.text}</p>
+          </article>)}
         </div>
         <div className={s.cta}>
-          <p className={s.ctaText}>
-            Присоединяйтесь к площадкам, которые уже принимают
-            бронирования онлайн.
-          </p>
-          <Link className={s.ctaButton} href="/register">
-            Добавить площадку
-          </Link>
+          <p className={s.ctaText}>Присоединяйтесь к площадкам, которые уже принимают бронирования онлайн.</p>
+          <Link className={s.ctaButton} href="/register">Добавить площадку</Link>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 }

@@ -8,7 +8,8 @@ import {
 } from "@/features/booking/server/availabilityRepository";
 import {
   parseAvailabilityInput,
-  parseBookingSlot
+  parseBookingSlot,
+  parseOwnerBookingSlot
 } from "@/features/booking/server/availabilitySchema";
 import { buildAvailabilityOptions, buildOpenBlocks } from "@/features/booking/server/slotEngine";
 import { getMinimumBookingMinutes, getWeekday, parseTimeLabel } from "@/features/shared/server/dateTime";
@@ -39,7 +40,24 @@ export async function ensureUnitCanBeBooked(input: {
   startTime: string;
   unitId: string;
 }) {
-  const parsed = parseBookingSlot(input);
+  await ensureParsedSlotCanBeBooked(parseBookingSlot(input));
+}
+
+export async function ensureOwnerUnitCanBeBooked(input: {
+  date: string;
+  durationMinutes: number;
+  startTime: string;
+  unitId: string;
+}) {
+  await ensureParsedSlotCanBeBooked(parseOwnerBookingSlot(input));
+}
+
+async function ensureParsedSlotCanBeBooked(parsed: {
+  date: string;
+  durationMinutes: number;
+  startTime: string;
+  unitId: string;
+}) {
   const unit = await findUnit(parsed.unitId);
   if (!unit) throw new Error("Корт недоступен для бронирования");
   if (parsed.durationMinutes % unit.slotMinutes !== 0) throw new Error(`Длительность записи должна быть кратна шагу корта: ${formatSlotMinutes(unit.slotMinutes)}`);

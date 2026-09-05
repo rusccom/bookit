@@ -2,12 +2,12 @@ import { z } from "zod";
 import type { BookingRecord } from "@/features/booking/server/bookingTypes";
 import { getBookingForActor } from "@/features/booking/server/bookingQueryRepository";
 import { bookingTimeToUtc, escapeCalendarText, foldCalendarLine, formatCalendarTimestamp } from "@/features/booking/server/bookingCalendarFormat";
-import { isFutureBookingStart, parseTimeLabel } from "@/features/shared/server/dateTime";
+import { isFutureBooking } from "@/features/booking/server/bookingTime";
 
 export async function getCustomerBookingCalendar(input: { bookingId: string; customerUserId: string }) {
   if (!z.string().uuid().safeParse(input.bookingId).success) return null;
   const booking = await getBookingForActor({ actorRole: "customer", actorUserId: input.customerUserId, bookingId: input.bookingId });
-  if (!booking || booking.status !== "confirmed" || !isFutureBookingStart(booking.dateLabel, parseTimeLabel(booking.startTime))) return null;
+  if (!booking || booking.status !== "confirmed" || !isFutureBooking(booking)) return null;
   return buildBookingCalendar(booking);
 }
 

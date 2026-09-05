@@ -16,23 +16,15 @@ const FEATURES = [
 ];
 
 export function LandingFeatures() {
-  return (
-    <section className={s.section}>
+  return <section className={s.section}>
       <div className={`${s.sectionHeader} ${s.sectionHeaderCentered}`}>
         <h2>Возможности платформы</h2>
-        <p>
-          Всё, что нужно для удобной аренды — от быстрого поиска
-          до полного управления расписанием.
-        </p>
+        <p>Всё, что нужно для удобной аренды — от быстрого поиска до полного управления расписанием.</p>
       </div>
       <div className={s.cardGrid}>
-        {FEATURES.map((item) => (
-          <article key={item.title} className={s.card}>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </article>
-        ))}
+        {FEATURES.map((item) => <article key={item.title} className={s.card}>
+          <h3>{item.title}</h3><p>{item.text}</p>
+        </article>)}
       </div>
-    </section>
-  );
+    </section>;
 }

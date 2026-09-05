@@ -20,28 +20,21 @@ const TESTIMONIALS = [
 ];
 
 export function LandingTestimonials() {
-  return (
-    <section className={shared.section}>
+  return <section className={shared.section}>
       <div className={`${shared.sectionHeader} ${shared.sectionHeaderCentered}`}>
         <h2>Что говорят пользователи</h2>
         <p>Отзывы игроков и владельцев площадок о работе с BookCort.</p>
       </div>
       <div className={s.grid}>
-        {TESTIMONIALS.map((item) => (
-          <article key={item.name} className={s.card}>
+        {TESTIMONIALS.map((item) => <article key={item.name} className={s.card}>
             <p className={s.text}>&laquo;{item.text}&raquo;</p>
             <div className={s.author}>
-              <span className={s.avatar}>
-                {item.name.charAt(0)}
-              </span>
+              <span className={s.avatar}>{item.name.charAt(0)}</span>
               <div className={s.authorInfo}>
-                <span className={s.name}>{item.name}</span>
-                <span className={s.role}>{item.role}</span>
+                <span className={s.name}>{item.name}</span><span className={s.role}>{item.role}</span>
               </div>
             </div>
-          </article>
-        ))}
+          </article>)}
       </div>
-    </section>
-  );
+    </section>;
 }

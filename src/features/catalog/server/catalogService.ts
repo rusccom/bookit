@@ -4,24 +4,25 @@ import {
   COURT_KIND_OPTIONS,
   COURT_SURFACE_OPTIONS
 } from "@/features/catalog/courtOptions";
+import { isSlotMinutes, SLOT_OPTIONS } from "@/features/catalog/slotOptions";
 import {
   createUnitWithRules,
   listDistinctCities,
   listOwnerUnits,
-  listSearchUnits,
   setOwnerUnitActive,
   updateUnitWithRules
 } from "@/features/catalog/server/catalogRepository";
 import type { WeeklyScheduleEntry } from "@/features/catalog/server/catalogTypes";
 import { parseTimeLabel } from "@/features/shared/server/dateTime";
+import { halfHourTimeSchema } from "@/features/shared/server/timeSchema";
+import { parseWithMessage } from "@/features/shared/server/validation";
 
 const allowedKinds = new Set<string>(COURT_KIND_OPTIONS.map((item) => item.value));
 const allowedSurfaces = new Set<string>(COURT_SURFACE_OPTIONS.map((item) => item.value));
-const timeSchema = z.string().regex(/^(?:[01]\d|2[0-3]):(?:00|30)$/, "Время должно быть кратно 30 минутам");
-
+const slotOptionsLabel = SLOT_OPTIONS.map((option) => option.label).join(", ");
 const scheduleSchema = z.object({
-  endTime: timeSchema,
-  startTime: timeSchema,
+  endTime: halfHourTimeSchema,
+  startTime: halfHourTimeSchema,
   weekday: z.number().int().min(0).max(6)
 }).refine((item) => parseTimeLabel(item.startTime) < parseTimeLabel(item.endTime), {
   message: "Время закрытия должно быть позже времени открытия"
@@ -35,7 +36,7 @@ const courtSchema = z.object({
   ownerUserId: z.string().uuid(),
   pricePerHour: z.number().finite().min(0, "Цена не может быть отрицательной").max(10000, "Проверьте цену"),
   schedule: z.array(scheduleSchema).min(1, "Выберите хотя бы один рабочий день").max(7),
-  slotMinutes: z.union([z.literal(30), z.literal(60), z.literal(120)], { errorMap: () => ({ message: "Выберите шаг слотов: 30 минут, 1 час или 2 часа" }) }),
+  slotMinutes: z.number().int().refine(isSlotMinutes, `Выберите шаг слотов: ${slotOptionsLabel}`),
   surface: z.string().refine((value) => allowedSurfaces.has(value), "Выберите покрытие"),
   title: z.string().trim().min(2, "Укажите название корта").max(100),
   venueTitle: z.string().trim().min(2, "Укажите название площадки").max(100)
@@ -70,16 +71,14 @@ export async function getCityOptions() {
   return listDistinctCities();
 }
 
-export async function searchUnits(input: { city: string; venueQuery?: string }) {
-  return listSearchUnits(input);
-}
-
 function parseCourt(input: CourtInput) {
-  const result = courtSchema.safeParse(input);
-  if (!result.success) throw new Error(result.error.issues[0]?.message || "Проверьте данные корта");
-  assertUniqueDays(result.data.schedule);
-  assertSlotFitsSchedule(result.data);
-  return result.data;
+  const court = parseWithMessage(courtSchema, input, "Проверьте данные корта");
+  const slotMinutes = court.slotMinutes;
+  if (!isSlotMinutes(slotMinutes)) throw new Error(`Выберите шаг слотов: ${slotOptionsLabel}`);
+  const result = { ...court, slotMinutes };
+  assertUniqueDays(result.schedule);
+  assertSlotFitsSchedule(result);
+  return result;
 }
 
 function assertSlotFitsSchedule(input: z.output<typeof courtSchema>) {

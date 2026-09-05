@@ -1,6 +1,7 @@
 import { getDb } from "@/features/database/server/client";
 import { createId } from "@/features/shared/server/id";
-import type { CreateBookingInput, DbExecutor } from "@/features/booking/server/bookingRepositoryTypes";
+import type { CreateBookingInput } from "@/features/booking/server/bookingRepositoryTypes";
+import type { DbExecutor } from "@/features/database/server/types";
 
 export async function createBooking(input: CreateBookingInput) {
   const sql = input.sql || getDb();

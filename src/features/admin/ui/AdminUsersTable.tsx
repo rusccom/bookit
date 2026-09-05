@@ -1,5 +1,5 @@
 import type { AdminUserRecord } from "@/features/admin/server/adminTypes";
-import { formatBelarusPhone } from "@/features/shared/server/phone";
+import { formatBelarusPhone } from "@/features/shared/phone";
 import { formatAdminDate, getAdminRoleLabel } from "./adminPresentation";
 import { AdminUserActions } from "./AdminUserActions";
 import { AdminBadge } from "./shared/AdminBadge";

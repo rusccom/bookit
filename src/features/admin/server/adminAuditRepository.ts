@@ -5,6 +5,7 @@ import type {
   AdminAuditRecord
 } from "@/features/admin/server/adminTypes";
 import { getDb } from "@/features/database/server/client";
+import type { DbExecutor } from "@/features/database/server/types";
 import { createId } from "@/features/shared/server/id";
 
 type AuditRow = Row & {
@@ -23,7 +24,7 @@ export async function createAdminAudit(input: {
   details?: Record<string, string | number | boolean | null>;
   entityId: string;
   entityType: string;
-}, executor?: Pick<ReturnType<typeof getDb>, "unsafe" | "json">) {
+}, executor?: DbExecutor) {
   const sql = executor || getDb();
   await sql.unsafe(`
     INSERT INTO admin_audit_log (

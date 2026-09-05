@@ -5,11 +5,9 @@ import { loginUserAction } from "@/features/auth/server/authActions";
 import styles from "./auth.module.css";
 
 export function ModernLoginForm() {
-  return (
-    <section className={styles.formCard}>
+  return <section className={styles.formCard}>
       <div className={styles.cardHeader}>
-        <h2>Вход в кабинет</h2>
-        <p>Используйте email и пароль, которые указали при регистрации.</p>
+        <h2>Вход в кабинет</h2><p>Используйте email и пароль, которые указали при регистрации.</p>
       </div>
       <form action={loginUserAction} className={styles.form}>
         <label className={styles.field}>
@@ -23,6 +21,5 @@ export function ModernLoginForm() {
         <button className={styles.primaryButton} type="submit">Войти</button>
       </form>
       <p className={styles.footer}>Нет аккаунта? <Link className={styles.link} href="/register">Зарегистрироваться</Link>.</p>
-    </section>
-  );
+    </section>;
 }

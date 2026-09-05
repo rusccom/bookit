@@ -26,13 +26,17 @@ export type CatalogUnitRow = Row & {
   venue_title: string;
 };
 
+type RuleRow = { end_minutes: number; id: string; start_minutes: number; weekday: number };
+type SearchUnitRow = Pick<CatalogUnitRow, "address" | "city" | "description" | "kind" |
+  "price_per_hour" | "slot_minutes" | "surface" | "unit_id" | "unit_title" | "venue_title">;
+
 export function groupOwnerUnits(rows: CatalogUnitRow[]): OwnerUnit[] {
   const units = new Map<string, OwnerUnit>();
   for (const row of rows) appendOwnerUnit(units, row);
   return [...units.values()];
 }
 
-export function mapSearchUnit(row: CatalogUnitRow): SearchUnit {
+export function mapSearchUnit(row: SearchUnitRow): SearchUnit {
   return {
     address: row.address,
     city: row.city,
@@ -48,13 +52,13 @@ export function mapSearchUnit(row: CatalogUnitRow): SearchUnit {
 }
 
 function appendOwnerUnit(units: Map<string, OwnerUnit>, row: CatalogUnitRow) {
-  const unit = units.get(row.unit_id) || createOwnerUnit(row);
+  const unit = units.get(row.unit_id) || mapOwnerUnit(row);
   const rule = mapRule(row);
   if (rule) unit.rules.push(rule);
   units.set(row.unit_id, unit);
 }
 
-function createOwnerUnit(row: CatalogUnitRow): OwnerUnit {
+function mapOwnerUnit(row: CatalogUnitRow): OwnerUnit {
   return {
     ...mapSearchUnit(row),
     isActive: row.is_active,
@@ -63,12 +67,13 @@ function createOwnerUnit(row: CatalogUnitRow): OwnerUnit {
   };
 }
 
+export function mapAvailabilityRule(row: RuleRow): AvailabilityRule {
+  return { endMinutes: row.end_minutes, id: row.id,
+    startMinutes: row.start_minutes, weekday: row.weekday };
+}
+
 function mapRule(row: CatalogUnitRow): AvailabilityRule | null {
   if (!row.rule_id || row.rule_weekday === null) return null;
-  return {
-    endMinutes: Number(row.rule_end),
-    id: row.rule_id,
-    startMinutes: Number(row.rule_start),
-    weekday: row.rule_weekday
-  };
+  return mapAvailabilityRule({ end_minutes: Number(row.rule_end), id: row.rule_id,
+    start_minutes: Number(row.rule_start), weekday: row.rule_weekday });
 }

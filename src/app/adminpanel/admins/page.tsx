@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/features/admin/server/requireAdmin";
 import { getAdminSecurityData } from "@/features/admin/server/adminSecurityService";
-import { getAdminParam as pick, type AdminPageProps } from "@/features/admin/ui/adminPageParams";
+import type { AdminPageProps } from "@/features/admin/ui/adminPageParams";
 import { AdminAccountsTable } from "@/features/admin/ui/AdminAccountsTable";
 import { AdminCreateForm } from "@/features/admin/ui/AdminCreateForm";
 import { AdminPasswordForm } from "@/features/admin/ui/AdminPasswordForm";
@@ -8,6 +8,7 @@ import { AdminSessionsTable } from "@/features/admin/ui/AdminSessionsTable";
 import { AdminTwoFactorPanel } from "@/features/admin/ui/AdminTwoFactorPanel";
 import { AdminPage } from "@/features/admin/ui/shared/AdminPage";
 import styles from "@/features/admin/ui/adminSecurity.module.css";
+import { getSearchParam as pick } from "@/features/shared/server/searchParams";
 
 export default async function AdminsPage(props: AdminPageProps) {
   const params = await props.searchParams;

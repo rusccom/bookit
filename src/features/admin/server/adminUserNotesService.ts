@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { AdminAccount } from "@/features/admin/server/adminTypes";
 import { insertAdminUserNote } from "@/features/admin/server/adminUserNotesRepository";
+import { parseWithMessage } from "@/features/shared/server/validation";
 
 const noteSchema = z.object({
   userId: z.string().uuid("Пользователь не найден"),
@@ -8,7 +9,6 @@ const noteSchema = z.object({
 });
 
 export async function addAdminUserNote(admin: AdminAccount, input: z.input<typeof noteSchema>) {
-  const result = noteSchema.safeParse(input);
-  if (!result.success) throw new Error(result.error.issues[0]?.message || "Проверьте заметку");
-  return insertAdminUserNote({ ...result.data, admin });
+  const note = parseWithMessage(noteSchema, input, "Проверьте заметку");
+  return insertAdminUserNote({ ...note, admin });
 }

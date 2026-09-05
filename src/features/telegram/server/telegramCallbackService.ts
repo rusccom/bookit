@@ -22,11 +22,11 @@ export async function handleTelegramCallback(query: CallbackQuery) {
   const profile = await ensureTelegramProfile(chatId);
   if (!profile?.userId || !await isTelegramUserActive(profile.userId)) return;
   const [action, bookingId] = data.split(":");
-  if (action === "confirm") await confirmBooking(query.id, bookingId, chatId);
+  if (action === "confirm") await confirmTelegramCallback(query.id, bookingId, chatId);
   if (action === "reject") await rejectBooking(query.id, bookingId, chatId);
 }
 
-async function confirmBooking(callbackId: string, bookingId: string, chatId: number) {
+async function confirmTelegramCallback(callbackId: string, bookingId: string, chatId: number) {
   await confirmTelegramBooking({ bookingId, chatId });
   await answerTelegramCallback({ callbackQueryId: callbackId, text: "Бронирование подтверждено" });
   await sendTelegramMessage({ chatId, text: "Бронь подтверждена и сохранена." });

@@ -2,10 +2,13 @@ import { registerTelegramCustomer } from "@/features/auth/server/authService";
 import { buildTelegramAssistantReply } from "@/features/llm/server/assistantService";
 import { getEnv, isSmsConfigured } from "@/features/shared/server/env";
 import {
+  BELARUS_PHONE_CODES,
+  BELARUS_PHONE_EXAMPLE,
+  BELARUS_PHONE_FORMAT,
   isBelarusPhoneValid,
   normalizeBelarusPhone
-} from "@/features/shared/server/phone";
-import { generateOtpCode, hashOtpCode, verifyOtpCode } from "@/features/telegram/server/otp";
+} from "@/features/shared/phone";
+import { generateOtpCode, hashOtpCode, verifyOtpCode } from "@/features/shared/server/otp";
 import { isTelegramUserActive } from "@/features/telegram/server/telegramAccess";
 import { handleTelegramCallback } from "@/features/telegram/server/telegramCallbackService";
 import { sendTelegramMessage } from "@/features/telegram/server/telegramApi";
@@ -14,7 +17,7 @@ import {
   resetTelegramProfile,
   updateTelegramProfile
 } from "@/features/telegram/server/telegramRepository";
-import { sendOtpSms } from "@/features/telegram/server/smsService";
+import { sendOtpSms } from "@/features/shared/server/smsService";
 
 type TelegramUpdate = {
   callback_query?: {
@@ -57,31 +60,15 @@ export async function handleTelegramWebhook(input: {
 
 async function handleTextMessage(chatId: number, text: string) {
   const profile = await ensureTelegramProfile(chatId);
+  if (!profile) throw new Error("Telegram profile was not initialized");
+  if (text === "/start") return startRegistration(chatId);
+  if (profile.stage !== "ready" || !profile.userId) return handleRegistrationStep(profile, text);
+  if (!await isTelegramUserActive(profile.userId)) return notifyBlockedUser(chatId);
+  await handleReadyUserMessage({ chatId: profile.chatId, pendingIntent: profile.pendingIntent, userId: profile.userId }, text);
+}
 
-  if (!profile) {
-    throw new Error("Telegram profile was not initialized");
-  }
-
-  if (text === "/start") {
-    await startRegistration(chatId);
-    return;
-  }
-
-  if (profile.stage !== "ready" || !profile.userId) {
-    await handleRegistrationStep(profile, text);
-    return;
-  }
-
-  if (!await isTelegramUserActive(profile.userId)) {
-    await sendTelegramMessage({ chatId, text: "Ваш аккаунт заблокирован администратором." });
-    return;
-  }
-
-  await handleReadyUserMessage({
-    chatId: profile.chatId,
-    pendingIntent: profile.pendingIntent,
-    userId: profile.userId
-  }, text);
+async function notifyBlockedUser(chatId: number) {
+  await sendTelegramMessage({ chatId, text: "Ваш аккаунт заблокирован администратором." });
 }
 
 async function startRegistration(chatId: number) {
@@ -110,19 +97,11 @@ async function handleReadyUserMessage(
     previousIntent: profile.pendingIntent,
     userId: profile.userId
   });
-
   await updateTelegramProfile({
     chatId: profile.chatId,
-    patch: {
-      pendingIntent: reply.nextIntent
-    }
+    patch: { pendingIntent: reply.nextIntent }
   });
-
-  await sendTelegramMessage({
-    chatId: profile.chatId,
-    replyMarkup: reply.keyboard,
-    text: reply.text
-  });
+  await sendTelegramMessage({ chatId: profile.chatId, replyMarkup: reply.keyboard, text: reply.text });
 }
 
 async function handleRegistrationStep(profile: TelegramProfile, text: string) {
@@ -150,7 +129,7 @@ async function handleNameStep(profile: TelegramProfile, text: string) {
 
   await sendTelegramMessage({
     chatId: profile.chatId,
-    text: "Теперь отправьте номер телефона: +375 XX XXX XX XX. Коды операторов: 25, 29, 33, 44."
+    text: `Теперь отправьте номер телефона: ${BELARUS_PHONE_FORMAT}. Коды операторов: ${BELARUS_PHONE_CODES}.`
   });
 }
 
@@ -160,7 +139,7 @@ async function handlePhoneStep(profile: TelegramProfile, text: string) {
   if (!isBelarusPhoneValid(phone)) {
     await sendTelegramMessage({
       chatId: profile.chatId,
-      text: "Номер не распознан. Пример: +375 29 123 45 67"
+      text: `Номер не распознан. Пример: ${BELARUS_PHONE_EXAMPLE}`
     });
     return;
   }
@@ -175,26 +154,23 @@ async function handlePhoneStep(profile: TelegramProfile, text: string) {
 
 async function sendVerificationCode(chatId: number, phone: string) {
   const code = generateOtpCode();
-  const sms = await sendOtpSms({
-    code,
-    phone
-  });
-
-  await updateTelegramProfile({
-    chatId,
-    patch: {
-      codeExpiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
-      pendingCodeHash: hashOtpCode(code),
-      pendingPhone: phone,
-      stage: "verify_code"
-    }
-  });
-
+  const sms = await sendOtpSms({ code, phone });
+  await saveVerificationCode(chatId, phone, code);
   await sendTelegramMessage({
     chatId,
     text: sms.delivered
       ? "Код отправлен по SMS. Пришлите его сюда."
       : `${sms.preview}\nПосле настройки SMS-провайдера этот fallback исчезнет.`
+  });
+}
+
+async function saveVerificationCode(chatId: number, phone: string, code: string) {
+  await updateTelegramProfile({
+    chatId,
+    patch: {
+      codeExpiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+      pendingCodeHash: hashOtpCode(code), pendingPhone: phone, stage: "verify_code"
+    }
   });
 }
 
@@ -215,27 +191,15 @@ async function completeTelegramRegistration(
   phone: string,
   smsConfirmed: boolean
 ) {
-  const user = await registerTelegramCustomer({
-    fullName: profile.pendingName || "Telegram user",
-    phone
-  });
-
+  const user = await registerTelegramCustomer({ fullName: profile.pendingName || "Telegram user", phone });
   await updateTelegramProfile({
     chatId: profile.chatId,
     patch: {
-      codeExpiresAt: null,
-      pendingCodeHash: null,
-      pendingIntent: {},
-      pendingPhone: phone,
-      stage: "ready",
-      userId: user.id
+      codeExpiresAt: null, pendingCodeHash: null, pendingIntent: {},
+      pendingPhone: phone, stage: "ready", userId: user.id
     }
   });
-
-  await sendTelegramMessage({
-    chatId: profile.chatId,
-    text: buildRegistrationDoneText(smsConfirmed)
-  });
+  await sendTelegramMessage({ chatId: profile.chatId, text: buildRegistrationDoneText(smsConfirmed) });
 }
 
 function buildRegistrationDoneText(smsConfirmed: boolean) {
@@ -251,18 +215,9 @@ function buildRegistrationDoneText(smsConfirmed: boolean) {
 }
 
 function isOtpValid(profile: TelegramProfile, text: string) {
-  if (!profile.pendingCodeHash || !profile.codeExpiresAt) {
-    return false;
-  }
-
-  if (new Date(profile.codeExpiresAt).getTime() < Date.now()) {
-    return false;
-  }
-
-  return verifyOtpCode({
-    code: text,
-    hash: profile.pendingCodeHash
-  });
+  if (!profile.pendingCodeHash || !profile.codeExpiresAt) return false;
+  if (new Date(profile.codeExpiresAt).getTime() < Date.now()) return false;
+  return verifyOtpCode({ code: text, hash: profile.pendingCodeHash });
 }
 
 function validateSecret(headers: Headers) {

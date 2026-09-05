@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { ModernSiteHeader } from "@/features/app/ui/ModernSiteHeader";
+import { AuthIntro } from "@/features/auth/ui/AuthIntro";
 
 import styles from "./auth.module.css";
 
@@ -22,32 +23,13 @@ export function ModernAuthLayout(props: ModernAuthLayoutProps) {
       ? styles.layout
       : styles.layoutCentered;
 
-  return (
-    <main className={styles.page}>
+  return <main className={styles.page}>
       <ModernSiteHeader />
       <div className={styles.shell}>
         <section className={cls}>
-          {hasIntro && (
-            <article className={styles.intro}>
-              {props.eyebrow && <p className={styles.eyebrow}>{props.eyebrow}</p>}
-              <h1>{props.title}</h1>
-              {props.description && <p className={styles.description}>{props.description}</p>}
-              <ul className={styles.highlightList}>
-                {highlights.map(renderHighlight)}
-              </ul>
-            </article>
-          )}
+          {hasIntro && <AuthIntro description={props.description} eyebrow={props.eyebrow} highlights={highlights} title={props.title!} />}
           <div className={styles.content}>{props.children}</div>
         </section>
       </div>
-    </main>
-  );
-}
-
-function renderHighlight(item: string) {
-  return (
-    <li key={item} className={styles.highlightItem}>
-      {item}
-    </li>
-  );
+    </main>;
 }

@@ -11,23 +11,13 @@ export async function ModernSiteHeader() {
   const ctaHref = user ? getDashboardPath(user.role) : "/register";
   const ctaLabel = user ? "Личный кабинет" : "Регистрация";
 
-  return (
-    <header className={styles.header}>
+  return <header className={styles.header}>
       <Link className={styles.brand} href="/">
-        <Image
-          alt="BookCort"
-          className={styles.logo}
-          height={36}
-          src="/images/brand/logo.png"
-          width={160}
-        />
+        <Image alt="BookCort" className={styles.logo} height={36} src="/images/brand/logo.png" style={{ width: "auto" }} width={160} />
       </Link>
       <nav className={styles.nav}>
-        {user ? null : (
-          <Link className={styles.secondary} href="/login">Войти</Link>
-        )}
+        {!user && <Link className={styles.secondary} href="/login">Войти</Link>}
         <Link className={styles.primary} href={ctaHref}>{ctaLabel}</Link>
       </nav>
-    </header>
-  );
+    </header>;
 }

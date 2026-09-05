@@ -11,26 +11,20 @@ export async function extractBookingIntent(input: {
   previousIntent: Record<string, unknown>;
   todayIso: string;
 }) {
-  if (!isAiConfigured()) {
-    return getFallbackIntent();
-  }
-
+  if (!isAiConfigured()) return getFallbackIntent();
   const completion = await getClient().chat.completions.parse({
-    messages: [
-      {
-        content: buildSystemPrompt(input.todayIso, input.previousIntent),
-        role: "system"
-      },
-      {
-        content: input.message,
-        role: "user"
-      }
-    ],
+    messages: buildMessages(input),
     model: getEnv().OPENROUTER_MODEL,
     response_format: zodResponseFormat(bookingIntentSchema, "booking_intent")
   });
-
   return completion.choices[0]?.message.parsed || getFallbackIntent();
+}
+
+function buildMessages(input: { message: string; previousIntent: Record<string, unknown>; todayIso: string }) {
+  return [
+    { content: buildSystemPrompt(input.todayIso, input.previousIntent), role: "system" as const },
+    { content: input.message, role: "user" as const }
+  ];
 }
 
 function buildSystemPrompt(

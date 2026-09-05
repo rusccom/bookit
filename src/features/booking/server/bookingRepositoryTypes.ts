@@ -1,7 +1,6 @@
-import type { Row, Sql } from "postgres";
+import type { Row } from "postgres";
 import type { SlotMinutes } from "@/features/catalog/slotOptions";
-
-export type DbExecutor = Pick<Sql<Record<string, never>>, "unsafe">;
+import type { DbExecutor } from "@/features/database/server/types";
 
 export type RuleRow = Row & {
   end_minutes: number;

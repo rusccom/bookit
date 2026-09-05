@@ -14,7 +14,7 @@ export function getDb() {
   }
 
   const env = getEnv();
-  const ssl = env.DATABASE_URL.includes("localhost") ? false : "require";
+  const ssl = isLocalDatabase(env.DATABASE_URL) ? false : "require";
 
   globalSql.sql = postgres(env.DATABASE_URL, {
     connect_timeout: 30,
@@ -25,4 +25,9 @@ export function getDb() {
   });
 
   return globalSql.sql;
+}
+
+function isLocalDatabase(databaseUrl: string) {
+  const hostname = new URL(databaseUrl).hostname;
+  return ["localhost", "127.0.0.1", "::1"].includes(hostname);
 }

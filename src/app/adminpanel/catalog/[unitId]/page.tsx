@@ -3,10 +3,11 @@ import { z } from "zod";
 import { requireAdmin } from "@/features/admin/server/requireAdmin";
 import { findAdminCourtDetails } from "@/features/admin/server/adminCatalogRepository";
 import { AdminCourtEditor } from "@/features/admin/ui/AdminCourtEditor";
-import { getAdminParam as pick, type AdminPageProps } from "@/features/admin/ui/adminPageParams";
+import type { AdminPageProps } from "@/features/admin/ui/adminPageParams";
 import { AdminPage } from "@/features/admin/ui/shared/AdminPage";
 import { AdminCard } from "@/features/admin/ui/shared/AdminCard";
 import { AdminLink } from "@/features/admin/ui/shared/AdminLink";
+import { getSearchParam as pick } from "@/features/shared/server/searchParams";
 
 type Props = AdminPageProps & { params: Promise<{ unitId: string }> };
 

@@ -1,5 +1,5 @@
 import type { AdminUserDetails } from "@/features/admin/server/adminTypes";
-import { formatBelarusPhone } from "@/features/shared/server/phone";
+import { formatBelarusPhone } from "@/features/shared/phone";
 import { getAdminRoleLabel } from "./adminPresentation";
 import { AdminUserActions } from "./AdminUserActions";
 import { AdminUserBookingTable } from "./AdminUserBookingTable";
